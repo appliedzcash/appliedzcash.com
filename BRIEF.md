@@ -97,6 +97,7 @@ CONTRIBUTING.md     how to propose a pattern
 ## Now
 
 - [ ] **Start here: Mark reviews `draft-bound-notes.md` for public release.** Also fix its Motivation claim "a note commitment appears once" (consensus enforces uniqueness for nullifiers only; the site page was corrected in PR #2). Ask Julian about the ZcashNames credit. Then add `/specs/bound-notes/` and link it from the page's Spec section. That closes L1.
+- [ ] Mark reads the L3 draft on local branch `l3-wallet-native-orders` (unpushed): the page in 100% STE, plus a toy-poll demo (memo with MAC, ZIP 321 URI, QR code, Testnet Inbox). Push only after Mark clears the wallet-native orders ZIP.
 - [ ] Mark turns on "Enforce HTTPS" for Pages (repo settings).
 - [ ] Mark picks licenses: code (MIT/Apache, like Zodiac) and page text (for example CC BY 4.0).
 

@@ -349,3 +349,60 @@ pre {
 .cost-table tbody th {
   font-weight: 600;
 }
+
+.terms {
+  display: grid;
+  grid-template-columns: minmax(7rem, max-content) 1fr;
+  gap: var(--space-2) var(--space-3);
+}
+
+.terms dt {
+  font-weight: 600;
+}
+
+.terms dd {
+  margin: 0;
+}
+
+.status-table td:last-child {
+  text-align: left;
+}
+
+.status-table td:nth-child(2) {
+  white-space: nowrap;
+  text-align: left;
+}
+
+.notice p {
+  margin: 0;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.demo .qr {
+  display: flex;
+  justify-content: center;
+  margin: var(--space-3) 0;
+}
+
+.demo .qr svg {
+  width: min(100%, 18rem);
+  height: auto;
+  border-radius: var(--radius);
+}
+
+@media (max-width: 32rem) {
+  .terms,
+  .field-row {
+    grid-template-columns: 1fr;
+    gap: 0 var(--space-3);
+  }
+
+  .terms dd {
+    margin-bottom: var(--space-2);
+  }
+}

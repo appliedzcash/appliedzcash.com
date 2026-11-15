@@ -9,10 +9,14 @@ description = "In-browser demos for appliedzcash.com, built to WASM"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
+base64 = "0.22"
 blake2b_simd = "1"
 hex = "0.4.3"
 orchard = { version = "=0.16.0", default-features = false, features = ["std"] }
+qrcode = { version = "0.14", default-features = false, features = ["svg"] }
 wasm-bindgen = "0.2"
+zcash_address = "0.14"
+zcash_protocol = "0.11"
 
 [profile.release]
 opt-level = "s"
