@@ -1570,3 +1570,66 @@ figure.hero-figure svg {
     word-break: break-all;
   }
 }
+
+/* "On this page" rail (added by scripts/site.js on long pages). It sits right of the text column. */
+.toc {
+  display: none;
+}
+
+@media (min-width: 72rem) {
+  .toc {
+    position: fixed;
+    top: 5rem;
+    left: calc(50% + var(--measure) / 2 + 2rem);
+    display: block;
+    width: 13rem;
+    max-height: calc(100vh - 7rem);
+    overflow-y: auto;
+    font-size: 0.85rem;
+  }
+
+  .toc p {
+    margin: 0 0 var(--space-2);
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .toc ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-left: 1px solid var(--line);
+  }
+
+  .toc a {
+    display: block;
+    margin-left: -1px;
+    padding: 0.2rem 0 0.2rem var(--space-3);
+    color: var(--muted);
+    border-left: 2px solid transparent;
+    text-decoration: none;
+    transition: color 150ms;
+  }
+
+  .toc .sub a {
+    padding-left: 1.75rem;
+  }
+
+  .toc a:hover {
+    color: var(--text);
+  }
+
+  .toc a[aria-current] {
+    color: var(--text);
+    border-left-color: var(--accent);
+  }
+}
+
+@media print {
+  .toc {
+    display: none !important;
+  }
+}
