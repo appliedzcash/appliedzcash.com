@@ -43,7 +43,10 @@ function run(demo) {
     const last = stamps.at(-1);
     return demo.stamp(text, last?.cmx ?? GENESIS_PREV, last?.nf ?? demo.genesis_rho(), ironwood);
   };
-  const chain = documents.reduce((stamps, text) => [...stamps, stampAfter(stamps, text)], []);
+  const chain = [];
+  for (const text of documents) {
+    chain.push(stampAfter(chain, text));
+  }
 
   const next = stampAfter(chain, docInput.value);
   showValues(nextValues, [
