@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Third-party notices | Applied Zcash</title>
+    <meta name="robots" content="noindex" />
+    <link rel="stylesheet" href="../styles/main.css" />
+  </head>
+  <body>
+    <header>
+      <a class="site-name" href="../">Applied Zcash</a>
+    </header>
+    <main>
+      <p class="kicker">Notices</p>
+      <h1>Third-party notices</h1>
+      <p>
+        The demo file <code>wasm/demo_bg.wasm</code> includes the crates below. Each crate keeps its own license. This
+        page gives the license text and the crates that use it. CI makes this page from <code>demo/Cargo.lock</code>.
+      </p>
+      <h2>Licenses</h2>
+      <ul>
+        {{#each overview}}
+        <li><a href="#{{id}}">{{name}}</a>: {{count}}</li>
+        {{/each}}
+      </ul>
+      {{#each licenses}}
+      <h2 id="{{id}}">{{name}}</h2>
+      <ul>
+        {{#each used_by}}
+        <li><a href="{{#if crate.repository}}{{crate.repository}}{{else}}https://crates.io/crates/{{crate.name}}{{/if}}">{{crate.name}} {{crate.version}}</a></li>
+        {{/each}}
+      </ul>
+      <pre>{{text}}</pre>
+      {{/each}}
+    </main>
+    <footer>
+      <p>
+        Applied Zcash is a community site. Anyone can propose a pattern. The
+        <a href="https://github.com/appliedzcash/appliedzcash.com">source</a> is on GitHub.
+      </p>
+      <p class="licenses">
+        Text: <a href="https://github.com/appliedzcash/appliedzcash.com/blob/main/LICENSE-CC0">CC0 1.0</a>. Code: <a href="https://github.com/appliedzcash/appliedzcash.com/blob/main/LICENSE">0BSD</a>. The demos include
+        crates under their own licenses: <a href="../wasm/notices.html">notices</a>.
+      </p>
+      <div class="donate">
+        <a class="donate-qr" href="zcash:u1j8gmxccf6g59x2er94h7ym959ehr7dmavhsk5vu9lu3wmtltffcwdlc7pa32mj0dxtrcans43hr6sl8d3w4mhn6klxry4w3kz6lkzwphvthrhwak506ah6fzmxzlsaeu7ghky3xcq23nt6fhwrnwc8rtupggntn4hfhjprfxtvaz6nkx">
+          <img src="../images/donate-qr.svg" alt="QR code of the donation address" width="112" height="112" />
+        </a>
+        <div>
+          <p><strong>Support this site.</strong> Send ZEC to this shielded address:</p>
+          <p><a href="zcash:u1j8gmxccf6g59x2er94h7ym959ehr7dmavhsk5vu9lu3wmtltffcwdlc7pa32mj0dxtrcans43hr6sl8d3w4mhn6klxry4w3kz6lkzwphvthrhwak506ah6fzmxzlsaeu7ghky3xcq23nt6fhwrnwc8rtupggntn4hfhjprfxtvaz6nkx"><code>u1j8gmxccf6g59x2er94h7ym959ehr7dmavhsk5vu9lu3wmtltffcwdlc7pa32mj0dxtrcans43hr6sl8d3w4mhn6klxry4w3kz6lkzwphvthrhwak506ah6fzmxzlsaeu7ghky3xcq23nt6fhwrnwc8rtupggntn4hfhjprfxtvaz6nkx</code></a></p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

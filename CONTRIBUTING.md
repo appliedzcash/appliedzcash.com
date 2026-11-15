@@ -47,3 +47,12 @@ Use the `wasm-bindgen-cli` version that is in `demo/Cargo.lock`. Then start a lo
 ## Stack
 
 Use plain HTML, the one stylesheet in `styles/main.css` and vanilla JavaScript modules. Do not add frameworks, npm packages, external fonts or analytics.
+
+## Licenses
+
+- Code (the `demo/` crate, `scripts/`, `styles/`, the workflows): 0BSD, in `LICENSE`.
+- Page text and images: CC0 1.0, in `LICENSE-CC0`.
+- A spec page keeps the license of its ZIP draft. The draft header names it.
+- The WASM build bundles crates under their own licenses. CI writes their notices to `wasm/notices.html`.
+
+You agree that your contribution uses these licenses.

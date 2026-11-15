@@ -12,7 +12,7 @@ Zcash has no smart contracts. Apps can still bind data and rules to shielded not
 |---|---|
 | Audience | App builders first. Wallet teams and grant reviewers read the same pages. |
 | Brand | Neutral and community. Shielded Labs gets author credit per page. |
-| Shape | A pattern catalog. Each pattern page: problem, mechanism, cost, spec, demo, toy example. |
+| Shape | A pattern catalog. Each pattern page: problem, mechanism, cost, spec, demo, toy example. A "basics" section comes before the patterns: one page each, use, mechanism, limits and a live demo (Mark, Nov 15). |
 | Examples | Fresh toy examples written for the site (a timestamp registry, a counter). Zodiac and ZcashNames stay out of the examples at launch. |
 | Demos | One in-browser demo per pattern. |
 | Specs | Mark reviews a ZIP draft, then the site hosts the cleared text. When a `zcash/zips` PR exists, the page links there. |
@@ -24,7 +24,11 @@ Zcash has no smart contracts. Apps can still bind data and rules to shielded not
 ### Site map
 
 ```
-/                                 Home: what near-programmability is, the pattern list
+/                                 Home: what near-programmability is, the basics list, the pattern list
+/basics/concepts/                 Concepts: notes, pools, actions, memos, keys, addresses
+/basics/payment-links/            Payment links: ZIP 321 URI and QR code
+/basics/address-per-customer/     Address per customer: diversified addresses
+/basics/watch-only-keys/          Watch-only keys: UFVK and UIVK for servers
 /patterns/bound-notes/            Bound notes
 /patterns/polite-actions/         Polite actions
 /patterns/wallet-native-orders/   Wallet-native orders
@@ -67,6 +71,7 @@ CONTRIBUTING.md     how to propose a pattern
 5. **L4 action pairing:** the page, the spec and the demo.
 6. **L5 threshold keys:** the page and the demo.
 7. **L6 launch:** Mark points appliedzcash.com at Pages, then announces.
+8. **Basics:** four basics pages with demos, and the home page split into basics and patterns. One PR.
 
 ## Source material
 
@@ -96,22 +101,17 @@ CONTRIBUTING.md     how to propose a pattern
 
 ## Now
 
-- [ ] **Start here: Mark reviews `draft-bound-notes.md` for public release.** Also fix its Motivation claim "a note commitment appears once" (consensus enforces uniqueness for nullifiers only; the site page was corrected in PR #2). Ask Julian about the ZcashNames credit. Then add `/specs/bound-notes/` and link it from the page's Spec section. That closes L1.
-- [ ] Mark turns on "Enforce HTTPS" for Pages (repo settings).
-- [ ] Mark submits https://appliedzcash.com/sitemap.xml in Google Search Console.
-- [ ] Mark picks licenses: code (MIT/Apache, like Zodiac) and page text (for example CC BY 4.0).
+- [ ] **Start here: Mark shares the site with friends (L6).** HTTPS works and the sitemap is in Search Console.
 
 ## Soon
 
 - [ ] Mark reviews the wallet-native orders ZIP. Then add `/specs/wallet-native-orders/` (closes L3).
-- [ ] Align Zodiac's `set_canonical_pairing` with its ZIP (Zodiac BRIEF, Soon). Mark reviews the ZIP. Then add `/specs/action-pairing/` (closes L4).
-- [ ] Mark clears the FROST material from the art market build. Build L5 with an "experimental" label until a cryptographer reviews the nested construction.
+- [ ] A cryptographer reviews the nested FROST construction. Until then the L5 page keeps its Experimental label.
 
 - [ ] Design roadmap (Nov 15 review: "paper, ink and one amber signal"). PR 2: mark, favicon, og card, sticky header, compact donate footer. PR 3: styled formulas and byte rulers, page header rhythm, callouts. PR 4: demo instrument frame, shared hex component, verdict cards; fix the memo meter (it counts characters, the label says bytes). PR 5: home hero, numbered cards, prev/next pager, SVG figures for the ASCII art. Pattern glyphs wait for Mark to approve a mockup.
 
 ## Later
 
-- [ ] L6: Mark announces the site.
 - [ ] Vale in CI for STE: sentence length, passive voice, and a vocabulary from the ASD-STE100 approved-word list (free from ASD on request).
 - [ ] A favicon and an og:image, so shared links show a picture.
 - [ ] `/wishlist/`: ZIP 68, ZIP 231 memo bundles, ZSAs, and what each would unlock.
@@ -131,4 +131,12 @@ CONTRIBUTING.md     how to propose a pattern
 - [x] Nov 15: donation address (Mark's Noir wallet, Mainnet UA) and its QR code in every footer (appliedzcash/appliedzcash.com#5).
 - [x] Nov 15: L4 merged (appliedzcash/appliedzcash.com#6) and live: canonical action pairing page in 100% STE and the rebuild demo (ZIP retry rule included). Copilot review fixed: retry rule, live result, CSS brace, mobile fields.
 - [x] Nov 15: SEO merged (appliedzcash/appliedzcash.com#7): keyword-led titles and descriptions, canonical URLs, Open Graph and JSON-LD, `sitemap.xml` and `robots.txt`. Copilot's "demo for each pattern" comment declined, because the L5 demo comes next.
+- [x] Nov 15: Basics built on branch `basics`: concepts, payment links, address per customer and watch-only keys, each with a WASM demo on Testnet keys. The demo shop seed is 32 bytes of 0x07. New deps `zip32` and `zip321`. `scripts/values.js` and `qr_svg` in the demo crate are now shared.
+- [x] Nov 15: L5 merged (appliedzcash/appliedzcash.com#8) and live: threshold keys page in 100% STE with an Experimental label, and the nested FROST demo (2-of-3 group in a 2-of-2 key, per-object tweak, hash-then-reveal commitments; reddsa 0.5.2 on frost-core 3.0.0). Mark cleared the art market's tweak and nesting recipe; the page names neither the art market, the estate, Zodiac nor SRA. All five pattern pages are live.
+- [x] Nov 15: HTTPS fixed. GitHub had issued no certificate, so https://appliedzcash.com served a *.github.io certificate. Removing and re-adding the custom domain (Pages API, Mark's OK) got a Let's Encrypt certificate for appliedzcash.com and www (expires Feb 13, 2027). Enforce HTTPS is on, and HTTP redirects to HTTPS.
+- [x] Nov 15: licenses chosen by Mark (most permissive): code 0BSD (`LICENSE`), page text and images CC0 1.0 (`LICENSE-CC0`). Spec pages keep their ZIP draft's license (MIT). CI writes the WASM's third-party notices to `wasm/notices.html` with cargo-about 0.9.3. Merged in appliedzcash/appliedzcash.com#10 and live.
+- [x] Nov 15: Mark submitted https://appliedzcash.com/sitemap.xml in Google Search Console.
+- [x] Nov 15: Mark reviewed the bound-notes draft in a local preview and decided it stays off this site; he handles the ZIPs on the Zodiac end. ShieldedLabs/zodiac#88 trims all four drafts (bound notes 467 to 290 lines with test vectors; pairing, decision markets and wallet orders also moved to STE).
+- [x] Nov 15: `set_canonical_pairing` in the pinned orchard fork (aphelionz/orchard `2e69445`) checked against the pairing ZIP rule by rule: it matches.
+- [x] Nov 15: Mark merged ShieldedLabs/zodiac#88: all four ZIP drafts trimmed, three moved to STE; decision markets gained an advisory report window D (VOID without a decision) and a fee allowance F at m x ZIP 317. Open source problems are listed in the PR description.
 - [x] Nov 15: design PR 1, foundations: paper and ink color tokens, an accent focus ring, a skip link, a serif display face (Source Serif 4) and a mono face (JetBrains Mono), both self-hosted under the OFL in `fonts/` (91 KB).

@@ -3,6 +3,7 @@ name = "demo"
 version = "0.1.0"
 edition = "2021"
 publish = false
+license = "0BSD"
 description = "In-browser demos for appliedzcash.com, built to WASM"
 
 [lib]
@@ -11,13 +12,20 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 base64 = "0.22"
 blake2b_simd = "1"
+frost-core = { version = "=3.0.0", features = ["internals"] }
+frost-rerandomized = "=3.0.0"
 hex = "0.4.3"
 orchard = { version = "=0.16.0", default-features = false, features = ["std"] }
 pasta_curves = { version = "0.6", default-features = false }
 qrcode = { version = "0.14", default-features = false, features = ["svg"] }
+rand_chacha = "0.3"
+rand_core = "0.6"
+reddsa = { version = "=0.5.2", features = ["frost"] }
 wasm-bindgen = "0.2"
 zcash_address = "0.14"
 zcash_protocol = "0.11"
+zip32 = "0.3"
+zip321 = "0.10"
 
 [profile.release]
 opt-level = "s"
