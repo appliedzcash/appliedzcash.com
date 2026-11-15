@@ -314,3 +314,38 @@ pre {
     margin-bottom: var(--space-2);
   }
 }
+
+.table-wrap {
+  overflow-x: auto;
+  margin: var(--space-3) 0;
+}
+
+.cost-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.cost-table th,
+.cost-table td {
+  padding: var(--space-2);
+  text-align: right;
+  border-bottom: 1px solid var(--line);
+}
+
+.cost-table th:first-child,
+.cost-table td:first-child {
+  min-width: 8rem;
+  text-align: left;
+}
+
+.cost-table thead th {
+  color: var(--muted);
+  font-weight: 600;
+  vertical-align: bottom;
+}
+
+.cost-table tbody th {
+  font-weight: 600;
+}

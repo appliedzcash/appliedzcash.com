@@ -4,7 +4,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Polite actions | Applied Zcash</title>
+    <meta
+      name="description"
+      content="Each Zcash wallet trial-decrypts each shielded action. Keep the action count of an app small: one note per epoch, records in the memo."
+    />
     <link rel="stylesheet" href="../../styles/main.css" />
+    <script type="module" src="../../scripts/polite-actions.js"></script>
   </head>
   <body>
     <header>
@@ -14,10 +19,144 @@
     <main>
       <p class="kicker">Pattern</p>
       <h1>Polite actions</h1>
-      <p>
-        Each wallet must try to decrypt each action on the chain. Each action that an app adds increases the scan time of all wallets. Thus, an app must keep its number of actions small. For example, an app can use one note for each epoch.
+      <p class="lede">
+        Each shielded wallet must try to decrypt each action on the chain. Each action that an app adds increases the
+        scan work of all wallets. Thus, an app must keep its number of actions small.
       </p>
-      <p class="notice">This page is a stub. Later versions will add the mechanism, the cost, the spec, a demo and a toy example.</p>
+
+      <h2 id="problem">Problem</h2>
+      <p>
+        An app that keeps state on the chain often uses one note for each user. When a user changes, the app spends the
+        old note and makes a new note. That is one action for each changed user. A busy app makes thousands of actions
+        each day.
+      </p>
+      <p>
+        The app pays only the fee for these actions. All other wallets pay with scan time and bandwidth. The cost
+        increases with each user of the app.
+      </p>
+
+      <h2 id="mechanism">Mechanism</h2>
+      <p>
+        A light wallet downloads compact blocks. A compact block keeps about 148 bytes of each Orchard-protocol action:
+      </p>
+      <pre><code>nullifier            32 bytes
+cmx                  32 bytes
+ephemeral key        32 bytes
+ciphertext prefix    52 bytes
+                    ─────────
+                    148 bytes</code></pre>
+      <p>
+        The wallet tries to decrypt each action with each key that it holds. This is trial decryption. The compact block
+        drops the memo. Thus, for a light wallet:
+      </p>
+      <ul>
+        <li>each action costs one trial decryption for each key, and 148 bytes of download;</li>
+        <li>memo bytes are free.</li>
+      </ul>
+      <p>The action count is the lever. An app that uses fewer actions makes the chain faster to scan for all wallets.</p>
+
+      <h3>Techniques</h3>
+      <ol>
+        <li>
+          <strong>Put user state in leaves.</strong> Put the state of each user in a leaf of a Merkle tree. Bind the root
+          in one <a href="../bound-notes/">bound note</a>. A change to a user changes a leaf, and the root note changes
+          one time for each epoch. Each user gets a leaf proof from the app and compares the leaf with the bound root.
+        </li>
+        <li>
+          <strong>Put records in the memo.</strong> A memo holds 512 bytes, and light wallets skip it. Put
+          the public record of the epoch in the memo of the root note. When the record is too long, add chunk notes to
+          the same transaction. Bind a hash of the full record in the root note. Thus, the binding covers each chunk.
+        </li>
+        <li>
+          <strong>Use the free action.</strong> An Orchard-protocol bundle has two actions or more. The root note
+          (spend and output) fills one action. The fee input and its change fill the second action. Thus, a record that
+          fits in one memo costs two actions, and each chunk adds one action.
+        </li>
+        <li>
+          <strong>Use epochs.</strong> Collect the changes of a period in one transaction. A longer epoch makes fewer
+          transactions each day.
+        </li>
+      </ol>
+
+      <h2 id="cost">Cost</h2>
+      <ul>
+        <li>
+          <strong>Proof delivery.</strong> Each user must get leaf proofs from the app. A leaf proof is about
+          32 × log₂(N) bytes for N users. If the app holds back a proof, the user must wait. The user can see the delay.
+        </li>
+        <li>
+          <strong>Privacy.</strong> The result is better privacy. With one note for each user, the action count shows how
+          many users changed in each epoch. With leaves, the action count stays the same.
+        </li>
+        <li>
+          <strong>Payouts.</strong> A payment to a user wallet is one action for each payment. The user must receive a
+          usual note, so this cost stays.
+        </li>
+        <li>
+          <strong>Proving.</strong> Fewer actions make faster transaction builds.
+        </li>
+      </ul>
+
+      <h2 id="spec">Spec</h2>
+      <p>
+        This pattern is a design rule. It uses the protocol of today: <a href="../bound-notes/">bound notes</a> for the
+        root, and the ZIP 302 memo format for the record.
+      </p>
+
+      <h2 id="demo">Demo: the cost of a scoreboard</h2>
+      <p>
+        A toy app keeps a scoreboard for a game. The scores of some players change in each transaction. The calculator
+        compares two designs:
+      </p>
+      <ul>
+        <li><strong>One note per player:</strong> 2 actions for the root and the fee, plus 1 action for each changed player.</li>
+        <li><strong>One note per epoch:</strong> 2 actions, plus 1 action for each chunk note.</li>
+      </ul>
+      <p>The mainnet target block time is 75 seconds. Thus, the chain makes about 1,152 blocks each day.</p>
+
+      <div class="demo" id="cost-demo">
+        <label for="tx-input">Transactions each day</label>
+        <input id="tx-input" type="number" min="0" step="1" value="1152" inputmode="numeric" />
+        <label for="users-input">Changed players in each transaction</label>
+        <input id="users-input" type="number" min="0" step="1" value="20" inputmode="numeric" />
+        <label for="chunks-input">Chunk notes in each transaction</label>
+        <input id="chunks-input" type="number" min="0" step="1" value="0" inputmode="numeric" />
+
+        <div class="table-wrap">
+          <table class="cost-table">
+            <thead>
+              <tr>
+                <th scope="col">Design</th>
+                <th scope="col">Actions each transaction</th>
+                <th scope="col">Actions each day</th>
+                <th scope="col">Download each day, per wallet</th>
+                <th scope="col">Download each year, per wallet</th>
+              </tr>
+            </thead>
+            <tbody id="cost-body"></tbody>
+          </table>
+        </div>
+        <p class="result" id="cost-result" role="status"></p>
+      </div>
+
+      <h3>Example results</h3>
+      <p>Each row has 20 changed players in each transaction, and no chunk notes.</p>
+      <div class="table-wrap">
+        <table class="cost-table">
+          <thead>
+            <tr>
+              <th scope="col">Design and cadence</th>
+              <th scope="col">Actions each day</th>
+              <th scope="col">Download each day</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>One note per player, each block</td><td>25,344</td><td>3.75 MB</td></tr>
+            <tr><td>One note per epoch, each block</td><td>2,304</td><td>341 kB</td></tr>
+            <tr><td>One note per epoch, each 10 minutes</td><td>288</td><td>42.6 kB</td></tr>
+          </tbody>
+        </table>
+      </div>
     </main>
     <footer>
       <p>
