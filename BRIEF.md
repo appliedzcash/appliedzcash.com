@@ -108,7 +108,6 @@ CONTRIBUTING.md     how to propose a pattern
 - [ ] Mark reviews the wallet-native orders ZIP. Then add `/specs/wallet-native-orders/` (closes L3).
 - [ ] A cryptographer reviews the nested FROST construction. Until then the L5 page keeps its Experimental label.
 
-- [ ] Design follow-ups: Pattern glyphs wait for Mark to approve a mockup.
 
 ## Later
 
@@ -148,3 +147,4 @@ CONTRIBUTING.md     how to propose a pattern
 - [x] Nov 15: design hygiene: STE fixes in the new UI strings ("Wait" for the loading pill, "Demo", "Change this page on GitHub"), a `404.html` with absolute paths, forced-colors and print styles, and `tools/check_chrome.py` as the first CI step (same header, footer and head links on every page; the deploy copies each linked folder).
 - [x] Nov 15: "On this page" rail on pages with 10 or more headings (orders, pairing), at 72rem and wider, built by `scripts/site.js`.
 - [x] Nov 15: action-pairing table: the seed uses the shared grouped hex view, each nf and cmx has a color swatch, and a cmx that changed since the last build flashes (all four on a second standard build, none on a canonical one).
+- [x] Nov 15: pattern glyphs on the home cards (Mark approved the mockup): a chain of notes, a short row of actions, a memo note, a joined pair, and three signers with two sealed. The seal parts use the amber seal color, and the system highlight color in forced colors.

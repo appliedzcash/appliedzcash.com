@@ -605,6 +605,10 @@ main > ol:not(.bytes) > li:not(:last-child)::after {
   transition: opacity 150ms, transform 150ms;
 }
 
+.pattern-list li:has(.glyph)::after {
+  right: calc(var(--space-3) + 2rem);
+}
+
 .pattern-list li:hover::after {
   opacity: 1;
   transform: translateX(3px);
@@ -615,6 +619,43 @@ main > ol:not(.bytes) > li:not(:last-child)::after {
     transform: translateY(-1px);
     box-shadow: 0 10px 24px -18px rgb(0 0 0 / 45%);
   }
+}
+
+/* Pattern glyphs: drawn in the style of the site mark. The seal parts are amber. */
+.pattern-list .glyph {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  color: var(--muted);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  transition: color 150ms;
+}
+
+.glyph .faint {
+  opacity: 0.5;
+}
+
+.glyph .s {
+  fill: var(--seal);
+  stroke: none;
+}
+
+.glyph rect.s {
+  stroke: var(--seal);
+  stroke-width: 1.4;
+}
+
+.glyph .sl {
+  stroke: var(--seal);
+  stroke-width: 2;
+}
+
+.pattern-list li:hover .glyph,
+.pattern-list li:focus-within .glyph {
+  color: var(--text);
 }
 
 .pattern-list p {
@@ -1519,6 +1560,16 @@ figure.hero-figure svg {
   .fingerprint,
   .swatch {
     display: none;
+  }
+
+  .glyph .s,
+  .glyph rect.s {
+    fill: Highlight;
+    stroke: Highlight;
+  }
+
+  .glyph .sl {
+    stroke: Highlight;
   }
 
   .tag,
