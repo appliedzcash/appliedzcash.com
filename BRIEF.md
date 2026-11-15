@@ -97,6 +97,7 @@ CONTRIBUTING.md     how to propose a pattern
 ## Now
 
 - [ ] **Start here: Mark reviews `draft-bound-notes.md` for public release.** Also fix its Motivation claim "a note commitment appears once" (consensus enforces uniqueness for nullifiers only; the site page was corrected in PR #2). Ask Julian about the ZcashNames credit. Then add `/specs/bound-notes/` and link it from the page's Spec section. That closes L1.
+- [ ] Mark reads the L5 draft on local branch `l5-threshold-keys` (unpushed): the page in 100% STE with an Experimental label, and a nested FROST demo (2-of-3 group inside a 2-of-2 key, per-object tweak; reddsa 0.5.2 on frost-core 3.0.0, ported from the art market's `title-keys`). The page names neither the art market, the estate, Zodiac nor SRA. Pushing it publishes the art market's tweak and nesting recipe: Mark's clearance.
 - [ ] Mark turns on "Enforce HTTPS" for Pages (repo settings).
 - [ ] Mark picks licenses: code (MIT/Apache, like Zodiac) and page text (for example CC BY 4.0).
 
@@ -104,7 +105,7 @@ CONTRIBUTING.md     how to propose a pattern
 
 - [ ] Mark reviews the wallet-native orders ZIP. Then add `/specs/wallet-native-orders/` (closes L3).
 - [ ] Align Zodiac's `set_canonical_pairing` with its ZIP (Zodiac BRIEF, Soon). Mark reviews the ZIP. Then add `/specs/action-pairing/` (closes L4).
-- [ ] Mark clears the FROST material from the art market build. Build L5 with an "experimental" label until a cryptographer reviews the nested construction.
+- [ ] A cryptographer reviews the nested FROST construction. Until then the L5 page keeps its Experimental label.
 
 ## Later
 

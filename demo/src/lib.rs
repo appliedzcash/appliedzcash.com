@@ -4,7 +4,9 @@
 mod bound_notes;
 mod orders;
 mod pairing;
+mod threshold;
 
 pub use bound_notes::{genesis_rho, stamp, Stamp};
 pub use orders::{order, Order};
 pub use pairing::{pair, Bundle};
+pub use threshold::{threshold, Threshold};
