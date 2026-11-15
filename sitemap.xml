@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://appliedzcash.com/</loc></url>
+  <url><loc>https://appliedzcash.com/basics/concepts/</loc></url>
+  <url><loc>https://appliedzcash.com/basics/payment-links/</loc></url>
+  <url><loc>https://appliedzcash.com/basics/address-per-customer/</loc></url>
+  <url><loc>https://appliedzcash.com/basics/watch-only-keys/</loc></url>
   <url><loc>https://appliedzcash.com/patterns/bound-notes/</loc></url>
   <url><loc>https://appliedzcash.com/patterns/polite-actions/</loc></url>
   <url><loc>https://appliedzcash.com/patterns/wallet-native-orders/</loc></url>

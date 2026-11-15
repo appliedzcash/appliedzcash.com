@@ -71,6 +71,11 @@ header .site-name {
   text-decoration: none;
 }
 
+header nav {
+  display: flex;
+  gap: var(--space-3);
+}
+
 header nav a {
   color: var(--muted);
 }
@@ -443,4 +448,8 @@ pre {
 
 .pairing-table td.dummy {
   color: var(--muted);
+}
+
+.capability-table td {
+  text-align: center;
 }

@@ -7,10 +7,7 @@
 use base64::{engine::general_purpose::URL_SAFE_NO_PAD, Engine};
 use blake2b_simd::Params;
 use orchard::keys::{FullViewingKey, Scope, SpendingKey};
-use qrcode::{render::svg, EcLevel, QrCode};
 use wasm_bindgen::prelude::*;
-use zcash_address::unified::{self, Encoding, Receiver, Revision, Uitem};
-use zcash_protocol::consensus::NetworkType;
 
 /// The scheme token of the toy poll.
 const SCHEME: &str = "toypoll1";
@@ -39,12 +36,7 @@ fn round_tag() -> String {
 /// The demo Inbox: a Testnet unified address with one Orchard receiver.
 fn inbox() -> String {
     let sk = SpendingKey::from_bytes([9; 32]).expect("a valid spending key");
-    let receiver = FullViewingKey::from(&sk)
-        .address_at(0u32, Scope::External)
-        .to_raw_address_bytes();
-    unified::Address::try_from_items(Revision::R0, vec![Uitem::Data(Receiver::Orchard(receiver))])
-        .expect("one Orchard receiver is a valid unified address")
-        .encode(&NetworkType::Test)
+    crate::testnet_address(&FullViewingKey::from(&sk).address_at(0u32, Scope::External))
 }
 
 /// A toy poll command: `q` and a question number from 1 to 9, a space, then YES or NO.
@@ -125,11 +117,7 @@ fn build(
         "zcash:{inbox}?amount={ORDER_AMOUNT}&memo={}",
         URL_SAFE_NO_PAD.encode(memo.as_bytes())
     );
-    let qr_svg = QrCode::with_error_correction_level(uri.as_bytes(), EcLevel::L)
-        .map_err(|error| format!("The QR code failed: {error}."))?
-        .render::<svg::Color>()
-        .min_dimensions(256, 256)
-        .build();
+    let qr_svg = crate::qr_svg(&uri)?;
 
     Ok(Order { inbox, memo, uri, qr_svg })
 }

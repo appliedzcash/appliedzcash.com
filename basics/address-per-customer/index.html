@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Address per customer: diversified Zcash addresses | Applied Zcash</title>
+    <meta name="description" content="One Zcash key gives many unlinkable addresses. Give each customer or order its own address, and find the customer from the address. Live demo." />
+    <link rel="canonical" href="https://appliedzcash.com/basics/address-per-customer/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Applied Zcash" />
+    <meta property="og:title" content="Address per customer: diversified Zcash addresses" />
+    <meta property="og:description" content="One Zcash key gives many unlinkable addresses. Give each customer or order its own address, and find the customer from the address. Live demo." />
+    <meta property="og:url" content="https://appliedzcash.com/basics/address-per-customer/" />
+    <meta name="twitter:card" content="summary" />
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Address per customer", "description": "One Zcash key gives many unlinkable addresses. Give each customer or order its own address, and find the customer from the address. Live demo.", "url": "https://appliedzcash.com/basics/address-per-customer/", "inLanguage": "en", "about": "Zcash", "isPartOf": {"@type": "WebSite", "name": "Applied Zcash", "url": "https://appliedzcash.com/"}}</script>
+    <link rel="stylesheet" href="../../styles/main.css" />
+    <script type="module" src="../../scripts/address-per-customer.js"></script>
+  </head>
+  <body>
+    <header>
+      <a class="site-name" href="../../">Applied Zcash</a>
+      <nav><a href="../../#basics">Basics</a> <a href="../../#patterns">Patterns</a></nav>
+    </header>
+    <main>
+      <p class="kicker">Basic</p>
+      <h1>Address per customer</h1>
+      <p class="lede">
+        One key gives many addresses. Give each customer or each order its own address. The shop knows which address got
+        each payment. Outsiders see unrelated addresses.
+      </p>
+
+      <h2 id="use">Use</h2>
+      <ul>
+        <li>a deposit address for each user of an exchange or a game;</li>
+        <li>an address for each invoice;</li>
+        <li>an address for each place where you publish a donation link.</li>
+      </ul>
+      <p>
+        The address identifies the payment. Thus, the payer can send a payment with no memo, and the shop still finds the
+        order.
+      </p>
+
+      <h2 id="mechanism">Mechanism</h2>
+      <pre><code>full viewing key ──→ diversifier key dk ──→ d_j = FF1(dk, j) ──→ address j
+                                      ↑                             │
+incoming viewing key ── dk ───────────┴──── j = FF1⁻¹(dk, d_j) ←────┘</code></pre>
+      <ol>
+        <li>The shop gives each customer a number <code>j</code>, the diversifier index.</li>
+        <li>The key encrypts <code>j</code> into an 11-byte diversifier <code>d_j</code>.</li>
+        <li>The diversifier and the key give a receiver. The receiver goes in a unified address.</li>
+        <li>A payment arrives. The wallet decrypts the note with its incoming viewing key, one key for all addresses.</li>
+        <li>The wallet decrypts the diversifier of the note to get <code>j</code> again.</li>
+      </ol>
+      <p>
+        Each index from 0 to 2<sup>88</sup> − 1 gives a valid Orchard address. The wallet scans one time for all
+        addresses. Thus, many addresses cost the same scan work as one address.
+      </p>
+      <p>
+        The shop keeps a table of <code>j</code> and the customer. The table is the only shop data that this pattern
+        needs.
+      </p>
+
+      <h2 id="limits">Limits</h2>
+      <ul>
+        <li>
+          <strong>Transparent receivers.</strong> A unified address with a transparent receiver shows that receiver on the
+          chain. Use addresses with shielded receivers only.
+        </li>
+        <li>
+          <strong>Viewing keys.</strong> A holder of the incoming viewing key can link all the addresses. Keep the key
+          secret.
+        </li>
+        <li>
+          <strong>Wallet support.</strong> Wallet apps make a new address on request and select the index themselves. A
+          server selects the index with a library such as <code>orchard</code> or <code>zcash_keys</code>.
+        </li>
+      </ul>
+
+      <h2 id="demo">Demo: a demo shop</h2>
+      <p>
+        The demo uses the <code>orchard</code> crate, compiled to WebAssembly. It makes addresses of the demo shop key from
+        a first index. Copy an address into the second field. The shop key finds the index of the address.
+      </p>
+      <div class="notice">
+        <p>
+          <strong>CAUTION:</strong> The demo shop uses Testnet. Its seed is 32 bytes of 0x07, in the public source of this
+          site. Do not send real funds to it.
+        </p>
+      </div>
+
+      <div class="demo" id="customer-demo">
+        <div class="field-row">
+          <div>
+            <label for="start-input">First index <code>j</code></label>
+            <input id="start-input" type="number" min="0" step="1" value="0" inputmode="numeric" disabled />
+          </div>
+          <div>
+            <label for="count-input">Number of addresses</label>
+            <input id="count-input" type="number" min="1" max="10" step="1" value="3" inputmode="numeric" disabled />
+          </div>
+        </div>
+
+        <h3>Addresses</h3>
+        <dl class="values" id="address-values"></dl>
+
+        <h3>Find the customer</h3>
+        <label for="find-input">Address of a payment</label>
+        <textarea id="find-input" rows="3" spellcheck="false" disabled></textarea>
+        <p class="result" id="find-result"></p>
+
+        <p class="status" id="demo-status" role="status">The WASM module is loading.</p>
+      </div>
+    </main>
+    <footer>
+      <p>
+        Applied Zcash is a community site. Anyone can propose a pattern. The
+        <a href="https://github.com/appliedzcash/appliedzcash.com">source</a> is on GitHub.
+      </p>
+      <div class="donate">
+        <a class="donate-qr" href="zcash:u1j8gmxccf6g59x2er94h7ym959ehr7dmavhsk5vu9lu3wmtltffcwdlc7pa32mj0dxtrcans43hr6sl8d3w4mhn6klxry4w3kz6lkzwphvthrhwak506ah6fzmxzlsaeu7ghky3xcq23nt6fhwrnwc8rtupggntn4hfhjprfxtvaz6nkx">
+          <img src="../../images/donate-qr.svg" alt="QR code of the donation address" width="112" height="112" />
+        </a>
+        <div>
+          <p><strong>Support this site.</strong> Send ZEC to this shielded address:</p>
+          <p><a href="zcash:u1j8gmxccf6g59x2er94h7ym959ehr7dmavhsk5vu9lu3wmtltffcwdlc7pa32mj0dxtrcans43hr6sl8d3w4mhn6klxry4w3kz6lkzwphvthrhwak506ah6fzmxzlsaeu7ghky3xcq23nt6fhwrnwc8rtupggntn4hfhjprfxtvaz6nkx"><code>u1j8gmxccf6g59x2er94h7ym959ehr7dmavhsk5vu9lu3wmtltffcwdlc7pa32mj0dxtrcans43hr6sl8d3w4mhn6klxry4w3kz6lkzwphvthrhwak506ah6fzmxzlsaeu7ghky3xcq23nt6fhwrnwc8rtupggntn4hfhjprfxtvaz6nkx</code></a></p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

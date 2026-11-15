@@ -12,7 +12,7 @@ Zcash has no smart contracts. Apps can still bind data and rules to shielded not
 |---|---|
 | Audience | App builders first. Wallet teams and grant reviewers read the same pages. |
 | Brand | Neutral and community. Shielded Labs gets author credit per page. |
-| Shape | A pattern catalog. Each pattern page: problem, mechanism, cost, spec, demo, toy example. |
+| Shape | A pattern catalog. Each pattern page: problem, mechanism, cost, spec, demo, toy example. A "basics" section comes before the patterns: one page each, use, mechanism, limits and a live demo (Mark, Nov 15). |
 | Examples | Fresh toy examples written for the site (a timestamp registry, a counter). Zodiac and ZcashNames stay out of the examples at launch. |
 | Demos | One in-browser demo per pattern. |
 | Specs | Mark reviews a ZIP draft, then the site hosts the cleared text. When a `zcash/zips` PR exists, the page links there. |
@@ -24,7 +24,11 @@ Zcash has no smart contracts. Apps can still bind data and rules to shielded not
 ### Site map
 
 ```
-/                                 Home: what near-programmability is, the pattern list
+/                                 Home: what near-programmability is, the basics list, the pattern list
+/basics/concepts/                 Concepts: notes, pools, actions, memos, keys, addresses
+/basics/payment-links/            Payment links: ZIP 321 URI and QR code
+/basics/address-per-customer/     Address per customer: diversified addresses
+/basics/watch-only-keys/          Watch-only keys: UFVK and UIVK for servers
 /patterns/bound-notes/            Bound notes
 /patterns/polite-actions/         Polite actions
 /patterns/wallet-native-orders/   Wallet-native orders
@@ -67,6 +71,7 @@ CONTRIBUTING.md     how to propose a pattern
 5. **L4 action pairing:** the page, the spec and the demo.
 6. **L5 threshold keys:** the page and the demo.
 7. **L6 launch:** Mark points appliedzcash.com at Pages, then announces.
+8. **Basics:** four basics pages with demos, and the home page split into basics and patterns. One PR.
 
 ## Source material
 
@@ -129,3 +134,4 @@ CONTRIBUTING.md     how to propose a pattern
 - [x] Nov 15: donation address (Mark's Noir wallet, Mainnet UA) and its QR code in every footer (appliedzcash/appliedzcash.com#5).
 - [x] Nov 15: L4 merged (appliedzcash/appliedzcash.com#6) and live: canonical action pairing page in 100% STE and the rebuild demo (ZIP retry rule included). Copilot review fixed: retry rule, live result, CSS brace, mobile fields.
 - [x] Nov 15: SEO merged (appliedzcash/appliedzcash.com#7): keyword-led titles and descriptions, canonical URLs, Open Graph and JSON-LD, `sitemap.xml` and `robots.txt`. Copilot's "demo for each pattern" comment declined, because the L5 demo comes next.
+- [x] Nov 15: Basics built on branch `basics`: concepts, payment links, address per customer and watch-only keys, each with a WASM demo on Testnet keys. The demo shop seed is 32 bytes of 0x07. New deps `zip32` and `zip321`. `scripts/values.js` and `qr_svg` in the demo crate are now shared.
