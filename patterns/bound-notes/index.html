@@ -38,8 +38,9 @@
         memo, a verifier needs a viewing key. Compact blocks hold only the first part of each ciphertext.
       </p>
       <p>
-        The note commitment is a strong place for a record. The commitment is inserted in the note commitment tree.
-        Consensus lets a predecessor note be spent one time only. A record in a bound chain gets these properties.
+        The note commitment is a strong place for a record. Consensus adds each note commitment to the note commitment
+        tree. Consensus accepts each nullifier one time, so each note can be spent one time only. A record in the note
+        commitment gets these two properties.
       </p>
 
       <h2 id="mechanism">Mechanism</h2>

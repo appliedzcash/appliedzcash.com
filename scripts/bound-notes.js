@@ -1,5 +1,5 @@
-// Bound notes demo: a toy timestamp registry. The chain is a list of documents.
-// Each change recalculates every stamp, because each stamp binds the cmx of the one before it.
+// Bound notes demo: a toy timestamp registry. Each added stamp is fixed: the chain keeps its
+// document and values. The pool locks while the chain holds stamps, so every stamp shares one version.
 
 import { loadDemo } from "./wasm.js";
 
@@ -19,7 +19,7 @@ const verifyValues = $("verify-values");
 const verifyResult = $("verify-result");
 const status = $("demo-status");
 
-const documents = [];
+const chain = []; // { text, stamp }
 
 function showValues(list, rows) {
   list.replaceChildren(
@@ -35,33 +35,19 @@ function showValues(list, rows) {
   );
 }
 
-function run(demo) {
-  const ironwood = poolSelect.value === "ironwood";
+const ironwood = () => poolSelect.value === "ironwood";
 
-  // Each stamp's prev is the cmx before it. Its rho is the nullifier before it.
-  const stampAfter = (stamps, text) => {
-    const last = stamps.at(-1);
-    return demo.stamp(text, last?.cmx ?? GENESIS_PREV, last?.nf ?? demo.genesis_rho(), ironwood);
-  };
-  const chain = [];
-  for (const text of documents) {
-    chain.push(stampAfter(chain, text));
-  }
+// A stamp's prev is the cmx of the stamp before it. Its rho is the nullifier of that stamp.
+function stampAfter(demo, last, text) {
+  return demo.stamp(text, last?.cmx ?? GENESIS_PREV, last?.nf ?? demo.genesis_rho(), ironwood());
+}
 
-  const next = stampAfter(chain, docInput.value);
-  showValues(nextValues, [
-    ["fields (document hash)", next.doc_hash],
-    ["prev", chain.at(-1)?.cmx ?? GENESIS_PREV],
-    ["ρ", chain.at(-1)?.nf ?? demo.genesis_rho()],
-    ["rseed", next.rseed],
-    ["cmx", next.cmx],
-  ]);
-
+function showChain() {
   chainList.replaceChildren(
-    ...chain.map((stamp, i) => {
+    ...chain.map(({ text, stamp }) => {
       const li = document.createElement("li");
       const doc = document.createElement("p");
-      doc.textContent = documents[i];
+      doc.textContent = text;
       const values = document.createElement("dl");
       values.className = "values";
       showValues(values, [["cmx", stamp.cmx]]);
@@ -70,27 +56,36 @@ function run(demo) {
     }),
   );
   chainEmpty.hidden = chain.length > 0;
+  poolSelect.disabled = chain.length > 0;
+  verifySelect.replaceChildren(...chain.map((_, i) => new Option(`Stamp ${i + 1}`, String(i))));
+  verifySelect.value = String(chain.length - 1);
+  verifySelect.disabled = verifyInput.disabled = resetButton.disabled = chain.length === 0;
+}
 
-  const selected = verifySelect.value;
-  verifySelect.replaceChildren(
-    ...chain.map((_, i) => new Option(`Stamp ${i + 1}`, String(i))),
-  );
-  verifySelect.value = selected && Number(selected) < chain.length ? selected : String(chain.length - 1);
-  const enabled = chain.length > 0;
-  verifySelect.disabled = verifyInput.disabled = resetButton.disabled = !enabled;
+function run(demo) {
+  const tip = chain.at(-1)?.stamp;
+  const next = stampAfter(demo, tip, docInput.value);
+  showValues(nextValues, [
+    ["fields (document hash)", next.doc_hash],
+    ["prev", tip?.cmx ?? GENESIS_PREV],
+    ["ρ", tip?.nf ?? demo.genesis_rho()],
+    ["rseed", next.rseed],
+    ["cmx", next.cmx],
+  ]);
 
-  if (!enabled) {
+  if (chain.length === 0) {
     verifyValues.replaceChildren();
     verifyResult.textContent = "";
     return;
   }
   const i = Number(verifySelect.value);
-  const claimed = stampAfter(chain.slice(0, i), verifyInput.value);
+  const claimed = stampAfter(demo, chain[i - 1]?.stamp, verifyInput.value);
+  const onChain = chain[i].stamp.cmx;
   showValues(verifyValues, [
-    ["cmx on the chain", chain[i].cmx],
+    ["cmx on the chain", onChain],
     ["cmx from this document", claimed.cmx],
   ]);
-  const match = claimed.cmx === chain[i].cmx;
+  const match = claimed.cmx === onChain;
   verifyResult.className = `result ${match ? "match" : "mismatch"}`;
   verifyResult.textContent = match
     ? "The two values are equal. The stamp binds this document."
@@ -109,21 +104,28 @@ try {
   };
 
   stampButton.addEventListener("click", () => {
-    documents.push(docInput.value);
-    verifySelect.value = "";
+    try {
+      chain.push({ text: docInput.value, stamp: stampAfter(demo, chain.at(-1)?.stamp, docInput.value) });
+    } catch (error) {
+      status.textContent = `Error: ${error.message}`;
+      return;
+    }
     verifyInput.value = docInput.value;
+    showChain();
     update();
   });
   resetButton.addEventListener("click", () => {
-    documents.length = 0;
+    chain.length = 0;
     verifyInput.value = "";
+    showChain();
     update();
   });
   for (const el of [docInput, poolSelect, verifySelect, verifyInput]) {
     el.addEventListener(el.tagName === "SELECT" ? "change" : "input", update);
   }
 
-  docInput.disabled = poolSelect.disabled = stampButton.disabled = false;
+  docInput.disabled = stampButton.disabled = false;
+  showChain();
   update();
 } catch (error) {
   status.textContent = `Error: the WASM module failed to load (${error.message}).`;
