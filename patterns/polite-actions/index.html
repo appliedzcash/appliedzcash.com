@@ -139,6 +139,9 @@
       </p>
 
       <div class="demo" id="cost-demo">
+        <div class="demo-head">
+          <span class="demo-label">Live demo</span>
+        </div>
         <label for="tx-input">Transactions each day</label>
         <input id="tx-input" type="number" min="0" step="1" value="1152" inputmode="numeric" />
         <label for="users-input">Changed players in each transaction</label>
@@ -146,6 +149,8 @@
         <label for="chunks-input">Chunk notes in each transaction</label>
         <input id="chunks-input" type="number" min="0" step="1" value="0" inputmode="numeric" />
 
+        <p class="ratio-line" id="cost-result" role="status"></p>
+        <div class="bars" id="cost-bars" aria-hidden="true"></div>
         <div class="table-wrap">
           <table class="cost-table">
             <thead>
@@ -160,7 +165,6 @@
             <tbody id="cost-body"></tbody>
           </table>
         </div>
-        <p class="result" id="cost-result" role="status"></p>
       </div>
 
       <h3 id="example-results">Example results</h3>

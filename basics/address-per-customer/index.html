@@ -101,6 +101,10 @@ incoming viewing key ── dk ───────────┴──── 
       </div>
 
       <div class="demo" id="customer-demo">
+        <div class="demo-head">
+          <span class="demo-label">Live demo</span>
+          <p class="status" id="demo-status" role="status" data-state="loading">Loading</p>
+        </div>
         <div class="field-row">
           <div>
             <label for="start-input">First index <code>j</code></label>
@@ -120,7 +124,6 @@ incoming viewing key ── dk ───────────┴──── 
         <textarea id="find-input" rows="3" spellcheck="false" disabled></textarea>
         <p class="result" id="find-result"></p>
 
-        <p class="status" id="demo-status" role="status">The WASM module is loading.</p>
       </div>
     </main>
     <footer>

@@ -109,6 +109,10 @@
       </div>
 
       <div class="demo" id="keys-demo">
+        <div class="demo-head">
+          <span class="demo-label">Live demo</span>
+          <p class="status" id="demo-status" role="status" data-state="loading">Loading</p>
+        </div>
         <label for="seed-input">Seed, 32 bytes or more, hex</label>
         <input id="seed-input" type="text" autocomplete="off" spellcheck="false" disabled />
         <div class="actions">
@@ -120,7 +124,6 @@
         <dl class="values" id="key-values"></dl>
         <p class="result" id="address-result"></p>
 
-        <p class="status" id="demo-status" role="status">The WASM module is loading.</p>
       </div>
     </main>
     <footer>

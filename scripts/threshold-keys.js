@@ -2,6 +2,7 @@
 // The browser draws the key seed and a fresh nonce seed for each signature.
 
 import { loadDemo } from "./wasm.js";
+import { setStatus, showValues } from "./values.js";
 
 const $ = (id) => document.getElementById(id);
 const keysButton = $("keys-button");
@@ -20,19 +21,6 @@ const randomHex = (bytes) =>
 
 let keySeed = randomHex(32);
 
-function showValues(list, rows) {
-  list.replaceChildren(
-    ...rows.flatMap(([name, value]) => {
-      const dt = document.createElement("dt");
-      dt.textContent = name;
-      const dd = document.createElement("dd");
-      const code = document.createElement("code");
-      code.textContent = value;
-      dd.append(code);
-      return [dt, dd];
-    }),
-  );
-}
 
 const chosen = () => [...signers.querySelectorAll("input:checked")].map((box) => Number(box.value));
 
@@ -65,14 +53,14 @@ function run(demo, sign) {
         ? `The owner and members ${members.slice(0, -1).join(", ")} and ${members.at(-1)} made one signature. It verifies under rk.`
         : "The signature failed to verify.";
     }
-    status.textContent = "The WASM module is loaded.";
+    setStatus(status);
   } catch (error) {
     if (sign) {
       signValues.replaceChildren();
       result.className = "result mismatch";
       result.textContent = error.message;
     } else {
-      status.textContent = `Error: ${error.message}`;
+      setStatus(status, error.message);
     }
   }
 }
@@ -99,5 +87,5 @@ try {
   }
   run(demo, false);
 } catch (error) {
-  status.textContent = `Error: the WASM module failed to load (${error.message}).`;
+  setStatus(status, `the WASM module failed to load (${error.message}).`);
 }

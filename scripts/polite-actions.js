@@ -14,6 +14,7 @@ const usersInput = $("users-input");
 const chunksInput = $("chunks-input");
 const body = $("cost-body");
 const result = $("cost-result");
+const bars = $("cost-bars");
 
 const count = new Intl.NumberFormat("en-US");
 const decimal = new Intl.NumberFormat("en-US", { maximumSignificantDigits: 3 });
@@ -63,11 +64,30 @@ function update() {
     }),
   );
 
+  const max = Math.max(...designs.map((d) => d.perDay), 1);
+  bars.replaceChildren(
+    ...designs.map(({ name, perDay }) => {
+      const row = document.createElement("div");
+      row.className = "bar";
+      row.style.setProperty("--w", `${(perDay / max) * 100}%`);
+      const label = document.createElement("span");
+      label.textContent = name;
+      const value = document.createElement("span");
+      value.textContent = `${count.format(perDay)} actions each day`;
+      row.append(label, value);
+      return row;
+    }),
+  );
+
   const [perPlayer, perEpoch] = designs;
-  result.textContent =
-    perEpoch.perDay > 0 && perPlayer.perDay > perEpoch.perDay
-      ? `One note per epoch uses ${decimal.format(perPlayer.perDay / perEpoch.perDay)} times fewer actions.`
-      : "The two designs use the same number of actions.";
+  if (perEpoch.perDay > 0 && perPlayer.perDay > perEpoch.perDay) {
+    const ratio = document.createElement("strong");
+    ratio.className = "ratio";
+    ratio.textContent = `${decimal.format(perPlayer.perDay / perEpoch.perDay)}×`;
+    result.replaceChildren(ratio, " fewer actions with one note per epoch");
+  } else {
+    result.textContent = "The two designs use the same number of actions.";
+  }
 }
 
 for (const input of [txInput, usersInput, chunksInput]) {

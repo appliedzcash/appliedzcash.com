@@ -1,7 +1,7 @@
 // Address per customer demo: addresses of the demo shop key, and the index of a pasted address.
 
 import { loadDemo } from "./wasm.js";
-import { showValues } from "./values.js";
+import { setStatus, showValues } from "./values.js";
 
 const $ = (id) => document.getElementById(id);
 const start = $("start-input");
@@ -20,11 +20,11 @@ try {
         values,
         Array.from(addresses.indexes, (j, i) => [`Customer j = ${j}`, addresses.addresses[i]]),
       );
-      status.textContent = "The WASM module is loaded.";
+      setStatus(status);
       return addresses;
     } catch (error) {
       values.replaceChildren();
-      status.textContent = `Error: ${error.message}`;
+      setStatus(status, error.message);
     }
   };
   const lookup = () => {
@@ -56,5 +56,5 @@ try {
   find.value = first.addresses[first.addresses.length - 1];
   lookup();
 } catch (error) {
-  status.textContent = `Error: the WASM module failed to load (${error.message}).`;
+  setStatus(status, `the WASM module failed to load (${error.message}).`);
 }

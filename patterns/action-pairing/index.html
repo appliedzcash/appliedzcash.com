@@ -177,6 +177,10 @@ key_out   = BLAKE2b-256("Zcash_PairingOrd", d ‖ 0x01 ‖ rseed)</code></pre>
       </p>
 
       <div class="demo" id="pairing-demo">
+        <div class="demo-head">
+          <span class="demo-label">Live demo</span>
+          <p class="status" id="demo-status" role="status" data-state="loading">Loading</p>
+        </div>
         <label for="pkey-input">Pairing key <code>k</code></label>
         <input id="pkey-input" type="text" autocomplete="off" spellcheck="false" disabled />
         <label for="ctx-input">Context <code>ctx</code></label>
@@ -218,7 +222,6 @@ key_out   = BLAKE2b-256("Zcash_PairingOrd", d ‖ 0x01 ‖ rseed)</code></pre>
         </div>
         <p class="result" id="pairing-result" role="status"></p>
 
-        <p class="status" id="demo-status" role="status">The WASM module is loading.</p>
       </div>
     </main>
     <footer>

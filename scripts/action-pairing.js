@@ -2,6 +2,7 @@
 // cmx values with the previous build of the same mode and the same inputs.
 
 import { loadDemo } from "./wasm.js";
+import { setStatus } from "./values.js";
 
 const $ = (id) => document.getElementById(id);
 const keyInput = $("pkey-input");
@@ -88,12 +89,12 @@ function run(demo, mode) {
       result.className = "result mismatch";
       result.textContent = "The cmx values are different from the previous build.";
     }
-    status.textContent = "The WASM module is loaded.";
+    setStatus(status);
   } catch (error) {
     body.replaceChildren();
     seedValues.replaceChildren();
     result.textContent = "";
-    status.textContent = `Error: ${error.message}`;
+    setStatus(status, error.message);
   }
 }
 
@@ -107,5 +108,5 @@ try {
   }
   run(demo, "canonical");
 } catch (error) {
-  status.textContent = `Error: the WASM module failed to load (${error.message}).`;
+  setStatus(status, `the WASM module failed to load (${error.message}).`);
 }

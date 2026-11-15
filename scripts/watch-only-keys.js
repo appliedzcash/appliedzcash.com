@@ -1,7 +1,7 @@
 // Watch-only keys demo: one seed gives the spending key, the UFVK and the UIVK of account 0.
 
 import { loadDemo } from "./wasm.js";
-import { showValues } from "./values.js";
+import { setStatus, showValues } from "./values.js";
 
 const $ = (id) => document.getElementById(id);
 const seed = $("seed-input");
@@ -33,11 +33,11 @@ try {
         ? "The two addresses are the same. The UIVK makes the addresses of the wallet."
         : "The two addresses are different.";
       result.classList.add(same ? "match" : "mismatch");
-      status.textContent = "The WASM module is loaded.";
+      setStatus(status);
     } catch (error) {
       values.replaceChildren();
       result.textContent = "";
-      status.textContent = `Error: ${error.message}`;
+      setStatus(status, error.message);
     }
   };
 
@@ -54,5 +54,5 @@ try {
   seed.value = SHOP_SEED;
   update();
 } catch (error) {
-  status.textContent = `Error: the WASM module failed to load (${error.message}).`;
+  setStatus(status, `the WASM module failed to load (${error.message}).`);
 }

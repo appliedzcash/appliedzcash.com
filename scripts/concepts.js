@@ -1,7 +1,7 @@
 // Concepts demo: decode a Zcash address and list its receivers.
 
 import { loadDemo } from "./wasm.js";
-import { showValues } from "./values.js";
+import { setStatus, showValues } from "./values.js";
 
 const $ = (id) => document.getElementById(id);
 const input = $("address-input");
@@ -20,10 +20,10 @@ try {
         ["Memo", parts.memo ? "Yes, a payment can carry a memo." : "No. A payment to this address has no memo."],
         ...parts.names.map((name, i) => [name, parts.values[i]]),
       ]);
-      status.textContent = "The WASM module is loaded.";
+      setStatus(status);
     } catch (error) {
       values.replaceChildren();
-      status.textContent = `Error: ${error.message}`;
+      setStatus(status, error.message);
     }
   };
 
@@ -37,5 +37,5 @@ try {
   for (const el of [input, ...examples]) el.disabled = false;
   update();
 } catch (error) {
-  status.textContent = `Error: the WASM module failed to load (${error.message}).`;
+  setStatus(status, `the WASM module failed to load (${error.message}).`);
 }

@@ -2,7 +2,7 @@
 // document and values. The pool locks while the chain holds stamps, so every stamp shares one version.
 
 import { loadDemo } from "./wasm.js";
-import { showValues } from "./values.js";
+import { setStatus, showValues } from "./values.js";
 
 const GENESIS_PREV = "00".repeat(32);
 
@@ -84,9 +84,9 @@ try {
   const update = () => {
     try {
       run(demo);
-      status.textContent = "The WASM module is loaded.";
+      setStatus(status);
     } catch (error) {
-      status.textContent = `Error: ${error.message}`;
+      setStatus(status, error.message);
     }
   };
 
@@ -94,7 +94,7 @@ try {
     try {
       chain.push({ text: docInput.value, stamp: stampAfter(demo, chain.at(-1)?.stamp, docInput.value) });
     } catch (error) {
-      status.textContent = `Error: ${error.message}`;
+      setStatus(status, error.message);
       return;
     }
     verifyInput.value = docInput.value;
@@ -115,5 +115,5 @@ try {
   showChain();
   update();
 } catch (error) {
-  status.textContent = `Error: the WASM module failed to load (${error.message}).`;
+  setStatus(status, `the WASM module failed to load (${error.message}).`);
 }

@@ -2,7 +2,7 @@
 // The WASM module writes the memo with its MAC, the ZIP 321 URI, and the QR code.
 
 import { loadDemo } from "./wasm.js";
-import { showValues } from "./values.js";
+import { setStatus, showValues } from "./values.js";
 
 const $ = (id) => document.getElementById(id);
 const keyInput = $("key-input");
@@ -20,6 +20,21 @@ const randomHex = (bytes) =>
 
 let nonce = randomHex(4);
 
+// A memo holds 512 bytes. The meter counts UTF-8 bytes, and turns red above 90 percent.
+function memoMeter(bytes) {
+  const meter = document.createElement("meter");
+  meter.max = 512;
+  meter.high = 460;
+  meter.value = bytes;
+  const label = document.createElement("span");
+  label.className = "meter-label";
+  label.textContent = `${bytes} of 512 bytes`;
+  const box = document.createElement("span");
+  box.className = "memo-meter";
+  box.append(meter, label);
+  return box;
+}
+
 try {
   const demo = await loadDemo();
   const update = () => {
@@ -34,15 +49,15 @@ try {
       showValues(values, [
         ["Inbox", order.inbox],
         ["Memo", order.memo],
-        ["Memo length", `${order.memo.length} bytes of 512`],
+        ["Memo length", memoMeter(new TextEncoder().encode(order.memo).length)],
         ["ZIP 321 URI", order.uri],
       ]);
       qr.innerHTML = order.qr_svg; // SVG from the demo crate: the QR code of the URI.
-      status.textContent = "The WASM module is loaded.";
+      setStatus(status);
     } catch (error) {
       values.replaceChildren();
       qr.replaceChildren();
-      status.textContent = `Error: ${error.message}`;
+      setStatus(status, error.message);
     }
   };
 
@@ -64,5 +79,5 @@ try {
   }
   update();
 } catch (error) {
-  status.textContent = `Error: the WASM module failed to load (${error.message}).`;
+  setStatus(status, `the WASM module failed to load (${error.message}).`);
 }
