@@ -60,12 +60,59 @@
       </p>
 
       <h2 id="mechanism">Mechanism</h2>
-      <pre><code>kind   ─┐
-fields ─┼─ BLAKE2b-256(D, …) ──→ rseed ─┐
-prev   ─┘                               ├─ ZIP 212, ZIP 2005 ──→ esk, ψ, rcm
-                             ρ = nf_old ┘
-
-recipient, value, ρ, ψ, rcm ──→ NoteCommit ──→ cmx (on the chain)</code></pre>
+      <figure class="diagram">
+        <svg viewBox="0 0 360 495" role="img" aria-labelledby="fig-bn-title fig-bn-desc">
+          <title id="fig-bn-title">From app data to cmx</title>
+          <desc id="fig-bn-desc">The app hashes kind, fields and prev into rseed. ZIP 212 and ZIP 2005 calculate esk, ψ and rcm from rseed and ρ. NoteCommit calculates cmx from the recipient, the value, ρ, ψ and rcm. The chain keeps cmx.</desc>
+          <defs>
+            <marker id="fig-bn-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 8 4 0 8z" /></marker>
+          </defs>
+          <g class="e" marker-end="url(#fig-bn-arrow)">
+            <path d="M65 40V58H180" marker-end="none" />
+            <path d="M295 40V58H180" marker-end="none" />
+            <path d="M180 40V78" />
+            <path d="M180 110V148" />
+            <path d="M304 180V198H180" marker-end="none" />
+            <path d="M180 180V218" />
+            <path d="M180 250V268H80V288" />
+            <path d="M180 268V288" />
+            <path d="M180 268H280V288" />
+            <path d="M180 320V350H240" marker-end="none" />
+            <path d="M280 320V350H240" marker-end="none" />
+            <path d="M240 350V378" />
+            <path d="M166 395H178" />
+            <path d="M240 410V448" />
+          </g>
+          <rect class="v" x="20" y="10" width="90" height="30" rx="7" />
+          <text x="65" y="25">kind</text>
+          <rect class="v" x="135" y="10" width="90" height="30" rx="7" />
+          <text x="180" y="25">fields</text>
+          <rect class="k" x="250" y="10" width="90" height="30" rx="7" />
+          <text x="295" y="25">prev</text>
+          <rect class="f" x="90" y="80" width="180" height="30" rx="15" />
+          <text x="180" y="95">BLAKE2b-256(D, …)</text>
+          <rect class="c" x="125" y="150" width="110" height="30" rx="7" />
+          <text x="180" y="165">rseed</text>
+          <rect class="k" x="255" y="150" width="98" height="30" rx="7" />
+          <text x="304" y="165">ρ = nf_old</text>
+          <rect class="f" x="80" y="220" width="200" height="30" rx="15" />
+          <text x="180" y="235">ZIP 212, ZIP 2005</text>
+          <rect class="c" x="40" y="290" width="80" height="30" rx="7" />
+          <text x="80" y="305">esk</text>
+          <rect class="c" x="140" y="290" width="80" height="30" rx="7" />
+          <text x="180" y="305">ψ</text>
+          <rect class="c" x="240" y="290" width="80" height="30" rx="7" />
+          <text x="280" y="305">rcm</text>
+          <rect class="v" x="4" y="380" width="162" height="30" rx="7" />
+          <text x="85" y="395">recipient, value, ρ</text>
+          <rect class="f" x="180" y="380" width="120" height="30" rx="15" />
+          <text x="240" y="395">NoteCommit</text>
+          <rect class="k" x="185" y="450" width="110" height="30" rx="7" />
+          <text x="240" y="465">cmx</text>
+          <text class="m end" x="175" y="465">on the chain</text>
+        </svg>
+        <figcaption>Dashed: a value that the app calculates. Amber: a value on the chain.</figcaption>
+      </figure>
       <ol>
         <li>The app selects a binding domain <code>D</code>. <code>D</code> is 16 bytes. <code>D</code> is unique to the app and to the version of its record format.</li>
         <li>The app gives each type of record a kind. The kind is one byte.</li>

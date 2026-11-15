@@ -108,7 +108,7 @@ CONTRIBUTING.md     how to propose a pattern
 - [ ] Mark reviews the wallet-native orders ZIP. Then add `/specs/wallet-native-orders/` (closes L3).
 - [ ] A cryptographer reviews the nested FROST construction. Until then the L5 page keeps its Experimental label.
 
-- [ ] Design roadmap (Nov 15 review: "paper, ink and one amber signal"). PR 6: SVG figures for the ASCII art, and the bound-notes figure reused as the home hero figure. Later: an "On this page" rail for the long pages only. Pattern glyphs wait for Mark to approve a mockup.
+- [ ] Design follow-ups: an "On this page" rail for the long pages only (orders, pairing). Pattern glyphs wait for Mark to approve a mockup. A grouped hex view in the action-pairing table.
 
 ## Later
 
@@ -143,3 +143,4 @@ CONTRIBUTING.md     how to propose a pattern
 - [x] Nov 15: design PR 3, reading: formula blocks, byte rulers (bound notes, polite actions), captioned demo parameters, typed notices (warning, caution, note), ids and hover anchors on all headings, step circles on procedure lists, and Cost as a card grid. The fact strip and section numbers were left out.
 - [x] Nov 15: design PR 4, demos: a demo header with a status pill (`setStatus` in `scripts/values.js`, used by all nine WASM demos), hex values in groups of 8 with a color fingerprint and a flash on changed groups, verdict cards with an icon, stamp chain cards joined by "prev = cmx", a memo meter that counts UTF-8 bytes (it counted characters before), the QR on a white card, and bars plus a large ratio on the polite-actions calculator. Deferred: a grouped hex view inside the action-pairing table.
 - [x] Nov 15: design PR 5, home and navigation: hero buttons (Start with the basics, See the patterns), numbered card grids with a whole-card link and an Experimental tag on threshold keys, a prev/next pager across all nine pages in home order, and an edit-on-GitHub link. The threshold card now says "t of n" like its page.
+- [x] Nov 15: design PR 6, figures: the six ASCII diagrams are inline SVG figures (vertical flow, one SVG at all widths, STE title and description, site color tokens). Mark approved the bound-notes sample first. The home page gained a small bind, send and verify figure under the hero buttons.

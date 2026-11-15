@@ -62,13 +62,47 @@
       </p>
 
       <h2 id="mechanism">Mechanism</h2>
-      <pre><code>members 1, 2, 3 ── 2-of-3 ──→ group key A_G
-                                  │
-object id ──→ public tweak t ─────┤
-                                  ▼
-                       object group key A_G + [t]G ─┐
-                                                    ├─ 2-of-2 ──→ ak ──→ address of the object
-owner share A_O ────────────────────────────────────┘</code></pre>
+      <figure class="diagram">
+        <svg viewBox="0 0 360 450" role="img" aria-labelledby="fig-tk-title fig-tk-desc">
+          <title id="fig-tk-title">From the members to the address of an object</title>
+          <desc id="fig-tk-desc">Members 1, 2 and 3 make the group key A_G with 2-of-3 FROST. The object id gives the public tweak t. A_G + [t]G is the group key of the object. It and the owner share A_O make ak with 2-of-2 FROST. ak gives the address of the object.</desc>
+          <defs><marker id="fig-tk-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 8 4 0 8z" /></marker></defs>
+          <g class="e" marker-end="url(#fig-tk-arrow)">
+            <path d="M95 40V68" />
+            <path d="M272 40V68" />
+            <path d="M95 100V128" />
+            <path d="M95 160V178H250" marker-end="none" />
+            <path d="M272 100V178H250" marker-end="none" />
+            <path d="M250 178V198" />
+            <path d="M85 230V248H180" marker-end="none" />
+            <path d="M250 230V248H180" marker-end="none" />
+            <path d="M180 248V268" />
+            <path d="M180 300V338" />
+            <path d="M180 370V408" />
+          </g>
+          <rect class="v" x="20" y="10" width="150" height="30" rx="7" />
+          <text x="95" y="25">members 1, 2, 3</text>
+          <rect class="v" x="212" y="10" width="120" height="30" rx="7" />
+          <text x="272" y="25">object id</text>
+          <rect class="f" x="50" y="70" width="90" height="30" rx="15" />
+          <text x="95" y="85">2-of-3</text>
+          <rect class="c" x="202" y="70" width="140" height="30" rx="7" />
+          <text x="272" y="85">public tweak t</text>
+          <rect class="c" x="20" y="130" width="150" height="30" rx="7" />
+          <text x="95" y="145">group key A_G</text>
+          <rect class="v" x="10" y="200" width="150" height="30" rx="7" />
+          <text x="85" y="215">owner share A_O</text>
+          <rect class="c" x="175" y="200" width="150" height="30" rx="7" />
+          <text x="250" y="215">A_G + [t]G</text>
+          <rect class="f" x="130" y="270" width="100" height="30" rx="15" />
+          <text x="180" y="285">2-of-2</text>
+          <rect class="c" x="125" y="340" width="110" height="30" rx="7" />
+          <text x="180" y="355">ak</text>
+          <rect class="v" x="85" y="410" width="190" height="30" rx="7" />
+          <text x="180" y="425">address of the object</text>
+        </svg>
+        <figcaption>Dashed: a key that FROST or the tweak calculates. Each object gets its own key from a public tweak.</figcaption>
+      </figure>
 
       <h3 id="1-one-group-key-for-each-role">1. One group key for each role</h3>
       <ol>

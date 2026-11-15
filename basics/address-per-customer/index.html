@@ -52,9 +52,39 @@
       </p>
 
       <h2 id="mechanism">Mechanism</h2>
-      <pre><code>full viewing key ──→ diversifier key dk ──→ d_j = FF1(dk, j) ──→ address j
-                                      ↑                             │
-incoming viewing key ── dk ───────────┴──── j = FF1⁻¹(dk, d_j) ←────┘</code></pre>
+      <figure class="diagram">
+        <svg viewBox="0 0 360 330" role="img" aria-labelledby="fig-apc-title fig-apc-desc">
+          <title id="fig-apc-title">Make an address and find its customer</title>
+          <desc id="fig-apc-desc">The full viewing key and the incoming viewing key both give the diversifier key dk. FF1 with dk and j makes address j. The inverse of FF1 with dk finds j from the address.</desc>
+          <defs><marker id="fig-apc-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 8 4 0 8z" /></marker></defs>
+          <g class="e" marker-end="url(#fig-apc-arrow)">
+            <path d="M95 40V58H180" marker-end="none" />
+            <path d="M272 40V58H180" marker-end="none" />
+            <path d="M180 58V78" />
+            <path d="M180 110V128H95V148" />
+            <path d="M180 128H272" marker-end="none" />
+            <path d="M272 128V218" />
+            <path d="M95 180V218" />
+            <path d="M170 235H187" />
+            <path d="M272 250V288" />
+          </g>
+          <rect class="v" x="20" y="10" width="150" height="30" rx="7" />
+          <text x="95" y="25">full viewing key</text>
+          <rect class="v" x="192" y="10" width="160" height="30" rx="7" />
+          <text x="272" y="25">incoming viewing key</text>
+          <rect class="c" x="90" y="80" width="180" height="30" rx="7" />
+          <text x="180" y="95">diversifier key dk</text>
+          <rect class="f" x="20" y="150" width="150" height="30" rx="15" />
+          <text x="95" y="165">d_j = FF1(dk, j)</text>
+          <rect class="v" x="20" y="220" width="150" height="30" rx="7" />
+          <text x="95" y="235">address j</text>
+          <rect class="f" x="189" y="220" width="166" height="30" rx="15" />
+          <text x="272" y="235">j = FF1⁻¹(dk, d_j)</text>
+          <rect class="c" x="212" y="290" width="120" height="30" rx="7" />
+          <text x="272" y="305">customer j</text>
+        </svg>
+        <figcaption>Left: the shop makes address j. Right: the shop finds j from address j.</figcaption>
+      </figure>
       <ol>
         <li>The shop gives each customer a number <code>j</code>, the diversifier index.</li>
         <li>The key encrypts <code>j</code> into an 11-byte diversifier <code>d_j</code>.</li>

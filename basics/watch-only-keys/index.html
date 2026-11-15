@@ -48,9 +48,35 @@
       </ul>
 
       <h2 id="mechanism">Mechanism</h2>
-      <pre><code>seed ──ZIP 32──→ spending key ──→ full viewing key ──→ incoming viewing key
-                  spend             see in and out        see in
-                                    make addresses        make addresses</code></pre>
+      <figure class="diagram">
+        <svg viewBox="0 0 360 310" role="img" aria-labelledby="fig-wok-title fig-wok-desc">
+          <title id="fig-wok-title">Each key makes the keys below it</title>
+          <desc id="fig-wok-desc">ZIP 32 makes the spending key from the seed. The spending key makes the full viewing key. The full viewing key makes the incoming viewing key.</desc>
+          <defs><marker id="fig-wok-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 8 4 0 8z" /></marker></defs>
+          <g class="e" marker-end="url(#fig-wok-arrow)">
+            <path d="M110 40V68" />
+            <path d="M110 100V128" />
+            <path d="M110 160V198" />
+            <path d="M110 230V268" />
+          </g>
+          <rect class="v" x="25" y="10" width="170" height="30" rx="7" />
+          <text x="110" y="25">seed</text>
+          <rect class="f" x="60" y="70" width="100" height="30" rx="15" />
+          <text x="110" y="85">ZIP 32</text>
+          <rect class="v" x="25" y="130" width="170" height="30" rx="7" />
+          <text x="110" y="145">spending key</text>
+          <text class="m start" x="210" y="145">spend</text>
+          <rect class="v" x="25" y="200" width="170" height="30" rx="7" />
+          <text x="110" y="215">full viewing key</text>
+          <text class="m start" x="210" y="208">see in and out</text>
+          <text class="m start" x="210" y="224">make addresses</text>
+          <rect class="v" x="25" y="270" width="170" height="30" rx="7" />
+          <text x="110" y="285">incoming viewing key</text>
+          <text class="m start" x="210" y="278">see in</text>
+          <text class="m start" x="210" y="294">make addresses</text>
+        </svg>
+        <figcaption>A key can make each key below it. A key cannot make a key above it.</figcaption>
+      </figure>
       <p>
         Each key comes from the key on its left. The derivation goes in one direction only. Thus, each step removes a
         power:

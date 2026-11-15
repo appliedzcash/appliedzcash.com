@@ -81,16 +81,52 @@
       </dl>
 
       <h3 id="sequence">Sequence</h3>
-      <pre><code>participant                page                          operator
-     │                        │                               │
-  1  ├── join: payout address ───────────────────────────────→ │ i, k_i
-  2  │                        ├── hash of secret s ──────────→ │
-  3  │ ←──────────────── memo: 8-digit code ─────────────────── ┤
-  4  ├── types the code ────→ ├── s and code ────────────────→ │
-  5  │                        │ ←──────────────────────── k_i ─┤
-  6  │ ←── QR code: ZIP 321 ──┤  memo + MAC under k_i          │
-  7  ├── payment to the Inbox ──────────────────────────────→ │ status of each note
-  8  │ ←──────────────────── payout to the payout address ───── ┤</code></pre>
+      <figure class="diagram">
+        <svg viewBox="0 0 360 434" role="img" aria-labelledby="fig-wno-title fig-wno-desc">
+          <title id="fig-wno-title">The order sequence</title>
+          <desc id="fig-wno-desc">1: The participant joins with a payout address. 2: The page sends the hash of a secret s. 3: The operator sends an 8-digit code in a memo. 4: The participant types the code, and the page sends s and the code. 5: The operator sends k_i to the page. 6: The page shows a ZIP 321 QR code with the memo and its MAC. 7: The participant pays the Inbox. 8: The operator sends the payout.</desc>
+          <defs><marker id="fig-wno-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 8 4 0 8z" /></marker></defs>
+          <path class="life" d="M60 40V426" />
+          <path class="life" d="M180 40V426" />
+          <path class="life" d="M300 40V426" />
+          <g class="e" marker-end="url(#fig-wno-arrow)">
+            <path d="M64 84H298" />
+            <path d="M184 128H298" />
+            <path d="M296 172H62" />
+            <path d="M64 216H178" />
+            <path d="M184 216H298" />
+            <path d="M296 260H182" />
+            <path d="M176 304H62" />
+            <path d="M64 348H298" />
+            <path d="M296 392H62" />
+          </g>
+          <rect class="v" x="10" y="10" width="100" height="30" rx="7" />
+          <text x="60" y="25">participant</text>
+          <rect class="v" x="130" y="10" width="100" height="30" rx="7" />
+          <text x="180" y="25">page</text>
+          <rect class="v" x="250" y="10" width="100" height="30" rx="7" />
+          <text x="300" y="25">operator</text>
+          <text class="m" x="14" y="84">1</text>
+          <text class="s" x="180" y="75">join: payout address</text>
+          <text class="m" x="14" y="128">2</text>
+          <text class="s" x="240" y="119">hash of secret s</text>
+          <text class="m" x="14" y="172">3</text>
+          <text class="s" x="180" y="163">memo: 8-digit code</text>
+          <text class="m" x="14" y="216">4</text>
+          <text class="s" x="120" y="207">types the code</text>
+          <text class="s" x="240" y="207">s and code</text>
+          <text class="m" x="14" y="260">5</text>
+          <text class="s" x="240" y="251">k_i</text>
+          <text class="m" x="14" y="304">6</text>
+          <text class="s" x="120" y="295">memo + MAC</text>
+          <text class="s" x="120" y="281">ZIP 321 QR code</text>
+          <text class="m" x="14" y="348">7</text>
+          <text class="s" x="180" y="339">payment to the Inbox</text>
+          <text class="m" x="14" y="392">8</text>
+          <text class="s" x="180" y="383">payout</text>
+        </svg>
+        <figcaption>Each arrow is one message. The steps go from top to bottom.</figcaption>
+      </figure>
 
       <h3 id="join">Join</h3>
       <ol>

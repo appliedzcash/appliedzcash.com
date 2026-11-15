@@ -47,6 +47,30 @@
         <a class="button secondary" href="#patterns">See the patterns</a>
       </p>
 
+      <figure class="diagram hero-figure">
+        <svg viewBox="0 0 360 130" role="img" aria-labelledby="fig-home-title fig-home-desc">
+          <title id="fig-home-title">Bind, send and verify</title>
+          <desc id="fig-home-desc">The app puts a hash of its data in the rseed of a note. A standard wallet sends the note, and the chain keeps its cmx. Anyone with the data can calculate cmx again and compare it with the chain.</desc>
+          <defs><marker id="fig-home-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 8 4 0 8z" /></marker></defs>
+          <g class="e" marker-end="url(#fig-home-arrow)">
+            <path d="M100 49H133" />
+            <path d="M225 49H258" />
+            <path d="M55 64V96H305V66" />
+          </g>
+          <text class="m" x="55" y="18">your record</text>
+          <text class="m" x="180" y="18">rseed = hash</text>
+          <text class="m" x="305" y="18">on the chain</text>
+          <rect class="v" x="10" y="34" width="90" height="30" rx="7" />
+          <text x="55" y="49">app data</text>
+          <rect class="c" x="135" y="34" width="90" height="30" rx="7" />
+          <text x="180" y="49">note</text>
+          <rect class="k" x="260" y="34" width="90" height="30" rx="7" />
+          <text x="305" y="49">cmx</text>
+          <text class="m" x="180" y="114">anyone can calculate cmx again</text>
+        </svg>
+        <figcaption>A bound note: the chain keeps a commitment to the data of the app.</figcaption>
+      </figure>
+
       <h2 id="basics">The basics</h2>
       <p class="section-intro">
         The parts of a usual shielded payment, and how a shop or an app receives one. The patterns use these parts.
