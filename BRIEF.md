@@ -97,7 +97,7 @@ CONTRIBUTING.md     how to propose a pattern
 ## Now
 
 - [ ] **Start here: Mark reviews `draft-bound-notes.md` for public release.** Also fix its Motivation claim "a note commitment appears once" (consensus enforces uniqueness for nullifiers only; the site page was corrected in PR #2). Ask Julian about the ZcashNames credit. Then add `/specs/bound-notes/` and link it from the page's Spec section. That closes L1.
-- [ ] Mark reads the L5 draft on local branch `l5-threshold-keys` (unpushed): the page in 100% STE with an Experimental label, and a nested FROST demo (2-of-3 group inside a 2-of-2 key, per-object tweak; reddsa 0.5.2 on frost-core 3.0.0, ported from the art market's `title-keys`). The page names neither the art market, the estate, Zodiac nor SRA. Pushing it publishes the art market's tweak and nesting recipe: Mark's clearance.
+- [ ] Merge the L5 PR (threshold keys page and nested FROST demo, Experimental label). Mark cleared the art market's tweak and nesting recipe for publication on Nov 15. The page names neither the art market, the estate, Zodiac nor SRA.
 - [ ] Mark turns on "Enforce HTTPS" for Pages (repo settings).
 - [ ] Mark picks licenses: code (MIT/Apache, like Zodiac) and page text (for example CC BY 4.0).
 
