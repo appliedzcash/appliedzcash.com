@@ -107,6 +107,8 @@ CONTRIBUTING.md     how to propose a pattern
 - [ ] Align Zodiac's `set_canonical_pairing` with its ZIP (Zodiac BRIEF, Soon). Mark reviews the ZIP. Then add `/specs/action-pairing/` (closes L4).
 - [ ] Mark clears the FROST material from the art market build. Build L5 with an "experimental" label until a cryptographer reviews the nested construction.
 
+- [ ] Design roadmap (Nov 15 review: "paper, ink and one amber signal"). PR 2: mark, favicon, og card, sticky header, compact donate footer. PR 3: styled formulas and byte rulers, page header rhythm, callouts. PR 4: demo instrument frame, shared hex component, verdict cards; fix the memo meter (it counts characters, the label says bytes). PR 5: home hero, numbered cards, prev/next pager, SVG figures for the ASCII art. Pattern glyphs wait for Mark to approve a mockup.
+
 ## Later
 
 - [ ] L6: Mark announces the site.
@@ -129,3 +131,4 @@ CONTRIBUTING.md     how to propose a pattern
 - [x] Nov 15: donation address (Mark's Noir wallet, Mainnet UA) and its QR code in every footer (appliedzcash/appliedzcash.com#5).
 - [x] Nov 15: L4 merged (appliedzcash/appliedzcash.com#6) and live: canonical action pairing page in 100% STE and the rebuild demo (ZIP retry rule included). Copilot review fixed: retry rule, live result, CSS brace, mobile fields.
 - [x] Nov 15: SEO merged (appliedzcash/appliedzcash.com#7): keyword-led titles and descriptions, canonical URLs, Open Graph and JSON-LD, `sitemap.xml` and `robots.txt`. Copilot's "demo for each pattern" comment declined, because the L5 demo comes next.
+- [x] Nov 15: design PR 1, foundations: paper and ink color tokens, an accent focus ring, a skip link, a serif display face (Source Serif 4) and a mono face (JetBrains Mono), both self-hosted under the OFL in `fonts/` (91 KB).
