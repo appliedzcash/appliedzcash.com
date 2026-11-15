@@ -42,7 +42,7 @@ jobs:
       - name: Assemble the site
         run: |
           mkdir _site
-          cp -r index.html robots.txt sitemap.xml basics patterns styles scripts images _site/
+          cp -r index.html robots.txt sitemap.xml basics patterns styles scripts images fonts _site/
           wasm-bindgen --target web --no-typescript --out-dir _site/wasm \
             demo/target/wasm32-unknown-unknown/release/demo.wasm
           (cd demo && cargo about generate --locked --fail -o ../_site/wasm/notices.html about.hbs)
