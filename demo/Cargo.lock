@@ -259,6 +259,7 @@ dependencies = [
  "blake2b_simd",
  "hex",
  "orchard",
+ "pasta_curves",
  "qrcode",
  "wasm-bindgen",
  "zcash_address",

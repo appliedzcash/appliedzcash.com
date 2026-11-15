@@ -97,14 +97,15 @@ CONTRIBUTING.md     how to propose a pattern
 ## Now
 
 - [ ] **Start here: Mark reviews `draft-bound-notes.md` for public release.** Also fix its Motivation claim "a note commitment appears once" (consensus enforces uniqueness for nullifiers only; the site page was corrected in PR #2). Ask Julian about the ZcashNames credit. Then add `/specs/bound-notes/` and link it from the page's Spec section. That closes L1.
-- [ ] Merge the L3 PR (wallet-native orders page and toy-poll demo). Mark approved publishing the page on Nov 14. The ZIP text itself still waits on his review, as does `/specs/wallet-native-orders/`.
+- [ ] Mark reads the L4 draft on local branch `l4-action-pairing` (unpushed): the page in 100% STE and a rebuild demo (a real canonical build on orchard 0.16 against a random standard build). Push when Mark says. The ZIP text and `/specs/action-pairing/` wait on his review.
+- [ ] Merge PR #5: donation address and QR in the footer.
 - [ ] Mark turns on "Enforce HTTPS" for Pages (repo settings).
 - [ ] Mark picks licenses: code (MIT/Apache, like Zodiac) and page text (for example CC BY 4.0).
 
 ## Soon
 
 - [ ] Mark reviews the wallet-native orders ZIP. Then add `/specs/wallet-native-orders/` (closes L3).
-- [ ] Align Zodiac's `set_canonical_pairing` with its ZIP (Zodiac BRIEF, Soon). Mark reviews the ZIP. Build L4.
+- [ ] Align Zodiac's `set_canonical_pairing` with its ZIP (Zodiac BRIEF, Soon). Mark reviews the ZIP. Then add `/specs/action-pairing/` (closes L4).
 - [ ] Mark clears the FROST material from the art market build. Build L5 with an "experimental" label until a cryptographer reviews the nested construction.
 
 ## Later
@@ -124,3 +125,4 @@ CONTRIBUTING.md     how to propose a pattern
 - [x] Nov 14: L0 merged (appliedzcash/appliedzcash.com#1) and deployed. appliedzcash.com already points at Pages, so the site is live. Mark is fine with that.
 - [x] Nov 14: L1 page and demo merged (appliedzcash/appliedzcash.com#2). The page restates the mechanism and withholds the spec text; it names neither Zodiac nor ZcashNames. The demo is a timestamp registry on `orchard` 0.16 (both lead bytes) and replaces the home pipeline check. Copilot review fixed: cmx wording, fixed stamps, pool lock.
 - [x] Nov 14: L2 merged (appliedzcash/appliedzcash.com#3) and live: polite-actions page and scan-cost calculator for a toy scoreboard. ADR 5's general facts appear without Zodiac's name. Copilot review fixed: memo-cost scope, the padded second action, row headers.
+- [x] Nov 14: L3 merged (appliedzcash/appliedzcash.com#4) and live: wallet-native orders page in 100% STE and the toy-poll demo.

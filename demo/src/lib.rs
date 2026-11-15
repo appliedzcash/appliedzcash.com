@@ -3,6 +3,8 @@
 
 mod bound_notes;
 mod orders;
+mod pairing;
 
 pub use bound_notes::{genesis_rho, stamp, Stamp};
 pub use orders::{order, Order};
+pub use pairing::{pair, Bundle};

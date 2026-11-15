@@ -4,7 +4,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Canonical action pairing | Applied Zcash</title>
+    <meta
+      name="description"
+      content="A keyed sort sets the dummy notes and the action pairs of a Zcash bundle, so each rebuild gives the same note commitments."
+    />
     <link rel="stylesheet" href="../../styles/main.css" />
+    <script type="module" src="../../scripts/action-pairing.js"></script>
   </head>
   <body>
     <header>
@@ -14,10 +19,191 @@
     <main>
       <p class="kicker">Pattern</p>
       <h1>Canonical action pairing</h1>
-      <p>
-        A builder uses a keyed sort to put the actions of a bundle in order. The sort sets the pairs of actions.
+      <p class="lede">
+        A builder uses a keyed sort to put the actions of a bundle in order. The sort sets the pairs of spends and
+        outputs. Thus, each build of the same transaction gives the same note commitments.
       </p>
-      <p class="notice">This page is a stub. Later versions will add the mechanism, the cost, the spec, a demo and a toy example.</p>
+
+      <h2 id="problem">Problem</h2>
+      <p>
+        Each action of an Orchard-protocol bundle holds one spend and one output. The ρ of the output is the nullifier of
+        the spend in the same action. ψ, rcm and the note commitment of the output come from ρ. Thus, the note commitment
+        of an output changes when its pair changes.
+      </p>
+      <p>
+        A standard builder pairs spends and outputs at random. It also makes new dummy notes on each build. Thus, two
+        builds of the same transaction give each output a different note commitment.
+      </p>
+      <p>Three cases need the same note commitments on each build:</p>
+      <ul>
+        <li>
+          <strong>Rebuild after a reorg.</strong> A chain of <a href="../bound-notes/">bound notes</a> binds the
+          <code>cmx</code> of each predecessor. A reorg can remove a transaction. A rebuild with new commitments breaks
+          each later note that bound an old <code>cmx</code>.
+        </li>
+        <li>
+          <strong>Several signers.</strong> With FROST over a PCZT, each signer must examine the bundle before it signs. To
+          calculate the expected bundle, a signer needs the dummy notes and the pairs of the coordinator.
+        </li>
+        <li>
+          <strong>Receipts before mining.</strong> An app can tell a user the note commitment of a note before the chain
+          mines the transaction. That commitment must stay the same after a rebuild.
+        </li>
+      </ul>
+
+      <h2 id="mechanism">Mechanism</h2>
+      <pre><code>pairing key k ─┐
+context ctx   ─┼─→ pairing seed d ─→ PRF_d ─→ dummy spends, dummy outputs, output rseeds
+real nfs      ─┘           │
+                           └─→ keyed sort keys ─→ action a = (spend a, output a)
+                                                         │
+                                       ρ of output a = nf of spend a ─→ cmx</code></pre>
+
+      <h3>Inputs</h3>
+      <p>Each party that builds or examines the bundle uses the same inputs:</p>
+      <ul>
+        <li>the pairing key <code>k</code>, a 32-byte secret;</li>
+        <li>an app context <code>ctx</code>, for example an epoch number;</li>
+        <li>the real spends, each with its note and its nullifier key;</li>
+        <li>the real outputs, in the order of the caller;</li>
+        <li>the number of actions <code>n</code>;</li>
+        <li>the lead byte of the note plaintext.</li>
+      </ul>
+
+      <h3>Steps</h3>
+      <ol>
+        <li>
+          Sort the nullifiers of the <code>m</code> real spends. Calculate the pairing seed:
+          <pre><code>d = BLAKE2b-256("Zcash_PairingSd_",
+      k ‖ len(ctx) ‖ ctx ‖ m ‖ nf_1 ‖ … ‖ nf_m)</code></pre>
+        </li>
+        <li>
+          Use <code>d</code> as the key of a PRF. Each value has a tag byte <code>t</code> and an index <code>i</code>:
+          <pre><code>PRF_d(t, i, c) = BLAKE2b-512("Zcash_PairingPRF", d ‖ t ‖ i ‖ c)</code></pre>
+          <code>c</code> is a counter. It increases only when a value is invalid, for example a spending key.
+        </li>
+        <li>Make <code>n − m</code> dummy spends of value zero. The PRF gives the spending key, ρ and <code>rseed</code> of each dummy spend.</li>
+        <li>Give each real output an <code>rseed</code> from the PRF. A caller can give its own <code>rseed</code>, for example for a bound note.</li>
+        <li>Make the dummy outputs of value zero. The PRF gives the recipient and the <code>rseed</code> of each dummy output.</li>
+        <li>
+          Calculate a keyed sort key for each spend and each output:
+          <pre><code>key_spend = BLAKE2b-256("Zcash_PairingOrd", d ‖ 0x00 ‖ nf)
+key_out   = BLAKE2b-256("Zcash_PairingOrd", d ‖ 0x01 ‖ rseed)</code></pre>
+        </li>
+        <li>Sort the spends and the outputs by their keys. Action <code>a</code> holds spend <code>a</code> and output <code>a</code>.</li>
+        <li>Each output takes ρ from the nullifier of its action. Calculate esk, ψ, rcm and the note commitment as ZIP 212 and ZIP 2005 specify.</li>
+      </ol>
+      <p>
+        A value can fail, for example an esk of zero. The chance is about 2<sup>−254</sup>. Then the builder discards the
+        full build. It adds a retry byte to <code>ctx</code> and builds again. Each party that follows this rule gets the
+        same bundle.
+      </p>
+
+      <h3>Values that stay random</h3>
+      <p>
+        The value commitment trapdoor, the spend authorization randomizer, the proof and some outgoing ciphertexts stay
+        random. Nullifiers and note commitments are independent of these values. Thus, two canonical builds have different
+        transaction IDs. They spend the same notes, so the chain can mine one of them only.
+      </p>
+
+      <h3>Scope</h3>
+      <p>
+        The pattern is for bundles with <code>enableCrossAddress = 1</code>, in practice Ironwood-pool bundles. For other
+        bundles, ZIP 2006 sets the pairs by expanded receiver.
+      </p>
+
+      <h2 id="cost">Cost</h2>
+      <ul>
+        <li><strong>Chain.</strong> Zero. A canonical bundle has the same size and the same fee as a standard bundle.</li>
+        <li><strong>Build.</strong> A small number of BLAKE2b hashes for each action, and one sort.</li>
+        <li>
+          <strong>Builders.</strong> The builder must accept a pairing key and a context. The <code>orchard</code> crate
+          pairs at random. A fork of the crate implements this pattern, and an upstream PR is pending.
+        </li>
+        <li>
+          <strong>PCZT.</strong> The Constructor role makes the canonical build. A signer with <code>k</code> can build the
+          bundle again and compare <code>nf</code>, <code>cmx</code> and <code>epk</code> of each action before it signs.
+        </li>
+      </ul>
+
+      <h2 id="limits">Limits</h2>
+      <ul>
+        <li>
+          <strong>Privacy.</strong> All derived values come from <code>k</code>. Only a holder of <code>k</code> can
+          identify each dummy note. To all other parties, the dummy notes and the order of actions look random. Thus, keep
+          <code>k</code> as secret as a viewing key.
+        </li>
+        <li>
+          <strong>Reused seeds.</strong> A dummy nullifier repeats when <code>d</code> repeats. The seed binds the real
+          nullifiers, so two bundles with the same <code>d</code> spend the same notes. Only one of them can go on the
+          chain. A bundle with zero real spends needs a unique <code>ctx</code>.
+        </li>
+        <li>
+          <strong>Rebuild scope.</strong> A rebuild gives the same commitments only with the same inputs. A different fee
+          input changes <code>d</code>, and then all pairs change.
+        </li>
+      </ul>
+
+      <h2 id="spec">Spec</h2>
+      <p>
+        The full spec is a draft ZIP. It includes the spending key rule for dummy notes, the dummy output memo, the PCZT
+        fields and the rationale. This site will publish the draft after review.
+      </p>
+
+      <h2 id="demo">Demo: rebuild a bundle</h2>
+      <p>
+        The demo uses the <code>orchard</code> crate, compiled to WebAssembly. It makes Ironwood-pool notes of value zero.
+        The real spends use demo nullifiers. The real outputs go to a demo address.
+      </p>
+      <p>
+        Click a build button two times. A canonical build gives the same <code>cmx</code> values each time. A standard
+        build uses a new random seed each time, so its <code>cmx</code> values change.
+      </p>
+
+      <div class="demo" id="pairing-demo">
+        <label for="pkey-input">Pairing key <code>k</code></label>
+        <input id="pkey-input" type="text" autocomplete="off" spellcheck="false" disabled />
+        <label for="ctx-input">Context <code>ctx</code></label>
+        <input id="ctx-input" type="text" value="epoch 42" autocomplete="off" spellcheck="false" disabled />
+        <div class="field-row field-row-3">
+          <div>
+            <label for="spends-input">Real spends</label>
+            <input id="spends-input" type="number" min="0" max="8" step="1" value="2" inputmode="numeric" disabled />
+          </div>
+          <div>
+            <label for="outputs-input">Real outputs</label>
+            <input id="outputs-input" type="number" min="0" max="8" step="1" value="1" inputmode="numeric" disabled />
+          </div>
+          <div>
+            <label for="actions-input">Actions</label>
+            <input id="actions-input" type="number" min="2" max="8" step="1" value="4" inputmode="numeric" disabled />
+          </div>
+        </div>
+        <div class="actions">
+          <button type="button" id="canonical-button" disabled>Canonical build</button>
+          <button type="button" id="standard-button" class="secondary" disabled>Standard build</button>
+        </div>
+
+        <h3 id="build-title">Bundle</h3>
+        <dl class="values" id="seed-values"></dl>
+        <div class="table-wrap">
+          <table class="cost-table pairing-table">
+            <thead>
+              <tr>
+                <th scope="col">Action</th>
+                <th scope="col">Spend</th>
+                <th scope="col">nf</th>
+                <th scope="col">Output</th>
+                <th scope="col">cmx</th>
+              </tr>
+            </thead>
+            <tbody id="pairing-body"></tbody>
+          </table>
+        </div>
+        <p class="result" id="pairing-result"></p>
+
+        <p class="status" id="demo-status" role="status">The WASM module is loading.</p>
+      </div>
     </main>
     <footer>
       <p>
