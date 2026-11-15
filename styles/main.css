@@ -179,7 +179,9 @@ pre {
   font-weight: 600;
 }
 
-.demo input {
+.demo input,
+.demo textarea,
+.demo select {
   width: 100%;
   margin: var(--space-2) 0 var(--space-3);
   padding: var(--space-2);
@@ -199,4 +201,116 @@ pre {
   margin-bottom: 0;
   color: var(--muted);
   font-size: 0.9rem;
+}
+
+.demo textarea {
+  resize: vertical;
+}
+
+.demo h3 {
+  margin: var(--space-4) 0 var(--space-2);
+  font-size: 1rem;
+}
+
+.demo h3:first-of-type {
+  margin-top: var(--space-2);
+}
+
+.demo .actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.demo button {
+  padding: var(--space-2) var(--space-3);
+  font: inherit;
+  font-weight: 600;
+  color: var(--surface);
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.demo button.secondary {
+  color: var(--accent);
+  background: transparent;
+}
+
+.demo button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.values {
+  display: grid;
+  grid-template-columns: minmax(6rem, max-content) 1fr;
+  gap: var(--space-1) var(--space-3);
+  margin: 0 0 var(--space-3);
+  font-size: 0.9rem;
+}
+
+.values dt {
+  color: var(--muted);
+}
+
+.values dd {
+  margin: 0;
+  min-width: 0;
+}
+
+.chain {
+  padding-left: var(--space-4);
+}
+
+.chain li {
+  margin-bottom: var(--space-2);
+}
+
+.chain p {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+.chain .values {
+  margin: 0;
+}
+
+.demo .empty {
+  color: var(--muted);
+}
+
+.demo .result {
+  margin: 0;
+  font-weight: 600;
+}
+
+.demo .result.match {
+  color: #2e7d32;
+}
+
+.demo .result.mismatch {
+  color: #c62828;
+}
+
+@media (prefers-color-scheme: dark) {
+  .demo .result.match {
+    color: #81c784;
+  }
+
+  .demo .result.mismatch {
+    color: #ef9a9a;
+  }
+}
+
+@media (max-width: 32rem) {
+  .values {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .values dd {
+    margin-bottom: var(--space-2);
+  }
 }

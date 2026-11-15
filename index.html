@@ -9,7 +9,6 @@
       content="Patterns to attach data and rules to shielded Zcash notes. Anyone can verify them from chain data."
     />
     <link rel="stylesheet" href="styles/main.css" />
-    <script type="module" src="scripts/pipeline-check.js"></script>
   </head>
   <body>
     <header>
@@ -51,20 +50,6 @@
           <p>Give each app role one FROST group key. Any n of m members can sign for the role.</p>
         </li>
       </ul>
-
-      <h2 id="pipeline-check">Pipeline check</h2>
-      <p>
-        This box uses Rust code that is compiled to WebAssembly (WASM). The box shows that the demo build
-        operates correctly. It calculates a BLAKE2b-256 hash of your text with a 16-byte personalization:
-      </p>
-      <pre><code>h = BLAKE2b-256(personal = "appliedzcash.com", text)</code></pre>
-      <div class="demo">
-        <label for="hash-input">Text</label>
-        <input id="hash-input" type="text" value="zcash" autocomplete="off" spellcheck="false" disabled />
-        <label for="hash-output">h</label>
-        <output id="hash-output" for="hash-input"><code></code></output>
-        <p class="status" id="hash-status" role="status">The WASM module is loading.</p>
-      </div>
     </main>
     <footer>
       <p>

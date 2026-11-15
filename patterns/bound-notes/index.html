@@ -4,7 +4,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Bound notes | Applied Zcash</title>
+    <meta
+      name="description"
+      content="Put a hash of app data in the rseed of a Zcash note. The note commitment binds the data, and standard wallets can decrypt the note."
+    />
     <link rel="stylesheet" href="../../styles/main.css" />
+    <script type="module" src="../../scripts/bound-notes.js"></script>
   </head>
   <body>
     <header>
@@ -14,10 +19,178 @@
     <main>
       <p class="kicker">Pattern</p>
       <h1>Bound notes</h1>
-      <p>
-        An app puts a hash of its data in the <code>rseed</code> of a zero-value note. ZIP 212 calculates ψ and rcm from <code>rseed</code>. Thus, the note commitment <code>cmx</code> is a commitment to the data. Standard wallets can decrypt the note. Anyone with the data can calculate <code>cmx</code> again and compare it with the chain.
+      <p class="lede">
+        An app puts a hash of its data in the <code>rseed</code> of a note. ZIP 212 calculates ψ and rcm from
+        <code>rseed</code>. Thus, the note commitment <code>cmx</code> is a commitment to the data.
       </p>
-      <p class="notice">This page is a stub. Later versions will add the mechanism, the cost, the spec, a demo and a toy example.</p>
+      <p>
+        Standard wallets can decrypt a bound note. Anyone with the data can calculate <code>cmx</code> again and
+        compare it with the chain. The pattern operates with the consensus rules of today.
+      </p>
+
+      <h2 id="problem">Problem</h2>
+      <p>
+        Many apps must keep a public record on the chain. Anyone must be able to examine the record. Examples are a
+        name registry, a decision market and a timestamp service.
+      </p>
+      <p>
+        A memo is a weak place for a record. The memo is in the note ciphertext, outside the note commitment. To read a
+        memo, a verifier needs a viewing key. Compact blocks hold only the first part of each ciphertext.
+      </p>
+      <p>
+        The note commitment is a strong place for a record. Each note commitment occurs one time on the chain.
+        Consensus lets each note be spent one time only. A record in the note commitment gets these two properties.
+      </p>
+
+      <h2 id="mechanism">Mechanism</h2>
+      <pre><code>kind   ─┐
+fields ─┼─ BLAKE2b-256(D, …) ──→ rseed ─┐
+prev   ─┘                               ├─ ZIP 212, ZIP 2005 ──→ esk, ψ, rcm
+                             ρ = nf_old ┘
+
+recipient, value, ρ, ψ, rcm ──→ NoteCommit ──→ cmx (on the chain)</code></pre>
+      <ol>
+        <li>The app selects a binding domain <code>D</code>. <code>D</code> is 16 bytes. <code>D</code> is unique to the app and to the version of its record format.</li>
+        <li>The app gives each type of record a kind. The kind is one byte.</li>
+        <li>The app encodes the record as bytes. These bytes are the fields.</li>
+        <li>The app calculates <code>rseed</code>:</li>
+      </ol>
+      <pre><code>rseed = BLAKE2b-256(D, kind ‖ len(fields) ‖ fields ‖ prev)
+
+kind         1 byte
+len(fields)  8 bytes, little-endian
+prev         32 bytes: the cmx of the predecessor, or 32 zero bytes</code></pre>
+      <ol start="5">
+        <li>
+          The wallet builds a usual Orchard-protocol output with this <code>rseed</code>. ZIP 212 and ZIP 2005 calculate
+          esk, ψ and rcm from <code>rseed</code> and ρ. ρ is the nullifier of the note that the same action spends.
+        </li>
+      </ol>
+      <p>
+        The length prefix makes the encoding injective. Two different records always give two different inputs to the
+        hash.
+      </p>
+
+      <h3>Chains</h3>
+      <p>
+        A chain is a sequence of bound notes. The first note is the genesis note. Each note after it is the successor of
+        the note before it. <code>prev</code> is the <code>cmx</code> of the predecessor. For the genesis note,
+        <code>prev</code> is 32 zero bytes.
+      </p>
+      <p>
+        The transaction of a successor must spend its predecessor. Consensus accepts each nullifier one time. Thus, one
+        transaction at most extends each tip. The chain is an append-only record.
+      </p>
+
+      <h3>Verification</h3>
+      <p>
+        A verifier knows the recipient address, the value, the lead byte of the note plaintext and the record. The verifier
+        reads <code>nf_old</code> and <code>cmx</code> from the action. Then the verifier:
+      </p>
+      <ol>
+        <li>calculates <code>rseed</code> from the record;</li>
+        <li>sets ρ = <code>nf_old</code>;</li>
+        <li>calculates ψ and rcm from <code>rseed</code> and ρ;</li>
+        <li>calculates the note commitment;</li>
+        <li>compares its x-coordinate with <code>cmx</code>.</li>
+      </ol>
+      <p>
+        This check needs only public data. To check lineage, the verifier also needs the nullifier key <code>nk</code> of
+        the account that holds the chain. With <code>nk</code>, the verifier calculates the nullifier of the predecessor
+        and finds it in the transaction of the successor. An app with a public chain publishes its full viewing key.
+      </p>
+
+      <h3>Authority</h3>
+      <p>
+        Anyone can send a bound note to a published address. Thus, each app must define which notes count. This rule is
+        sufficient: the app pins a genesis note by its transaction ID and <code>cmx</code>. A note counts only if it
+        descends from that genesis note. A false note costs its sender a fee, and the record stays the same.
+      </p>
+
+      <h3>Privacy</h3>
+      <p>
+        <code>rseed</code> is a function of the record. A person who knows or guesses the record can calculate
+        <code>rseed</code>, and then esk. With esk, that person can decrypt the note and its memo. Thus, a bound note to a
+        published address is public. For a public registry, this is the correct result.
+      </p>
+      <p>
+        To keep a bound note private, put a secret of 256 bits or more in the fields. Examples are the hash of a secret
+        key and a random blinding value.
+      </p>
+
+      <h2 id="cost">Cost</h2>
+      <ul>
+        <li>
+          <strong>Fee.</strong> A usual record transaction spends the tip and one funding note. It makes the new note and a
+          change note. That is two actions. The ZIP 317 fee for two actions is 10,000 zatoshis (0.0001 ZEC).
+        </li>
+        <li>
+          <strong>Wallets.</strong> Each wallet tries to decrypt each action on the chain. Keep the number of records
+          small. See <a href="../polite-actions/">Polite actions</a>.
+        </li>
+        <li>
+          <strong>Verifiers.</strong> One BLAKE2b hash and one Sinsemilla commitment for each note. The demo below does
+          this work in your browser.
+        </li>
+        <li>
+          <strong>Builders.</strong> The transaction builder must accept an <code>rseed</code> from its caller. The
+          <code>orchard</code> crate samples <code>rseed</code> at random. A patch adds
+          <code>add_output_with_rseed</code>. The patch is pending upstream. A PCZT (ZIP 374) carries a bound output in
+          its usual <code>rseed</code> field.
+        </li>
+      </ul>
+
+      <h2 id="spec">Spec</h2>
+      <p>
+        The full spec is a draft ZIP. It includes the binding domain rules, the amendment to ZIP 212, the lineage check
+        and the security analysis. This site will publish the draft after review.
+      </p>
+
+      <h2 id="demo">Demo: a timestamp registry</h2>
+      <p>
+        The registry proves that a document existed at a block height. Each stamp is a zero-value note to the registry
+        address.
+      </p>
+      <pre><code>D       "TimeStamp_v1____"
+kind    1 (stamp)
+fields  BLAKE2b-256("TimeStamp_doc_v1", document)
+prev    the cmx of the previous stamp</code></pre>
+      <p>
+        The demo uses the <code>orchard</code> crate, compiled to WebAssembly. The registry key is a demo key. The ρ of the
+        first stamp is a demo value. Each next stamp spends the previous stamp in the same action. Thus, its ρ is the
+        nullifier of the previous stamp.
+      </p>
+
+      <div class="demo" id="stamp-demo">
+        <label for="doc-input">Document</label>
+        <textarea id="doc-input" rows="3" spellcheck="false" disabled>Minutes of the first meeting</textarea>
+        <label for="pool-select">Pool</label>
+        <select id="pool-select" disabled>
+          <option value="ironwood">Ironwood (lead byte 0x03)</option>
+          <option value="orchard">Orchard (lead byte 0x02)</option>
+        </select>
+
+        <h3>Next stamp</h3>
+        <dl class="values" id="next-values"></dl>
+        <div class="actions">
+          <button type="button" id="stamp-button" disabled>Add the stamp to the chain</button>
+          <button type="button" id="reset-button" class="secondary" disabled>Clear the chain</button>
+        </div>
+
+        <h3>Chain</h3>
+        <ol class="chain" id="chain-list"></ol>
+        <p class="empty" id="chain-empty">The chain is empty. Add a stamp.</p>
+
+        <h3>Verify a stamp</h3>
+        <label for="verify-select">Stamp</label>
+        <select id="verify-select" disabled></select>
+        <label for="verify-input">Document</label>
+        <textarea id="verify-input" rows="3" spellcheck="false" disabled></textarea>
+        <dl class="values" id="verify-values"></dl>
+        <p class="result" id="verify-result"></p>
+
+        <p class="status" id="demo-status" role="status">The WASM module is loading.</p>
+      </div>
     </main>
     <footer>
       <p>

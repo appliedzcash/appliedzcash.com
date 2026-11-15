@@ -1,3 +1,4 @@
 demo/target/
 wasm/
 _site/
+.claude/

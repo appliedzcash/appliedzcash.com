@@ -110,7 +110,7 @@ CONTRIBUTING.md     how to propose a pattern
 
 ## Later
 
-- [ ] L6: Mark points appliedzcash.com at GitHub Pages and announces the site.
+- [ ] L6: Mark announces the site.
 - [ ] `/wishlist/`: ZIP 68, ZIP 231 memo bundles, ZSAs, and what each would unlock.
 - [ ] Case studies: Zodiac Markets after Mark clears it; ZcashNames after Julian agrees.
 - [ ] Link each spec page to its `zcash/zips` PR once one exists.
@@ -121,3 +121,4 @@ CONTRIBUTING.md     how to propose a pattern
 - [x] Nov 14: plan the site with Mark (this brief). Mark approved it as written.
 - [x] Nov 14: Mark created the `appliedzcash` org. The empty public repo is https://github.com/appliedzcash/appliedzcash.com, set as `origin`. First commit `84538ee` pushed to `main`.
 - [x] Nov 14: L0 skeleton. Home page, five pattern stubs, `styles/main.css` (light and dark), `scripts/wasm.js` loader, `demo/` crate (BLAKE2b-256 pipeline check, built to WASM), `pages.yml` workflow, `CONTRIBUTING.md` stub. Licenses still wait for Mark.
+- [x] Nov 14: L0 merged (appliedzcash/appliedzcash.com#1) and deployed. appliedzcash.com already points at Pages, so the site is live. Mark is fine with that.
