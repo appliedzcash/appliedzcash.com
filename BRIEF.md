@@ -108,12 +108,11 @@ CONTRIBUTING.md     how to propose a pattern
 - [ ] Mark reviews the wallet-native orders ZIP. Then add `/specs/wallet-native-orders/` (closes L3).
 - [ ] A cryptographer reviews the nested FROST construction. Until then the L5 page keeps its Experimental label.
 
-- [ ] Design roadmap (Nov 15 review: "paper, ink and one amber signal"). PR 2: mark, favicon, og card, sticky header, compact donate footer. PR 3: styled formulas and byte rulers, page header rhythm, callouts. PR 4: demo instrument frame, shared hex component, verdict cards; fix the memo meter (it counts characters, the label says bytes). PR 5: home hero, numbered cards, prev/next pager, SVG figures for the ASCII art. Pattern glyphs wait for Mark to approve a mockup.
+- [ ] Design roadmap (Nov 15 review: "paper, ink and one amber signal"). PR 3: styled formulas and byte rulers, page header rhythm, callouts. PR 4: demo instrument frame, shared hex component, verdict cards; fix the memo meter (it counts characters, the label says bytes). PR 5: home hero, numbered cards, prev/next pager, SVG figures for the ASCII art. Pattern glyphs wait for Mark to approve a mockup.
 
 ## Later
 
 - [ ] Vale in CI for STE: sentence length, passive voice, and a vocabulary from the ASD-STE100 approved-word list (free from ASD on request).
-- [ ] A favicon and an og:image, so shared links show a picture.
 - [ ] `/wishlist/`: ZIP 68, ZIP 231 memo bundles, ZSAs, and what each would unlock.
 - [ ] Case studies: Zodiac Markets after Mark clears it; ZcashNames after Julian agrees.
 - [ ] Link each spec page to its `zcash/zips` PR once one exists.
@@ -140,3 +139,4 @@ CONTRIBUTING.md     how to propose a pattern
 - [x] Nov 15: `set_canonical_pairing` in the pinned orchard fork (aphelionz/orchard `2e69445`) checked against the pairing ZIP rule by rule: it matches.
 - [x] Nov 15: Mark merged ShieldedLabs/zodiac#88: all four ZIP drafts trimmed, three moved to STE; decision markets gained an advisory report window D (VOID without a decision) and a fee allowance F at m x ZIP 317. Open source problems are listed in the PR description.
 - [x] Nov 15: design PR 1, foundations: paper and ink color tokens, an accent focus ring, a skip link, a serif display face (Source Serif 4) and a mono face (JetBrains Mono), both self-hosted under the OFL in `fonts/` (91 KB).
+- [x] Nov 15: design PR 2, identity and chrome: the sealed-note mark (Mark picked option A of four), `images/mark.svg` favicon, apple-touch-icon, one og card for all pages (`images/og.png`, large summary card), theme-color, a frosted sticky header with a GitHub link, and a compact donate card with a copy button (`scripts/site.js`).
