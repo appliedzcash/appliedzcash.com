@@ -4,7 +4,8 @@
 // ephemeral key and the 52-byte ciphertext prefix.
 const COMPACT_ACTION_BYTES = 148;
 
-// The root note (spend and output) and the fee input with its change.
+// The root note (spend and output) and the shielded fee note with its change. With a
+// transparent fee, the second action is padding: a bundle has two actions or more.
 const BASE_ACTIONS = 2;
 
 const $ = (id) => document.getElementById(id);

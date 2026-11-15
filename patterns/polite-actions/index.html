@@ -47,12 +47,15 @@ ciphertext prefix    52 bytes
                     148 bytes</code></pre>
       <p>
         The wallet tries to decrypt each action with each key that it holds. This is trial decryption. The compact block
-        drops the memo. Thus, for a light wallet:
+        drops the memo. Thus, in the compact-block scan:
       </p>
       <ul>
         <li>each action costs one trial decryption for each key, and 148 bytes of download;</li>
         <li>memo bytes are free.</li>
       </ul>
+      <p>
+        To read a memo, a wallet gets the full transaction. Only the wallets that read the record pay for its memo bytes.
+      </p>
       <p>The action count is the lever. An app that uses fewer actions makes the chain faster to scan for all wallets.</p>
 
       <h3>Techniques</h3>
@@ -63,14 +66,15 @@ ciphertext prefix    52 bytes
           one time for each epoch. Each user gets a leaf proof from the app and compares the leaf with the bound root.
         </li>
         <li>
-          <strong>Put records in the memo.</strong> A memo holds 512 bytes, and light wallets skip it. Put
+          <strong>Put records in the memo.</strong> A memo holds 512 bytes, and the compact-block scan skips it. Put
           the public record of the epoch in the memo of the root note. When the record is too long, add chunk notes to
           the same transaction. Bind a hash of the full record in the root note. Thus, the binding covers each chunk.
         </li>
         <li>
-          <strong>Use the free action.</strong> An Orchard-protocol bundle has two actions or more. The root note
-          (spend and output) fills one action. The fee input and its change fill the second action. Thus, a record that
-          fits in one memo costs two actions, and each chunk adds one action.
+          <strong>Use the free action.</strong> An Orchard-protocol bundle has two actions or more. The builder adds a
+          padding action to a bundle with one action. The root note (spend and output) fills one action. A fee from a
+          shielded note and its change fill the second action. With a transparent fee, the second action is padding.
+          Thus, a record that fits in one memo costs two actions, and each chunk adds one action.
         </li>
         <li>
           <strong>Use epochs.</strong> Collect the changes of a period in one transaction. A longer epoch makes fewer
@@ -112,7 +116,10 @@ ciphertext prefix    52 bytes
         <li><strong>One note per player:</strong> 2 actions for the root and the fee, plus 1 action for each changed player.</li>
         <li><strong>One note per epoch:</strong> 2 actions, plus 1 action for each chunk note.</li>
       </ul>
-      <p>The mainnet target block time is 75 seconds. Thus, the chain makes about 1,152 blocks each day.</p>
+      <p>
+        The calculator pays the fee from a shielded note. With a transparent fee, the per-player design uses one action
+        fewer. The mainnet target block time is 75 seconds. Thus, the chain makes about 1,152 blocks each day.
+      </p>
 
       <div class="demo" id="cost-demo">
         <label for="tx-input">Transactions each day</label>
@@ -151,9 +158,9 @@ ciphertext prefix    52 bytes
             </tr>
           </thead>
           <tbody>
-            <tr><td>One note per player, each block</td><td>25,344</td><td>3.75 MB</td></tr>
-            <tr><td>One note per epoch, each block</td><td>2,304</td><td>341 kB</td></tr>
-            <tr><td>One note per epoch, each 10 minutes</td><td>288</td><td>42.6 kB</td></tr>
+            <tr><th scope="row">One note per player, each block</th><td>25,344</td><td>3.75 MB</td></tr>
+            <tr><th scope="row">One note per epoch, each block</th><td>2,304</td><td>341 kB</td></tr>
+            <tr><th scope="row">One note per epoch, each 10 minutes</th><td>288</td><td>42.6 kB</td></tr>
           </tbody>
         </table>
       </div>
