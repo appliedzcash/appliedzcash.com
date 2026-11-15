@@ -97,8 +97,7 @@ CONTRIBUTING.md     how to propose a pattern
 ## Now
 
 - [ ] **Start here: Mark reviews `draft-bound-notes.md` for public release.** Also fix its Motivation claim "a note commitment appears once" (consensus enforces uniqueness for nullifiers only; the site page was corrected in PR #2). Ask Julian about the ZcashNames credit. Then add `/specs/bound-notes/` and link it from the page's Spec section. That closes L1.
-- [ ] Mark reads the L4 draft on local branch `l4-action-pairing` (unpushed): the page in 100% STE and a rebuild demo (a real canonical build on orchard 0.16 against a random standard build). Push when Mark says. The ZIP text and `/specs/action-pairing/` wait on his review.
-- [ ] Merge PR #5: donation address and QR in the footer.
+- [ ] Merge the L4 PR (canonical action pairing page and rebuild demo). Mark approved publishing the page on Nov 15. The ZIP text and `/specs/action-pairing/` wait on his review.
 - [ ] Mark turns on "Enforce HTTPS" for Pages (repo settings).
 - [ ] Mark picks licenses: code (MIT/Apache, like Zodiac) and page text (for example CC BY 4.0).
 
@@ -126,3 +125,4 @@ CONTRIBUTING.md     how to propose a pattern
 - [x] Nov 14: L1 page and demo merged (appliedzcash/appliedzcash.com#2). The page restates the mechanism and withholds the spec text; it names neither Zodiac nor ZcashNames. The demo is a timestamp registry on `orchard` 0.16 (both lead bytes) and replaces the home pipeline check. Copilot review fixed: cmx wording, fixed stamps, pool lock.
 - [x] Nov 14: L2 merged (appliedzcash/appliedzcash.com#3) and live: polite-actions page and scan-cost calculator for a toy scoreboard. ADR 5's general facts appear without Zodiac's name. Copilot review fixed: memo-cost scope, the padded second action, row headers.
 - [x] Nov 14: L3 merged (appliedzcash/appliedzcash.com#4) and live: wallet-native orders page in 100% STE and the toy-poll demo.
+- [x] Nov 15: donation address (Mark's Noir wallet, Mainnet UA) and its QR code in every footer (appliedzcash/appliedzcash.com#5).
