@@ -97,19 +97,20 @@ CONTRIBUTING.md     how to propose a pattern
 ## Now
 
 - [ ] **Start here: Mark reviews `draft-bound-notes.md` for public release.** Also fix its Motivation claim "a note commitment appears once" (consensus enforces uniqueness for nullifiers only; the site page was corrected in PR #2). Ask Julian about the ZcashNames credit. Then add `/specs/bound-notes/` and link it from the page's Spec section. That closes L1.
-- [ ] Mark reads the L3 draft on local branch `l3-wallet-native-orders` (unpushed): the page in 100% STE, plus a toy-poll demo (memo with MAC, ZIP 321 URI, QR code, Testnet Inbox). Push only after Mark clears the wallet-native orders ZIP.
+- [ ] Merge the L3 PR (wallet-native orders page and toy-poll demo). Mark approved publishing the page on Nov 14. The ZIP text itself still waits on his review, as does `/specs/wallet-native-orders/`.
 - [ ] Mark turns on "Enforce HTTPS" for Pages (repo settings).
 - [ ] Mark picks licenses: code (MIT/Apache, like Zodiac) and page text (for example CC BY 4.0).
 
 ## Soon
 
-- [ ] Mark reviews the wallet-native orders ZIP. Build L3.
+- [ ] Mark reviews the wallet-native orders ZIP. Then add `/specs/wallet-native-orders/` (closes L3).
 - [ ] Align Zodiac's `set_canonical_pairing` with its ZIP (Zodiac BRIEF, Soon). Mark reviews the ZIP. Build L4.
 - [ ] Mark clears the FROST material from the art market build. Build L5 with an "experimental" label until a cryptographer reviews the nested construction.
 
 ## Later
 
 - [ ] L6: Mark announces the site.
+- [ ] Vale in CI for STE: sentence length, passive voice, and a vocabulary from the ASD-STE100 approved-word list (free from ASD on request).
 - [ ] `/wishlist/`: ZIP 68, ZIP 231 memo bundles, ZSAs, and what each would unlock.
 - [ ] Case studies: Zodiac Markets after Mark clears it; ZcashNames after Julian agrees.
 - [ ] Link each spec page to its `zcash/zips` PR once one exists.
