@@ -9,6 +9,18 @@ export function setStatus(el, error) {
 const HEX = /^[0-9a-f]{16,}$/;
 const shown = new WeakMap(); // list -> Map(name -> last value), to mark changed groups
 
+// The fingerprint hue of a hex value: its first two bytes, as an angle from 0 to 360.
+const hue = (hex) => Math.round(parseInt(hex.slice(0, 4), 16) / 182);
+
+// A small color square for a hex value in a table cell. Equal values give equal squares.
+export function swatch(hex) {
+  const square = document.createElement("span");
+  square.className = "swatch";
+  square.setAttribute("aria-hidden", "true");
+  square.style.setProperty("--h", hue(hex));
+  return square;
+}
+
 // A hex value shows in groups of 8 characters, under a fingerprint bar: four colors from its
 // first bytes, so equal values look equal at a glance. Groups that changed since the last
 // render flash once. The spans add no characters, so a copy gives the clean value.
@@ -18,7 +30,7 @@ function hexValue(value, last) {
   bar.setAttribute("aria-hidden", "true");
   for (let i = 0; i < 4; i += 1) {
     const segment = document.createElement("span");
-    segment.style.setProperty("--h", Math.round(parseInt(value.slice(i * 4, i * 4 + 4), 16) / 182));
+    segment.style.setProperty("--h", hue(value.slice(i * 4)));
     bar.append(segment);
   }
   const code = document.createElement("code");

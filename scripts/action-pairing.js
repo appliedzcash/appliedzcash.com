@@ -2,7 +2,7 @@
 // cmx values with the previous build of the same mode and the same inputs.
 
 import { loadDemo } from "./wasm.js";
-import { setStatus } from "./values.js";
+import { setStatus, showValues, swatch } from "./values.js";
 
 const $ = (id) => document.getElementById(id);
 const keyInput = $("pkey-input");
@@ -27,16 +27,10 @@ const last = new Map();
 
 function show(bundle, mode) {
   title.textContent = `Bundle: ${mode} build`;
-  seedValues.replaceChildren();
-  const dt = document.createElement("dt");
-  dt.textContent = mode === "canonical" ? "Pairing seed d" : "Random seed";
-  const dd = document.createElement("dd");
-  const code = document.createElement("code");
-  code.textContent = bundle.seed;
-  dd.append(code);
-  seedValues.append(dt, dd);
+  showValues(seedValues, [[mode === "canonical" ? "Pairing seed d" : "Random seed", bundle.seed]]);
 
   const { spend_labels, nullifiers, output_labels, cmxs } = bundle;
+  const shownCmxs = [...body.querySelectorAll("tr")].map((row) => row.cells[4]?.querySelector("code")?.title);
   body.replaceChildren(
     ...cmxs.map((cmx, a) => {
       const row = document.createElement("tr");
@@ -45,10 +39,13 @@ function show(bundle, mode) {
         const cell = document.createElement(i === 0 ? "th" : "td");
         if (i === 0) cell.scope = "row";
         if (i === 2 || i === 4) {
+          const hex = i === 2 ? nullifiers[a] : cmx;
           const code = document.createElement("code");
           code.textContent = text;
-          code.title = i === 2 ? nullifiers[a] : cmx;
-          cell.append(code);
+          code.title = hex;
+          // A cmx that changed since the last build flashes once.
+          if (i === 4 && shownCmxs[a] !== undefined && shownCmxs[a] !== cmx) code.className = "changed";
+          cell.append(swatch(hex), code);
         } else {
           cell.textContent = text;
         }

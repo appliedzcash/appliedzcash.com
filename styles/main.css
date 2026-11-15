@@ -866,8 +866,19 @@ code.hex {
   overflow-wrap: normal;
 }
 
-code.hex .changed {
+code.hex .changed,
+.pairing-table code.changed {
   animation: changed 900ms ease-out;
+}
+
+.swatch {
+  display: inline-block;
+  width: 0.6rem;
+  height: 0.6rem;
+  margin-right: 0.4rem;
+  background: hsl(var(--h) 55% 50%);
+  border-radius: 2px;
+  vertical-align: -0.05em;
 }
 
 @keyframes changed {
@@ -877,7 +888,8 @@ code.hex .changed {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  code.hex .changed {
+  code.hex .changed,
+  .pairing-table code.changed {
     text-decoration: underline 1px var(--accent);
   }
 }
@@ -1504,7 +1516,8 @@ figure.hero-figure svg {
     color: Canvas;
   }
 
-  .fingerprint {
+  .fingerprint,
+  .swatch {
     display: none;
   }
 
