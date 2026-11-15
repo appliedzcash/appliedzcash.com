@@ -427,9 +427,12 @@ pre {
 .donate-qr img {
   display: block;
   border-radius: var(--radius);
+}
 
-.field-row-3 {
-  grid-template-columns: repeat(3, 1fr);
+@media (min-width: 32rem) {
+  .field-row-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 .pairing-table td,

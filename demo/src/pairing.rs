@@ -165,11 +165,42 @@ fn build(
     }
 
     let real_nfs: Vec<[u8; 32]> = (0..spends).map(|i| demo_value(b"spend", i)).collect();
-    let d = if canonical {
-        pairing_seed(&decode32(pairing_key_hex, "pairing key")?, ctx.as_bytes(), &real_nfs)
-    } else {
-        decode32(random, "random seed")?
-    };
+    let key = if canonical { Some(decode32(pairing_key_hex, "pairing key")?) } else { None };
+    let random = decode32(random, "random seed")?;
+
+    // Failed values: discard the build and repeat it with ctx || I2LEOSP_8(r), r = 1, 2, ...
+    // Each party that follows this rule gets the same bundle.
+    for r in 0..=u8::MAX {
+        let d = match key {
+            Some(key) => {
+                let mut ctx = ctx.as_bytes().to_vec();
+                if r > 0 {
+                    ctx.push(r);
+                }
+                pairing_seed(&key, &ctx, &real_nfs)
+            }
+            // A standard build draws a new random seed for each try.
+            None if r == 0 => random,
+            None => blake2b(SEED_PERSONAL, &[&random, &[r]]),
+        };
+        match attempt(&d, &real_nfs, outputs, actions) {
+            Ok(bundle) => return Ok(bundle),
+            Err(Failure::Retry) => continue,
+            Err(Failure::Fatal(error)) => return Err(error),
+        }
+    }
+    Err("All 256 tries failed.".into())
+}
+
+enum Failure {
+    /// A derived value failed: an esk of zero, or a note commitment of ⊥.
+    Retry,
+    Fatal(String),
+}
+
+fn attempt(d: &[u8; 32], real_nfs: &[[u8; 32]], outputs: u32, actions: u32) -> Result<Bundle, Failure> {
+    let d = *d;
+    let spends = real_nfs.len() as u32;
 
     // Real spends, then dummy spends from the PRF.
     let mut all_spends: Vec<Spend> = real_nfs
@@ -181,7 +212,7 @@ fn build(
         let fvk = pairing_key(&d, TAG_DUMMY_SPEND_KEY, i);
         let rho = to_base(&prf(&d, TAG_DUMMY_SPEND_RHO, i, 0));
         let rseed = left32(&prf(&d, TAG_DUMMY_SPEND_RSEED, i, 0));
-        let dummy = note(address(&fvk), rho, rseed).ok_or("A dummy note failed. Change the context.")?;
+        let dummy = note(address(&fvk), rho, rseed).ok_or(Failure::Retry)?;
         all_spends.push(Spend { label: format!("dummy spend {}", i + 1), nf: dummy.nullifier(&fvk).to_bytes() });
     }
 
@@ -209,14 +240,16 @@ fn build(
     if !distinct(all_spends.iter().map(|s| sort_key(0x00, &s.nf)).collect())
         || !distinct(all_outputs.iter().map(|o| sort_key(0x01, &o.rseed)).collect())
     {
-        return Err("Two sort keys are equal. Change the context.".into());
+        return Err(Failure::Fatal("Two sort keys are equal. The build fails.".into()));
     }
 
     // Action a: spend a and output a. The output takes ρ from the spend's nullifier.
     let mut cmxs = Vec::new();
     for (spend, output) in all_spends.iter().zip(&all_outputs) {
-        let rho = Rho::from_bytes(&spend.nf).into_option().ok_or("A nullifier is outside the field.")?;
-        let note = note(output.recipient, rho, output.rseed).ok_or("An output note failed. Change the context.")?;
+        let rho = Rho::from_bytes(&spend.nf)
+            .into_option()
+            .ok_or_else(|| Failure::Fatal("A nullifier is outside the field.".into()))?;
+        let note = note(output.recipient, rho, output.rseed).ok_or(Failure::Retry)?;
         cmxs.push(hex::encode(ExtractedNoteCommitment::from(note.commitment()).to_bytes()));
     }
 
