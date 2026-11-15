@@ -495,26 +495,150 @@ main > ol:not(.bytes) > li:not(:last-child)::after {
   }
 }
 
+/* Home: hero buttons and numbered cards. */
+.hero-sub,
+.section-intro {
+  color: var(--muted);
+}
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
+  margin: var(--space-4) 0 var(--space-5);
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding: 0 var(--space-4);
+  color: var(--surface);
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  font-weight: 600;
+  text-decoration: none;
+  transition: background-color 150ms;
+}
+
+.button:hover {
+  background: color-mix(in srgb, var(--accent) 88%, var(--text));
+}
+
+.button.secondary {
+  color: var(--accent);
+  background: transparent;
+  border-color: var(--line-strong);
+}
+
+.button.secondary:hover {
+  background: var(--accent-soft);
+}
+
 .pattern-list {
-  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+  gap: var(--space-3);
+  margin: var(--space-4) 0;
   padding: 0;
+  list-style: none;
+  counter-reset: card;
 }
 
 .pattern-list li {
-  margin: var(--space-3) 0;
-  padding: var(--space-3);
+  position: relative;
+  padding: var(--space-3) var(--space-3) var(--space-4);
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius);
+  counter-increment: card;
+  transition: border-color 150ms, transform 150ms, box-shadow 150ms;
+}
+
+.pattern-list li::before {
+  content: counter(card, decimal-leading-zero);
+  display: block;
+  margin-bottom: var(--space-2);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
 }
 
 .pattern-list a {
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 1.25rem;
   font-weight: 600;
+  text-decoration: none;
+}
+
+/* The whole card is the link. */
+.pattern-list a::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.pattern-list a:focus-visible {
+  outline: none;
+}
+
+.pattern-list li:hover,
+.pattern-list li:focus-within {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+}
+
+.pattern-list li:focus-within {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.pattern-list li::after {
+  content: "→";
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  color: var(--accent);
+  opacity: 0;
+  transition: opacity 150ms, transform 150ms;
+}
+
+.pattern-list li:hover::after {
+  opacity: 1;
+  transform: translateX(3px);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .pattern-list li:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 24px -18px rgb(0 0 0 / 45%);
+  }
 }
 
 .pattern-list p {
   margin: var(--space-1) 0 0;
   color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.tag {
+  display: inline-block;
+  margin-left: var(--space-1);
+  padding: 0 0.45rem;
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, var(--line));
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  vertical-align: 0.2em;
+}
+
+.pattern-list li:has(.tag) {
+  border-style: dashed;
 }
 
 /* Notices follow ASD-STE100: warning (danger to people or data), caution (danger to equipment), note. */
@@ -1156,4 +1280,77 @@ button.copy:hover {
 
 footer .licenses {
   font-size: 0.85rem;
+}
+
+/* Pager: the previous and next page, in the order of the home page. */
+.pager {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line);
+}
+
+.pager a {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color 150ms;
+}
+
+.pager a:hover {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+}
+
+.pager .next {
+  grid-column: 2;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.pager span {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.pager .prev span::before {
+  content: "← ";
+}
+
+.pager .next span::after {
+  content: " →";
+}
+
+.edit {
+  margin-top: var(--space-3);
+  font-size: 0.85rem;
+}
+
+.edit a {
+  color: var(--muted);
+}
+
+@media (max-width: 32rem) {
+  .pager {
+    grid-template-columns: 1fr;
+  }
+
+  .pager .next {
+    grid-column: 1;
+    align-items: flex-start;
+    text-align: left;
+  }
 }

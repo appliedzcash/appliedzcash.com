@@ -38,16 +38,19 @@
         An app on Zcash can attach data and rules to shielded notes. Anyone can use chain data to verify
         the data and the rules. We call this near-programmability.
       </p>
-      <p>
+      <p class="hero-sub">
         This site is for developers who look for smart contracts on Zcash. Its patterns operate with the consensus
-        rules of today.
+        rules of today. Each page has a live demo.
       </p>
-      <p>
-        Start with the basics. They show the parts of a usual shielded payment, and how a shop or an app receives one.
-        The patterns use these parts for near-programmability. Each page has a live demo.
+      <p class="buttons">
+        <a class="button" href="basics/concepts/">Start with the basics</a>
+        <a class="button secondary" href="#patterns">See the patterns</a>
       </p>
 
       <h2 id="basics">The basics</h2>
+      <p class="section-intro">
+        The parts of a usual shielded payment, and how a shop or an app receives one. The patterns use these parts.
+      </p>
       <ul class="pattern-list">
         <li>
           <a href="basics/concepts/">Concepts</a>
@@ -68,7 +71,7 @@
       </ul>
 
       <h2 id="patterns">Patterns</h2>
-      <p>
+      <p class="section-intro">
         Each pattern page gives the problem, the mechanism, the cost, the spec, a demo and a toy example.
       </p>
       <ul class="pattern-list">
@@ -89,8 +92,8 @@
           <p>Use a keyed sort to put the actions of a bundle in order. The order sets the pairs.</p>
         </li>
         <li>
-          <a href="patterns/threshold-keys/">Threshold keys</a>
-          <p>Give each app role one FROST group key. Any n of m members can sign for the role.</p>
+          <a href="patterns/threshold-keys/">Threshold keys</a> <span class="tag">Experimental</span>
+          <p>Give each app role one FROST group key. Any t of n members can sign for the role.</p>
         </li>
       </ul>
     </main>
