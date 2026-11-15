@@ -406,3 +406,25 @@ pre {
     margin-bottom: var(--space-2);
   }
 }
+
+.donate {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+  margin-top: var(--space-3);
+}
+
+.donate > div {
+  flex: 1 1 16rem;
+  min-width: 0;
+}
+
+.donate p {
+  margin: 0 0 var(--space-1);
+}
+
+.donate-qr img {
+  display: block;
+  border-radius: var(--radius);
+}
