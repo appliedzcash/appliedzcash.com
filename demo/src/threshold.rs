@@ -6,7 +6,8 @@
 //! FROST 2-of-2 key: `ak = ±([2]A_O − (A_G + [t]G))`, interpolated at zero over identifiers
 //! 1 (owner) and 2 (group).
 //!
-//! To sign, two members each commit to a nonce pair; the group's outer commitment is their
+//! To sign, two members each send the hash of their nonce commitments, then reveal them;
+//! each member checks every reveal against its hash. The group's outer commitment is their
 //! sum. Each member answers `z_j = d_j + ρ₂·e_j + λ₂·c·(±μ_j·σ_j)`, the coordinator checks
 //! each answer, sums them and adds `λ₂·c·(±t + α)` once. frost-core then aggregates the sum
 //! as identifier 2's share. This follows the nested FROST recipe of the `frostito` crate.
@@ -39,6 +40,9 @@ type Point = <PallasGroup as Group>::Element;
 
 const TWEAK_PERSONAL: &[u8; 16] = b"ToyKeys_tweak_v1";
 const MESSAGE_PERSONAL: &[u8; 16] = b"ToyKeys_msg_v1__";
+const SESSION_PERSONAL: &[u8; 16] = b"ToyKeys_sess_v1_";
+const NEST_PERSONAL: &[u8; 16] = b"ToyKeys_nest_v1_";
+const SET_PERSONAL: &[u8; 16] = b"ToyKeys_nset_v1_";
 
 const OWNER: u16 = 1;
 const GROUP: u16 = 2;
@@ -82,6 +86,42 @@ fn lagrange(j: u16, signers: &[u16]) -> Result<Scalar, String> {
         den *= o - x;
     }
     Ok(num * PallasScalarField::invert(&den).map_err(|_| "Two signers share an identifier.")?)
+}
+
+/// The hash a member sends before it reveals its commitments, so that no member can choose
+/// its nonces after it sees the nonces of the others.
+fn commitment_hash(session: &[u8; 32], j: u16, commitments: &SigningCommitments) -> Result<[u8; 32], String> {
+    let encoded = commitments.serialize().map_err(|_| "A commitment failed to encode.")?;
+    Ok(blake2b(NEST_PERSONAL, &[session.as_slice(), &j.to_le_bytes(), &encoded].concat()))
+}
+
+/// The digest of the commitment set: each chosen member and its hash. Each member signs it
+/// at reveal, so the coordinator shows one set to all members.
+fn set_digest(session: &[u8; 32], hashes: &BTreeMap<u16, [u8; 32]>) -> [u8; 32] {
+    let mut data = session.to_vec();
+    for (j, h) in hashes {
+        data.extend_from_slice(&j.to_le_bytes());
+        data.extend_from_slice(h);
+    }
+    blake2b(SET_PERSONAL, &data)
+}
+
+/// Each member's check at reveal: every revealed commitment matches the hash sent before it,
+/// and the set is exactly the hashed set.
+fn check_reveal(
+    session: &[u8; 32],
+    hashes: &BTreeMap<u16, [u8; 32]>,
+    revealed: &BTreeMap<u16, SigningCommitments>,
+) -> Result<(), String> {
+    if !hashes.keys().eq(revealed.keys()) {
+        return Err("The revealed set differs from the hashed set.".into());
+    }
+    for (j, c) in revealed {
+        if commitment_hash(session, *j, c)? != hashes[j] {
+            return Err(format!("The commitments of member {j} differ from its hash."));
+        }
+    }
+    Ok(())
 }
 
 /// The public side of the object key.
@@ -157,6 +197,8 @@ pub struct Threshold {
     pub owner_key: String,
     pub ak: String,
     pub negated: bool,
+    pub commitment_hashes: Vec<String>,
+    pub set_digest: String,
     pub alpha: String,
     pub rk: String,
     pub signature: String,
@@ -217,20 +259,33 @@ fn run(key_seed: &str, nonce_seed: &str, object_id: &str, signers: &[u16], messa
     let key = ObjectKey::derive(PallasGroup::generator() * owner_secret, group_key, t)?;
     let sighash: [u8; 32] = blake2b(MESSAGE_PERSONAL, message.as_bytes());
 
-    // Round 1: the owner and each chosen member commit to a nonce pair.
+    // Round 1: the owner and each chosen member make a nonce pair and its commitments.
     let mut rng = ChaCha20Rng::from_seed(seed(nonce_seed)?);
     let alpha = PallasScalarField::random(&mut rng);
+    let mut session_seed = [0u8; 32];
+    rand_core::RngCore::fill_bytes(&mut rng, &mut session_seed);
+    let session: [u8; 32] = blake2b(SESSION_PERSONAL, &[sighash, session_seed].concat());
     let owner_share = SigningShare::deserialize(&scalar_bytes(&owner_secret)).map_err(|_| "The owner share is invalid.")?;
     let (owner_nonces, owner_commit) = frost::round1::commit(&owner_share, &mut rng);
     let mut nonces: BTreeMap<u16, SigningNonces> = BTreeMap::new();
-    let mut revealed: BTreeMap<u16, SigningCommitments> = BTreeMap::new();
+    let mut commitments: BTreeMap<u16, SigningCommitments> = BTreeMap::new();
     for &j in &signers {
         let share = SigningShare::deserialize(&scalar_bytes(&member_secret(j)?)).map_err(|_| "A share is invalid.")?;
         let (n, c) = frost::round1::commit(&share, &mut rng);
         nonces.insert(j, n);
-        revealed.insert(j, c);
+        commitments.insert(j, c);
     }
-    // The group's outer commitment: the sum of the members' commitments.
+
+    // Inside the group: each member first sends the hash of its commitments.
+    let hashes: BTreeMap<u16, [u8; 32]> =
+        commitments.iter().map(|(j, c)| Ok((*j, commitment_hash(&session, *j, c)?))).collect::<Result<_, String>>()?;
+    let digest = set_digest(&session, &hashes);
+    // Then each member reveals its commitments. Each member checks every commitment against
+    // its hash before it continues.
+    let revealed = commitments;
+    check_reveal(&session, &hashes, &revealed)?;
+
+    // The group's outer commitment: the sum of the revealed commitments.
     let (mut hiding, mut binding) = (PallasGroup::identity(), PallasGroup::identity());
     for c in revealed.values() {
         hiding += c.hiding().value();
@@ -292,6 +347,8 @@ fn run(key_seed: &str, nonce_seed: &str, object_id: &str, signers: &[u16], messa
         owner_key: hex::encode(bytes(&key.owner)?),
         ak: hex::encode(bytes(&key.ak)?),
         negated: key.negated,
+        commitment_hashes: hashes.iter().map(|(j, h)| format!("member {j}: {}", hex::encode(h))).collect(),
+        set_digest: hex::encode(digest),
         alpha: hex::encode(scalar_bytes(&alpha)),
         rk: hex::encode(bytes(&rk)?),
         signature: hex::encode(signature_bytes),
@@ -320,6 +377,19 @@ mod tests {
         }
         // Both key signs occur, so the negation path runs.
         assert_eq!(seen, [true, true]);
+    }
+
+    #[test]
+    fn a_changed_reveal_fails_its_hash() {
+        let mut rng = ChaCha20Rng::from_seed([7; 32]);
+        let share = SigningShare::deserialize(&scalar_bytes(&PallasScalarField::random(&mut rng))).unwrap();
+        let (_, first) = frost::round1::commit(&share, &mut rng);
+        let (_, second) = frost::round1::commit(&share, &mut rng);
+        let session = [1; 32];
+        let hashes = BTreeMap::from([(1, commitment_hash(&session, 1, &first).unwrap())]);
+        assert!(check_reveal(&session, &hashes, &BTreeMap::from([(1, first)])).is_ok());
+        assert!(check_reveal(&session, &hashes, &BTreeMap::from([(1, second)])).is_err());
+        assert!(check_reveal(&session, &hashes, &BTreeMap::from([(2, first)])).is_err());
     }
 
     #[test]

@@ -54,6 +54,8 @@ function run(demo, sign) {
     ]);
     if (sign) {
       showValues(signValues, [
+        ...out.commitment_hashes.map((line, i) => [i === 0 ? "Commitment hashes" : "", line]),
+        ["Commitment set digest", out.set_digest],
         ["Randomizer α", out.alpha],
         ["rk = ak + [α]G", out.rk],
         ["Signature", out.signature],
