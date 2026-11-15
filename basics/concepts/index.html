@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Zcash concepts for app developers | Applied Zcash</title>
+    <meta name="description" content="The parts of a shielded Zcash payment: notes, pools, actions, memos, keys, addresses and trial decryption. The demo shows the receivers in a unified address." />
+    <link rel="canonical" href="https://appliedzcash.com/basics/concepts/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Applied Zcash" />
+    <meta property="og:title" content="Zcash concepts for app developers" />
+    <meta property="og:description" content="The parts of a shielded Zcash payment: notes, pools, actions, memos, keys, addresses and trial decryption. The demo shows the receivers in a unified address." />
+    <meta property="og:url" content="https://appliedzcash.com/basics/concepts/" />
+    <meta name="twitter:card" content="summary" />
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Concepts", "description": "The parts of a shielded Zcash payment: notes, pools, actions, memos, keys, addresses and trial decryption. The demo shows the receivers in a unified address.", "url": "https://appliedzcash.com/basics/concepts/", "inLanguage": "en", "about": "Zcash", "isPartOf": {"@type": "WebSite", "name": "Applied Zcash", "url": "https://appliedzcash.com/"}}</script>
+    <link rel="stylesheet" href="../../styles/main.css" />
+    <script type="module" src="../../scripts/concepts.js"></script>
+  </head>
+  <body>
+    <header>
+      <a class="site-name" href="../../">Applied Zcash</a>
+      <nav><a href="../../#basics">Basics</a> <a href="../../#patterns">Patterns</a></nav>
+    </header>
+    <main>
+      <p class="kicker">Basic</p>
+      <h1>Concepts</h1>
+      <p class="lede">
+        A shielded payment has a small set of parts: notes, actions, memos, keys and addresses. This page gives each part
+        in a few lines. All other pages use these words.
+      </p>
+
+      <h2 id="notes">Notes</h2>
+      <p>
+        A note holds value. Each note has a recipient, a value and a random seed <code>rseed</code>. The chain keeps a
+        commitment to the note, <code>cmx</code>. The commitment keeps the recipient and the value secret.
+      </p>
+      <p>
+        A wallet spends a note with its nullifier. Consensus accepts each nullifier one time. Thus, each note can be
+        spent one time only.
+      </p>
+
+      <h2 id="pools">Pools</h2>
+      <p>A pool is a set of notes with one protocol. Zcash has these pools:</p>
+      <dl class="terms">
+        <dt>Ironwood</dt>
+        <dd>The newest shielded pool. It uses the Orchard protocol. Use it for new apps.</dd>
+        <dt>Orchard</dt>
+        <dd>The first pool of the Orchard protocol. The Ironwood pool replaces it.</dd>
+        <dt>Sapling</dt>
+        <dd>An older shielded pool.</dd>
+        <dt>Transparent</dt>
+        <dd>A public pool. All values and addresses are visible, as in Bitcoin.</dd>
+      </dl>
+      <p>This site uses the Orchard protocol. The pages say "Ironwood pool" when the pool is important.</p>
+
+      <h2 id="actions">Actions and bundles</h2>
+      <p>
+        An action holds one spend and one output. A bundle holds the actions of one transaction in one pool. A bundle has
+        two actions or more. The builder adds dummy spends and dummy outputs to fill the actions.
+      </p>
+      <p>Outsiders see the number of actions. The real spends and outputs stay secret.</p>
+
+      <h2 id="memos">Memos</h2>
+      <p>
+        Each output carries a memo of 512 bytes. The memo is in the note ciphertext. The recipient can read the memo. The
+        sender can read it with the outgoing viewing key. ZIP 302 sets the format. A text memo is UTF-8 text.
+      </p>
+      <p>A transparent address has no memo.</p>
+
+      <h2 id="keys">Keys</h2>
+      <p>One seed gives all the keys of a wallet. Each key in this list comes from the key above it, and has less power.</p>
+      <div class="table-wrap">
+        <table class="cost-table capability-table">
+          <thead>
+            <tr><th scope="col">Key</th><th scope="col">Spend</th><th scope="col">See payments in</th><th scope="col">See payments out</th><th scope="col">Make addresses</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Spending key</th><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+            <tr><th scope="row">Full viewing key</th><td>No</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+            <tr><th scope="row">Incoming viewing key</th><td>No</td><td>Yes</td><td>No</td><td>Yes</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>See <a href="../watch-only-keys/">Watch-only keys</a>.</p>
+
+      <h2 id="addresses">Addresses</h2>
+      <p>
+        An address tells a wallet where to send a note. A unified address (ZIP 316) holds one receiver for each pool that
+        the recipient accepts. The wallet of the sender selects the best receiver.
+      </p>
+      <p>
+        One key gives many addresses. Only the holder of a viewing key can link these addresses. See
+        <a href="../address-per-customer/">Address per customer</a>.
+      </p>
+
+      <h2 id="trial-decryption">Trial decryption</h2>
+      <p>
+        The chain keeps the recipient of each note secret. Thus, a wallet must try to decrypt each action with its
+        incoming viewing key. This is trial decryption. Each action on the chain adds work for each wallet. See
+        <a href="../../patterns/polite-actions/">Polite actions</a>.
+      </p>
+
+      <h2 id="payment-requests">Payment requests</h2>
+      <p>
+        ZIP 321 sets a URI for a payment request. The URI holds the address, the amount and the memo. A wallet reads the
+        URI from a link or a QR code. See <a href="../payment-links/">Payment links</a>.
+      </p>
+
+      <h2 id="demo">Demo: look into an address</h2>
+      <p>
+        Type or paste a Zcash address. The demo decodes it with the <code>zcash_address</code> crate, compiled to
+        WebAssembly. It shows the network, the receivers and the memo support. The first address is the donation address
+        of this site.
+      </p>
+
+      <div class="demo" id="inspect-demo">
+        <label for="address-input">Address</label>
+        <textarea id="address-input" rows="3" spellcheck="false" disabled>u1j8gmxccf6g59x2er94h7ym959ehr7dmavhsk5vu9lu3wmtltffcwdlc7pa32mj0dxtrcans43hr6sl8d3w4mhn6klxry4w3kz6lkzwphvthrhwak506ah6fzmxzlsaeu7ghky3xcq23nt6fhwrnwc8rtupggntn4hfhjprfxtvaz6nkx</textarea>
+        <div class="actions">
+          <button type="button" class="secondary" data-example="u1j8gmxccf6g59x2er94h7ym959ehr7dmavhsk5vu9lu3wmtltffcwdlc7pa32mj0dxtrcans43hr6sl8d3w4mhn6klxry4w3kz6lkzwphvthrhwak506ah6fzmxzlsaeu7ghky3xcq23nt6fhwrnwc8rtupggntn4hfhjprfxtvaz6nkx" disabled>Donation address</button>
+          <button type="button" class="secondary" data-example="t1Hsc1LR8yKnbbe3twRp88p6vFfC5t7DLbs" disabled>Transparent address</button>
+        </div>
+
+        <h3>Parts</h3>
+        <dl class="values" id="address-values"></dl>
+
+        <p class="status" id="demo-status" role="status">The WASM module is loading.</p>
+      </div>
+    </main>
+    <footer>
+      <p>
+        Applied Zcash is a community site. Anyone can propose a pattern. The
+        <a href="https://github.com/appliedzcash/appliedzcash.com">source</a> is on GitHub.
+      </p>
+      <div class="donate">
+        <a class="donate-qr" href="zcash:u1j8gmxccf6g59x2er94h7ym959ehr7dmavhsk5vu9lu3wmtltffcwdlc7pa32mj0dxtrcans43hr6sl8d3w4mhn6klxry4w3kz6lkzwphvthrhwak506ah6fzmxzlsaeu7ghky3xcq23nt6fhwrnwc8rtupggntn4hfhjprfxtvaz6nkx">
+          <img src="../../images/donate-qr.svg" alt="QR code of the donation address" width="112" height="112" />
+        </a>
+        <div>
+          <p><strong>Support this site.</strong> Send ZEC to this shielded address:</p>
+          <p><a href="zcash:u1j8gmxccf6g59x2er94h7ym959ehr7dmavhsk5vu9lu3wmtltffcwdlc7pa32mj0dxtrcans43hr6sl8d3w4mhn6klxry4w3kz6lkzwphvthrhwak506ah6fzmxzlsaeu7ghky3xcq23nt6fhwrnwc8rtupggntn4hfhjprfxtvaz6nkx"><code>u1j8gmxccf6g59x2er94h7ym959ehr7dmavhsk5vu9lu3wmtltffcwdlc7pa32mj0dxtrcans43hr6sl8d3w4mhn6klxry4w3kz6lkzwphvthrhwak506ah6fzmxzlsaeu7ghky3xcq23nt6fhwrnwc8rtupggntn4hfhjprfxtvaz6nkx</code></a></p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

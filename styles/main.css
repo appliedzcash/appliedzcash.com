@@ -71,6 +71,11 @@ header .site-name {
   text-decoration: none;
 }
 
+header nav {
+  display: flex;
+  gap: var(--space-3);
+}
+
 header nav a {
   color: var(--muted);
 }
@@ -470,4 +475,8 @@ pre {
 .demo .signers input {
   width: auto;
   margin: 0;
+}
+
+.capability-table td {
+  text-align: center;
 }

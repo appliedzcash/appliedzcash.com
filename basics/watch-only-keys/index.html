@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Watch-only keys: Zcash viewing keys for servers | Applied Zcash</title>
+    <meta name="description" content="Give a Zcash server a viewing key: it sees payments and makes addresses, and the spending key stays offline. The demo derives a UFVK and a UIVK from a seed." />
+    <link rel="canonical" href="https://appliedzcash.com/basics/watch-only-keys/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Applied Zcash" />
+    <meta property="og:title" content="Watch-only keys: Zcash viewing keys for servers" />
+    <meta property="og:description" content="Give a Zcash server a viewing key: it sees payments and makes addresses, and the spending key stays offline. The demo derives a UFVK and a UIVK from a seed." />
+    <meta property="og:url" content="https://appliedzcash.com/basics/watch-only-keys/" />
+    <meta name="twitter:card" content="summary" />
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Watch-only keys", "description": "Give a Zcash server a viewing key: it sees payments and makes addresses, and the spending key stays offline. The demo derives a UFVK and a UIVK from a seed.", "url": "https://appliedzcash.com/basics/watch-only-keys/", "inLanguage": "en", "about": "Zcash", "isPartOf": {"@type": "WebSite", "name": "Applied Zcash", "url": "https://appliedzcash.com/"}}</script>
+    <link rel="stylesheet" href="../../styles/main.css" />
+    <script type="module" src="../../scripts/watch-only-keys.js"></script>
+  </head>
+  <body>
+    <header>
+      <a class="site-name" href="../../">Applied Zcash</a>
+      <nav><a href="../../#basics">Basics</a> <a href="../../#patterns">Patterns</a></nav>
+    </header>
+    <main>
+      <p class="kicker">Basic</p>
+      <h1>Watch-only keys</h1>
+      <p class="lede">
+        A server that receives payments needs a viewing key only. The viewing key shows the payments and makes new
+        addresses. The spending key stays offline.
+      </p>
+
+      <h2 id="use">Use</h2>
+      <ul>
+        <li>a shop server that marks orders as paid;</li>
+        <li>an accountant or an auditor who reads the payments of an account;</li>
+        <li>a public dashboard of the donations to a project.</li>
+      </ul>
+
+      <h2 id="mechanism">Mechanism</h2>
+      <pre><code>seed ──ZIP 32──→ spending key ──→ full viewing key ──→ incoming viewing key
+                  spend             see in and out        see in
+                                    make addresses        make addresses</code></pre>
+      <p>
+        Each key comes from the key on its left. The derivation goes in one direction only. Thus, each step removes a
+        power:
+      </p>
+      <div class="table-wrap">
+        <table class="cost-table capability-table">
+          <thead>
+            <tr><th scope="col">Key</th><th scope="col">Spend</th><th scope="col">See payments in</th><th scope="col">See payments out</th><th scope="col">Make addresses</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Spending key</th><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+            <tr><th scope="row">Full viewing key (UFVK)</th><td>No</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+            <tr><th scope="row">Incoming viewing key (UIVK)</th><td>No</td><td>Yes</td><td>No</td><td>Yes</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        ZIP 316 encodes a viewing key as a unified key, like a unified address. A UFVK starts with <code>uview1</code>. A
+        UIVK starts with <code>uivk1</code>. On Testnet, the prefixes end in <code>test1</code>.
+      </p>
+      <p>Select the smallest key for each task:</p>
+      <ol>
+        <li>Keep the seed and the spending key in an offline wallet or a hardware wallet.</li>
+        <li>Give the shop server the UIVK. The server makes addresses and finds payments.</li>
+        <li>Give an auditor the UFVK. The auditor also sees the payments out of the account.</li>
+      </ol>
+
+      <h2 id="limits">Limits</h2>
+      <ul>
+        <li>
+          <strong>All or nothing.</strong> A viewing key shows all the past and future payments of the account. To show
+          one payment only, use a payment disclosure (ZIP 311, draft).
+        </li>
+        <li>
+          <strong>Permanent access.</strong> A key that you give out stays valid. To stop new access, move the funds to a
+          new account. The old key still shows the old payments.
+        </li>
+        <li>
+          <strong>Balances.</strong> The UIVK sees each note in. The full viewing key also sees each spend. A balance
+          needs the full viewing key.
+        </li>
+      </ul>
+
+      <h2 id="demo">Demo: one seed, three keys</h2>
+      <p>
+        The demo uses the <code>orchard</code> and <code>zcash_address</code> crates, compiled to WebAssembly. It derives
+        the keys of account 0 on Testnet from the seed. It then makes address 0 two times: from the spending key, and from
+        the UIVK only. The first seed is the seed of the demo shop on the other basics pages.
+      </p>
+      <div class="notice">
+        <p>
+          <strong>WARNING:</strong> Type only demo seeds here. A seed gives full control of its funds. Keep real seeds in
+          a wallet.
+        </p>
+      </div>
+
+      <div class="demo" id="keys-demo">
+        <label for="seed-input">Seed, 32 bytes or more, hex</label>
+        <input id="seed-input" type="text" autocomplete="off" spellcheck="false" disabled />
+        <div class="actions">
+          <button type="button" id="random-button" disabled>Make a random seed</button>
+          <button type="button" id="shop-button" class="secondary" disabled>Use the demo shop seed</button>
+        </div>
+
+        <h3>Keys</h3>
+        <dl class="values" id="key-values"></dl>
+        <p class="result" id="address-result"></p>
+
+        <p class="status" id="demo-status" role="status">The WASM module is loading.</p>
+      </div>
+    </main>
+    <footer>
+      <p>
+        Applied Zcash is a community site. Anyone can propose a pattern. The
+        <a href="https://github.com/appliedzcash/appliedzcash.com">source</a> is on GitHub.
+      </p>
+      <div class="donate">
+        <a class="donate-qr" href="zcash:u1j8gmxccf6g59x2er94h7ym959ehr7dmavhsk5vu9lu3wmtltffcwdlc7pa32mj0dxtrcans43hr6sl8d3w4mhn6klxry4w3kz6lkzwphvthrhwak506ah6fzmxzlsaeu7ghky3xcq23nt6fhwrnwc8rtupggntn4hfhjprfxtvaz6nkx">
+          <img src="../../images/donate-qr.svg" alt="QR code of the donation address" width="112" height="112" />
+        </a>
+        <div>
+          <p><strong>Support this site.</strong> Send ZEC to this shielded address:</p>
+          <p><a href="zcash:u1j8gmxccf6g59x2er94h7ym959ehr7dmavhsk5vu9lu3wmtltffcwdlc7pa32mj0dxtrcans43hr6sl8d3w4mhn6klxry4w3kz6lkzwphvthrhwak506ah6fzmxzlsaeu7ghky3xcq23nt6fhwrnwc8rtupggntn4hfhjprfxtvaz6nkx"><code>u1j8gmxccf6g59x2er94h7ym959ehr7dmavhsk5vu9lu3wmtltffcwdlc7pa32mj0dxtrcans43hr6sl8d3w4mhn6klxry4w3kz6lkzwphvthrhwak506ah6fzmxzlsaeu7ghky3xcq23nt6fhwrnwc8rtupggntn4hfhjprfxtvaz6nkx</code></a></p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

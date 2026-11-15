@@ -2,6 +2,7 @@
 // document and values. The pool locks while the chain holds stamps, so every stamp shares one version.
 
 import { loadDemo } from "./wasm.js";
+import { showValues } from "./values.js";
 
 const GENESIS_PREV = "00".repeat(32);
 
@@ -20,20 +21,6 @@ const verifyResult = $("verify-result");
 const status = $("demo-status");
 
 const chain = []; // { text, stamp }
-
-function showValues(list, rows) {
-  list.replaceChildren(
-    ...rows.flatMap(([name, value]) => {
-      const dt = document.createElement("dt");
-      dt.textContent = name;
-      const dd = document.createElement("dd");
-      const code = document.createElement("code");
-      code.textContent = value;
-      dd.append(code);
-      return [dt, dd];
-    }),
-  );
-}
 
 const ironwood = () => poolSelect.value === "ironwood";
 

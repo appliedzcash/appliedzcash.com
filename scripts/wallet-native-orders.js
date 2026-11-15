@@ -2,6 +2,7 @@
 // The WASM module writes the memo with its MAC, the ZIP 321 URI, and the QR code.
 
 import { loadDemo } from "./wasm.js";
+import { showValues } from "./values.js";
 
 const $ = (id) => document.getElementById(id);
 const keyInput = $("key-input");
@@ -19,20 +20,6 @@ const randomHex = (bytes) =>
 
 let nonce = randomHex(4);
 
-function showValues(rows) {
-  values.replaceChildren(
-    ...rows.flatMap(([name, value]) => {
-      const dt = document.createElement("dt");
-      dt.textContent = name;
-      const dd = document.createElement("dd");
-      const code = document.createElement("code");
-      code.textContent = value;
-      dd.append(code);
-      return [dt, dd];
-    }),
-  );
-}
-
 try {
   const demo = await loadDemo();
   const update = () => {
@@ -44,7 +31,7 @@ try {
         Number(expiryInput.value) >>> 0,
         commandsInput.value,
       );
-      showValues([
+      showValues(values, [
         ["Inbox", order.inbox],
         ["Memo", order.memo],
         ["Memo length", `${order.memo.length} bytes of 512`],
