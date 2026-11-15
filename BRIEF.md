@@ -108,7 +108,7 @@ CONTRIBUTING.md     how to propose a pattern
 - [ ] Mark reviews the wallet-native orders ZIP. Then add `/specs/wallet-native-orders/` (closes L3).
 - [ ] A cryptographer reviews the nested FROST construction. Until then the L5 page keeps its Experimental label.
 
-- [ ] Design roadmap (Nov 15 review: "paper, ink and one amber signal"). PR 3: styled formulas and byte rulers, page header rhythm, callouts. PR 4: demo instrument frame, shared hex component, verdict cards; fix the memo meter (it counts characters, the label says bytes). PR 5: home hero, numbered cards, prev/next pager, SVG figures for the ASCII art. Pattern glyphs wait for Mark to approve a mockup.
+- [ ] Design roadmap (Nov 15 review: "paper, ink and one amber signal"). PR 4: demo instrument frame, shared hex component, verdict cards; fix the memo meter (it counts characters, the label says bytes). PR 5: home hero, numbered cards, prev/next pager, SVG figures for the ASCII art. Pattern glyphs wait for Mark to approve a mockup.
 
 ## Later
 
@@ -140,3 +140,4 @@ CONTRIBUTING.md     how to propose a pattern
 - [x] Nov 15: Mark merged ShieldedLabs/zodiac#88: all four ZIP drafts trimmed, three moved to STE; decision markets gained an advisory report window D (VOID without a decision) and a fee allowance F at m x ZIP 317. Open source problems are listed in the PR description.
 - [x] Nov 15: design PR 1, foundations: paper and ink color tokens, an accent focus ring, a skip link, a serif display face (Source Serif 4) and a mono face (JetBrains Mono), both self-hosted under the OFL in `fonts/` (91 KB).
 - [x] Nov 15: design PR 2, identity and chrome: the sealed-note mark (Mark picked option A of four), `images/mark.svg` favicon, apple-touch-icon, one og card for all pages (`images/og.png`, large summary card), theme-color, a frosted sticky header with a GitHub link, and a compact donate card with a copy button (`scripts/site.js`).
+- [x] Nov 15: design PR 3, reading: formula blocks, byte rulers (bound notes, polite actions), captioned demo parameters, typed notices (warning, caution, note), ids and hover anchors on all headings, step circles on procedure lists, and Cost as a card grid. The fact strip and section numbers were left out.

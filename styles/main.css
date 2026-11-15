@@ -260,13 +260,229 @@ code {
   overflow-wrap: anywhere;
 }
 
+main :not(pre) > code {
+  padding: 0.1em 0.35em;
+  background: var(--surface-2);
+  border-radius: 0.3rem;
+}
+
+.demo code,
+.bytes code {
+  padding: 0;
+  background: none;
+}
+
+.bytes code {
+  overflow-wrap: normal;
+  white-space: nowrap;
+}
+
 pre {
   overflow-x: auto;
-  padding: var(--space-3);
+  margin: var(--space-4) 0;
+  padding: 1.25rem;
   background: var(--surface-2);
+  border-radius: 0.625rem;
+  font-size: 0.8rem;
+  line-height: 1.55;
+  tab-size: 2;
+}
+
+pre code {
+  font-size: inherit;
+}
+
+/* A one-line definition: no box, an accent rule on the left. */
+pre.formula {
+  padding: var(--space-2) var(--space-4);
+  background: none;
+  border-left: 2px solid var(--accent);
+  border-radius: 0;
+  font-size: 0.9rem;
+}
+
+figure.code {
+  margin: var(--space-4) 0;
+}
+
+figure.code pre {
+  margin: 0;
+}
+
+figure.code figcaption,
+.notice .notice-title {
+  margin-bottom: var(--space-2);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Byte ruler: one cell for each field, width set by its byte count (--n). */
+.bytes {
+  display: flex;
+  margin: var(--space-3) 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  overflow: hidden;
+  font-size: 0.85rem;
+}
+
+.bytes li {
+  display: flex;
+  flex: var(--n, 24) 1 0;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 6.5rem;
+  padding: var(--space-2) var(--space-3);
+  background: var(--surface);
+}
+
+.bytes li + li {
+  border-left: 1px solid var(--line-strong);
+}
+
+.bytes li.var {
+  background: repeating-linear-gradient(135deg, var(--surface) 0 6px, var(--surface-2) 6px 12px);
+}
+
+.bytes span,
+.bytes-total,
+.bytes-note {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.bytes-total {
+  margin-top: calc(-1 * var(--space-2));
+  font-family: var(--font-mono);
+  text-align: right;
+}
+
+.bytes-note {
+  margin-top: calc(-1 * var(--space-2));
+}
+
+/* Procedure lists: numbered circles on a thin rail. */
+main > ol:not(.bytes) {
+  counter-reset: step;
+  padding-left: 0;
+  list-style: none;
+}
+
+main > ol[start="5"] {
+  counter-reset: step 4;
+}
+
+main > ol:not(.bytes) > li {
+  position: relative;
+  padding: 0 0 var(--space-3) 2.5rem;
+  counter-increment: step;
+}
+
+main > ol:not(.bytes) > li::before {
+  content: counter(step);
+  position: absolute;
+  top: 0.1em;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: 1.6rem;
+  height: 1.6rem;
+  color: var(--accent);
+  background: var(--bg);
+  border: 1.5px solid var(--accent);
+  border-radius: 50%;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+main > ol:not(.bytes) > li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 1.9em;
+  bottom: 0.2em;
+  left: calc(0.8rem - 0.5px);
+  border-left: 1px solid var(--line-strong);
+}
+
+/* Cost: a grid of labelled cards. */
+#cost + ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: var(--space-3);
+  padding: 0;
+  list-style: none;
+}
+
+#cost + ul > li {
+  padding: var(--space-3);
+  background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  line-height: 1.5;
+  font-size: 0.95rem;
+  text-wrap: wrap;
+}
+
+#cost + ul > li > strong:first-child {
+  display: block;
+  margin-bottom: var(--space-1);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Heading anchors (added by scripts/site.js). */
+.anchor {
+  margin-left: 0.35em;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-weight: 400;
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity 150ms;
+}
+
+:is(h2, h3):hover .anchor,
+.anchor:focus-visible {
+  opacity: 1;
+}
+
+@media (max-width: 32rem) {
+  pre:not(.formula),
+  figure.code {
+    margin-inline: calc(-1 * var(--space-3));
+  }
+
+  pre:not(.formula) {
+    border-radius: 0;
+  }
+
+  figure.code figcaption {
+    padding-inline: var(--space-3);
+  }
+
+  .bytes {
+    flex-direction: column;
+  }
+
+  .bytes li {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .bytes li + li {
+    border-top: 1px solid var(--line-strong);
+    border-left: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -300,11 +516,31 @@ pre {
   color: var(--muted);
 }
 
+/* Notices follow ASD-STE100: warning (danger to people or data), caution (danger to equipment), note. */
 .notice {
+  --c: var(--muted);
+  margin: var(--space-4) 0;
   padding: var(--space-3);
-  background: var(--accent-soft);
-  border-left: 3px solid var(--accent);
+  background: color-mix(in srgb, var(--c) 8%, var(--bg));
+  border: 1px solid color-mix(in srgb, var(--c) 35%, var(--line));
   border-radius: var(--radius);
+}
+
+.notice.warning {
+  --c: var(--bad);
+}
+
+.notice.caution {
+  --c: var(--accent);
+}
+
+.notice .notice-title {
+  color: var(--c);
+  font-weight: 600;
+}
+
+.notice p + p {
+  margin-top: var(--space-1);
 }
 
 .demo {

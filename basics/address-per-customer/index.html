@@ -92,9 +92,10 @@ incoming viewing key ── dk ───────────┴──── 
         The demo uses the <code>orchard</code> crate, compiled to WebAssembly. It makes addresses of the demo shop key from
         a first index. Copy an address into the second field. The shop key finds the index of the address.
       </p>
-      <div class="notice">
+      <div class="notice caution">
+        <p class="notice-title">Caution</p>
         <p>
-          <strong>CAUTION:</strong> The demo shop uses Testnet. Its seed is 32 bytes of 0x07, in the public source of this
+          The demo shop uses Testnet. Its seed is 32 bytes of 0x07, in the public source of this
           site. Do not send real funds to it.
         </p>
       </div>
@@ -111,10 +112,10 @@ incoming viewing key ── dk ───────────┴──── 
           </div>
         </div>
 
-        <h3>Addresses</h3>
+        <h3 id="addresses">Addresses</h3>
         <dl class="values" id="address-values"></dl>
 
-        <h3>Find the customer</h3>
+        <h3 id="find-the-customer">Find the customer</h3>
         <label for="find-input">Address of a payment</label>
         <textarea id="find-input" rows="3" spellcheck="false" disabled></textarea>
         <p class="result" id="find-result"></p>

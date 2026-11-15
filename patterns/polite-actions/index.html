@@ -55,12 +55,13 @@
       <p>
         A light wallet downloads compact blocks. A compact block keeps about 148 bytes of each Orchard-protocol action:
       </p>
-      <pre><code>nullifier            32 bytes
-cmx                  32 bytes
-ephemeral key        32 bytes
-ciphertext prefix    52 bytes
-                    ─────────
-                    148 bytes</code></pre>
+      <ol class="bytes">
+        <li style="--n: 32"><code>nullifier</code> <span>32 bytes</span></li>
+        <li style="--n: 32"><code>cmx</code> <span>32 bytes</span></li>
+        <li style="--n: 32"><code>ephemeral key</code> <span>32 bytes</span></li>
+        <li style="--n: 52"><code>ciphertext prefix</code> <span>52 bytes</span></li>
+      </ol>
+      <p class="bytes-total">Total: 148 bytes</p>
       <p>
         The wallet tries to decrypt each action with each key that it holds. This is trial decryption. The compact block
         drops the memo. Thus, in the compact-block scan:
@@ -74,7 +75,7 @@ ciphertext prefix    52 bytes
       </p>
       <p>The action count is the lever. An app that uses fewer actions makes the chain faster to scan for all wallets.</p>
 
-      <h3>Techniques</h3>
+      <h3 id="techniques">Techniques</h3>
       <ol>
         <li>
           <strong>Put user state in leaves.</strong> Put the state of each user in a leaf of a Merkle tree. Bind the root
@@ -101,19 +102,19 @@ ciphertext prefix    52 bytes
       <h2 id="cost">Cost</h2>
       <ul>
         <li>
-          <strong>Proof delivery.</strong> Each user must get leaf proofs from the app. A leaf proof is about
+          <strong>Proof delivery</strong> Each user must get leaf proofs from the app. A leaf proof is about
           32 × log₂(N) bytes for N users. If the app holds back a proof, the user must wait. The user can see the delay.
         </li>
         <li>
-          <strong>Privacy.</strong> The result is better privacy. With one note for each user, the action count shows how
+          <strong>Privacy</strong> The result is better privacy. With one note for each user, the action count shows how
           many users changed in each epoch. With leaves, the action count stays the same.
         </li>
         <li>
-          <strong>Payouts.</strong> A payment to a user wallet is one action for each payment. The user must receive a
+          <strong>Payouts</strong> A payment to a user wallet is one action for each payment. The user must receive a
           usual note, so this cost stays.
         </li>
         <li>
-          <strong>Proving.</strong> Fewer actions make faster transaction builds.
+          <strong>Proving</strong> Fewer actions make faster transaction builds.
         </li>
       </ul>
 
@@ -162,7 +163,7 @@ ciphertext prefix    52 bytes
         <p class="result" id="cost-result" role="status"></p>
       </div>
 
-      <h3>Example results</h3>
+      <h3 id="example-results">Example results</h3>
       <p>Each row has 20 changed players in each transaction, and no chunk notes.</p>
       <div class="table-wrap">
         <table class="cost-table">

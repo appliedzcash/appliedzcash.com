@@ -72,11 +72,14 @@ recipient, value, ρ, ψ, rcm ──→ NoteCommit ──→ cmx (on the chain)<
         <li>The app encodes the record as bytes. These bytes are the fields.</li>
         <li>The app calculates <code>rseed</code>:</li>
       </ol>
-      <pre><code>rseed = BLAKE2b-256(D, kind ‖ len(fields) ‖ fields ‖ prev)
-
-kind         1 byte
-len(fields)  8 bytes, little-endian
-prev         32 bytes: the cmx of the predecessor, or 32 zero bytes</code></pre>
+      <pre class="formula"><code>rseed = BLAKE2b-256(D, kind ‖ len(fields) ‖ fields ‖ prev)</code></pre>
+      <ol class="bytes">
+        <li style="--n: 1"><code>kind</code> <span>1 byte</span></li>
+        <li style="--n: 8"><code>len(fields)</code> <span>8 bytes</span></li>
+        <li class="var"><code>fields</code> <span>any length</span></li>
+        <li style="--n: 32"><code>prev</code> <span>32 bytes</span></li>
+      </ol>
+      <p class="bytes-note"><code>len(fields)</code> is little-endian. <code>prev</code> is the cmx of the predecessor, or 32 zero bytes.</p>
       <ol start="5">
         <li>
           The wallet builds a usual Orchard-protocol output with this <code>rseed</code>. ZIP 212 and ZIP 2005 calculate
@@ -88,7 +91,7 @@ prev         32 bytes: the cmx of the predecessor, or 32 zero bytes</code></pre>
         hash.
       </p>
 
-      <h3>Chains</h3>
+      <h3 id="chains">Chains</h3>
       <p>
         A chain is a sequence of bound notes. The first note is the genesis note. Each note after it is the successor of
         the note before it. <code>prev</code> is the <code>cmx</code> of the predecessor. For the genesis note,
@@ -99,7 +102,7 @@ prev         32 bytes: the cmx of the predecessor, or 32 zero bytes</code></pre>
         transaction at most extends each tip. The chain is an append-only record.
       </p>
 
-      <h3>Verification</h3>
+      <h3 id="verification">Verification</h3>
       <p>
         A verifier knows the recipient address, the value, the lead byte of the note plaintext and the record. The verifier
         reads <code>nf_old</code> and <code>cmx</code> from the action. Then the verifier:
@@ -117,14 +120,14 @@ prev         32 bytes: the cmx of the predecessor, or 32 zero bytes</code></pre>
         and finds it in the transaction of the successor. An app with a public chain publishes its full viewing key.
       </p>
 
-      <h3>Authority</h3>
+      <h3 id="authority">Authority</h3>
       <p>
         Anyone can send a bound note to a published address. Thus, each app must define which notes count. This rule is
         sufficient: the app pins a genesis note by its transaction ID and <code>cmx</code>. A note counts only if it
         descends from that genesis note. A false note costs its sender a fee, and the record stays the same.
       </p>
 
-      <h3>Privacy</h3>
+      <h3 id="privacy">Privacy</h3>
       <p>
         <code>rseed</code> is a function of the record. A person who knows or guesses the record can calculate
         <code>rseed</code>, and then esk. With esk, that person can decrypt the note and its memo. Thus, a bound note to a
@@ -138,19 +141,19 @@ prev         32 bytes: the cmx of the predecessor, or 32 zero bytes</code></pre>
       <h2 id="cost">Cost</h2>
       <ul>
         <li>
-          <strong>Fee.</strong> A usual record transaction spends the tip and one funding note. It makes the new note and a
+          <strong>Fee</strong> A usual record transaction spends the tip and one funding note. It makes the new note and a
           change note. That is two actions. The ZIP 317 fee for two actions is 10,000 zatoshis (0.0001 ZEC).
         </li>
         <li>
-          <strong>Wallets.</strong> Each wallet tries to decrypt each action on the chain. Keep the number of records
+          <strong>Wallets</strong> Each wallet tries to decrypt each action on the chain. Keep the number of records
           small. See <a href="../polite-actions/">Polite actions</a>.
         </li>
         <li>
-          <strong>Verifiers.</strong> One BLAKE2b hash and one Sinsemilla commitment for each note. The demo below does
+          <strong>Verifiers</strong> One BLAKE2b hash and one Sinsemilla commitment for each note. The demo below does
           this work in your browser.
         </li>
         <li>
-          <strong>Builders.</strong> The transaction builder must accept an <code>rseed</code> from its caller. The
+          <strong>Builders</strong> The transaction builder must accept an <code>rseed</code> from its caller. The
           <code>orchard</code> crate samples <code>rseed</code> at random. A patch adds
           <code>add_output_with_rseed</code>. The patch is pending upstream. A PCZT (ZIP 374) carries a bound output in
           its usual <code>rseed</code> field.
@@ -168,10 +171,13 @@ prev         32 bytes: the cmx of the predecessor, or 32 zero bytes</code></pre>
         The registry proves that a document existed at a block height. Each stamp is a zero-value note to the registry
         address.
       </p>
-      <pre><code>D       "TimeStamp_v1____"
+      <figure class="code">
+        <figcaption>Demo parameters</figcaption>
+        <pre><code>D       "TimeStamp_v1____"
 kind    1 (stamp)
 fields  BLAKE2b-256("TimeStamp_doc_v1", document)
 prev    the cmx of the previous stamp</code></pre>
+      </figure>
       <p>
         The demo uses the <code>orchard</code> crate, compiled to WebAssembly. The registry key is a demo key. The ρ of the
         first stamp is a demo value. Each next stamp spends the previous stamp in the same action. Thus, its ρ is the
@@ -187,18 +193,18 @@ prev    the cmx of the previous stamp</code></pre>
           <option value="orchard">Orchard (lead byte 0x02)</option>
         </select>
 
-        <h3>Next stamp</h3>
+        <h3 id="next-stamp">Next stamp</h3>
         <dl class="values" id="next-values"></dl>
         <div class="actions">
           <button type="button" id="stamp-button" disabled>Add the stamp to the chain</button>
           <button type="button" id="reset-button" class="secondary" disabled>Clear the chain</button>
         </div>
 
-        <h3>Chain</h3>
+        <h3 id="chain">Chain</h3>
         <ol class="chain" id="chain-list"></ol>
         <p class="empty" id="chain-empty">The chain is empty. Add a stamp.</p>
 
-        <h3>Verify a stamp</h3>
+        <h3 id="verify-a-stamp">Verify a stamp</h3>
         <label for="verify-select">Stamp</label>
         <select id="verify-select" disabled></select>
         <label for="verify-input">Document</label>

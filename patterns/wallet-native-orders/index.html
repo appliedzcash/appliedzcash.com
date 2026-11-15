@@ -64,7 +64,7 @@
       </ul>
 
       <h2 id="mechanism">Mechanism</h2>
-      <h3>Roles</h3>
+      <h3 id="roles">Roles</h3>
       <dl class="terms">
         <dt>Operator</dt>
         <dd>The service that runs the app. It receives orders and publishes the result.</dd>
@@ -80,7 +80,7 @@
         <dd>A one-time code of 8 digits. It moves <code>k_i</code> to one page.</dd>
       </dl>
 
-      <h3>Sequence</h3>
+      <h3 id="sequence">Sequence</h3>
       <pre><code>participant                page                          operator
      │                        │                               │
   1  ├── join: payout address ───────────────────────────────→ │ i, k_i
@@ -92,7 +92,7 @@
   7  ├── payment to the Inbox ──────────────────────────────→ │ status of each note
   8  │ ←──────────────────── payout to the payout address ───── ┤</code></pre>
 
-      <h3>Join</h3>
+      <h3 id="join">Join</h3>
       <ol>
         <li>The participant gives the operator a payout address with an Orchard receiver.</li>
         <li>The operator gives the participant a number <code>i</code>.</li>
@@ -106,7 +106,7 @@
         welcome can carry funds for the first orders.
       </p>
 
-      <h3>Sign-in</h3>
+      <h3 id="sign-in">Sign-in</h3>
       <ol>
         <li>The page makes a 32-byte secret <code>s</code> and keeps it.</li>
         <li>The page sends the hash of <code>s</code> to the operator.</li>
@@ -125,7 +125,7 @@
         request carries the new hash and the payout address.
       </p>
 
-      <h3>Order memo</h3>
+      <h3 id="order-memo">Order memo</h3>
       <p>The page writes each order as one line of printable ASCII:</p>
       <pre><code>memo = scheme " r=" round " t=" i " n=" nonce " x=" expiry
        " | " command [" | " command]… " | mac=" mac
@@ -140,7 +140,7 @@ mac     MAC_k_i(P_mac, all bytes before " | mac="), 8 bytes, hex</code></pre>
         <code>P_mac</code>. The memo is a ZIP 302 text memo of 512 bytes or fewer.
       </p>
 
-      <h3>Payment request</h3>
+      <h3 id="payment-request">Payment request</h3>
       <p>
         For each memo, the page makes a ZIP 321 payment request with one payment: the Inbox, the order amount and the
         memo. The page shows the request as a QR code. The page also shows the URI, the address and the memo for copy.
@@ -150,12 +150,12 @@ mac     MAC_k_i(P_mac, all bytes before " | mac="), 8 bytes, hex</code></pre>
         only when the participant asks for it.
       </p>
 
-      <h3>Windows and status</h3>
+      <h3 id="windows-and-status">Windows and status</h3>
       <p>
         The rules set a lag <code>c</code> in blocks. Epoch <code>e</code> closes at height <code>H_e</code>. Epoch
         <code>e</code> counts the Inbox notes at heights <code>h</code> with:
       </p>
-      <pre><code>H_(e-1) - c  &lt;  h  ≤  H_e - c</code></pre>
+      <pre class="formula"><code>H_(e-1) - c  &lt;  h  ≤  H_e - c</code></pre>
       <p>
         Each Inbox note is in one window. Anyone who knows the close heights can calculate each window. A reorg of fewer
         than <code>c</code> blocks keeps each closed window the same.
@@ -186,7 +186,7 @@ mac     MAC_k_i(P_mac, all bytes before " | mac="), 8 bytes, hex</code></pre>
         controls their own nonces.
       </p>
 
-      <h3>Record and disclosure</h3>
+      <h3 id="record-and-disclosure">Record and disclosure</h3>
       <p>
         For each window, the operator publishes a leaf list. Each leaf is the <code>cmx</code> of one Inbox note and its
         status code. The operator puts the Merkle root of the list in the record of the epoch, for example in a
@@ -202,7 +202,7 @@ mac     MAC_k_i(P_mac, all bytes before " | mac="), 8 bytes, hex</code></pre>
       </ol>
       <p>The disclosure opens one note only. The other notes of the wallet stay secret.</p>
 
-      <h3>Payout</h3>
+      <h3 id="payout">Payout</h3>
       <p>
         After the round, the operator pays the final balance of each participant to the payout address from the join.
       </p>
@@ -210,26 +210,27 @@ mac     MAC_k_i(P_mac, all bytes before " | mac="), 8 bytes, hex</code></pre>
       <h2 id="cost">Cost</h2>
       <ul>
         <li>
-          <strong>Each order.</strong> The order amount and the network fee. A usual shielded payment with change has two
+          <strong>Each order</strong> The order amount and the network fee. A usual shielded payment with change has two
           actions. The ZIP 317 fee for two actions is 10,000 zatoshis.
         </li>
         <li>
-          <strong>Wallets.</strong> Each order is one transaction on the chain. Put several commands in one memo. See
+          <strong>Wallets</strong> Each order is one transaction on the chain. Put several commands in one memo. See
           <a href="../polite-actions/">Polite actions</a>.
         </li>
         <li>
-          <strong>Sign-in on a new device.</strong> One code request. Its amount pays for the code note and its part of the
+          <strong>Sign-in on a new device</strong> One code request. Its amount pays for the code note and its part of the
           epoch transaction.
         </li>
         <li>
-          <strong>Wallet support.</strong> ZIP 321 with memos. The wallet must send the memo bytes unchanged.
+          <strong>Wallet support</strong> ZIP 321 with memos. The wallet must send the memo bytes unchanged.
         </li>
       </ul>
 
       <h2 id="limits">Limits</h2>
-      <div class="notice">
+      <div class="notice warning">
+        <p class="notice-title">Warning</p>
         <p>
-          <strong>WARNING:</strong> The operator knows <code>k_i</code>. Thus, the operator can make a false order. Use
+          The operator knows <code>k_i</code>. Thus, the operator can make a false order. Use
           this pattern only for apps with small stakes, for example credits. Apps with real stakes need signatures from
           the wallet of the participant.
         </p>
@@ -266,19 +267,23 @@ mac     MAC_k_i(P_mac, all bytes before " | mac="), 8 bytes, hex</code></pre>
 
       <h2 id="demo">Demo: a toy poll</h2>
       <p>A toy poll uses this scheme:</p>
-      <pre><code>scheme   toypoll1
+      <figure class="code">
+        <figcaption>Demo parameters</figcaption>
+        <pre><code>scheme   toypoll1
 command  "q" question SP answer
          question 1 to 9, answer YES or NO
 limit    9 commands in each memo
 amount   1,000 zatoshis (0.00001 ZEC)
 P_mac    "ToyPoll_ordmac_1"</code></pre>
+      </figure>
       <p>
         The demo uses Rust compiled to WebAssembly. It writes the memo, calculates the MAC, makes the ZIP 321 URI and draws
         the QR code. The session key and the nonce are random values from your browser.
       </p>
-      <div class="notice">
+      <div class="notice caution">
+        <p class="notice-title">Caution</p>
         <p>
-          <strong>CAUTION:</strong> The Inbox is a Testnet address. Its key is in the public source of this site. A wallet
+          The Inbox is a Testnet address. Its key is in the public source of this site. A wallet
           on Testnet can pay the request, but the operator is only a demo.
         </p>
       </div>
@@ -304,7 +309,7 @@ q3 NO</textarea>
           <button type="button" id="key-button" class="secondary" disabled>Make a new session key</button>
         </div>
 
-        <h3>Order</h3>
+        <h3 id="order">Order</h3>
         <dl class="values" id="order-values"></dl>
         <div class="qr" id="order-qr"></div>
 

@@ -51,7 +51,7 @@
       </p>
 
       <h2 id="mechanism">Mechanism</h2>
-      <pre><code>zcash:address?amount=ZEC&amp;memo=base64url&amp;label=text&amp;message=text</code></pre>
+      <pre class="formula"><code>zcash:address?amount=ZEC&amp;memo=base64url&amp;label=text&amp;message=text</code></pre>
       <dl class="terms">
         <dt><code>address</code></dt>
         <dd>The address of the recipient. Use a shielded address.</dd>
@@ -113,9 +113,10 @@
         The demo uses the <code>zip321</code> crate, compiled to WebAssembly. It writes the URI and draws the QR code. The
         address is address 0 of the demo shop on the other basics pages.
       </p>
-      <div class="notice">
+      <div class="notice caution">
+        <p class="notice-title">Caution</p>
         <p>
-          <strong>CAUTION:</strong> The demo shop address is a Testnet address. Its seed is in the public source of this
+          The demo shop address is a Testnet address. Its seed is in the public source of this
           site. Do not send real funds to it.
         </p>
       </div>
@@ -144,7 +145,7 @@
           </div>
         </div>
 
-        <h3>Link</h3>
+        <h3 id="link">Link</h3>
         <dl class="values" id="link-values"></dl>
         <div class="qr" id="link-qr"></div>
 

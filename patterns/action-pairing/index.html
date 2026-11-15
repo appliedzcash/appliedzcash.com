@@ -75,7 +75,7 @@ real nfs      ─┘           │
                                                          │
                                        ρ of output a = nf of spend a ─→ cmx</code></pre>
 
-      <h3>Inputs</h3>
+      <h3 id="inputs">Inputs</h3>
       <p>Each party that builds or examines the bundle uses the same inputs:</p>
       <ul>
         <li>the pairing key <code>k</code>, a 32-byte secret;</li>
@@ -86,16 +86,16 @@ real nfs      ─┘           │
         <li>the lead byte of the note plaintext.</li>
       </ul>
 
-      <h3>Steps</h3>
+      <h3 id="steps">Steps</h3>
       <ol>
         <li>
           Sort the nullifiers of the <code>m</code> real spends. Calculate the pairing seed:
-          <pre><code>d = BLAKE2b-256("Zcash_PairingSd_",
+          <pre class="formula"><code>d = BLAKE2b-256("Zcash_PairingSd_",
       k ‖ len(ctx) ‖ ctx ‖ m ‖ nf_1 ‖ … ‖ nf_m)</code></pre>
         </li>
         <li>
           Use <code>d</code> as the key of a PRF. Each value has a tag byte <code>t</code> and an index <code>i</code>:
-          <pre><code>PRF_d(t, i, c) = BLAKE2b-512("Zcash_PairingPRF", d ‖ t ‖ i ‖ c)</code></pre>
+          <pre class="formula"><code>PRF_d(t, i, c) = BLAKE2b-512("Zcash_PairingPRF", d ‖ t ‖ i ‖ c)</code></pre>
           <code>c</code> is a counter. It increases only when a value is invalid, for example a spending key.
         </li>
         <li>Make <code>n − m</code> dummy spends of value zero. The PRF gives the spending key, ρ and <code>rseed</code> of each dummy spend.</li>
@@ -103,7 +103,7 @@ real nfs      ─┘           │
         <li>Make the dummy outputs of value zero. The PRF gives the recipient and the <code>rseed</code> of each dummy output.</li>
         <li>
           Calculate a keyed sort key for each spend and each output:
-          <pre><code>key_spend = BLAKE2b-256("Zcash_PairingOrd", d ‖ 0x00 ‖ nf)
+          <pre class="formula"><code>key_spend = BLAKE2b-256("Zcash_PairingOrd", d ‖ 0x00 ‖ nf)
 key_out   = BLAKE2b-256("Zcash_PairingOrd", d ‖ 0x01 ‖ rseed)</code></pre>
         </li>
         <li>Sort the spends and the outputs by their keys. Action <code>a</code> holds spend <code>a</code> and output <code>a</code>.</li>
@@ -115,14 +115,14 @@ key_out   = BLAKE2b-256("Zcash_PairingOrd", d ‖ 0x01 ‖ rseed)</code></pre>
         same bundle.
       </p>
 
-      <h3>Values that stay random</h3>
+      <h3 id="values-that-stay-random">Values that stay random</h3>
       <p>
         The value commitment trapdoor, the spend authorization randomizer, the proof and some outgoing ciphertexts stay
         random. Nullifiers and note commitments are independent of these values. Thus, two canonical builds have different
         transaction IDs. They spend the same notes, so the chain can mine one of them only.
       </p>
 
-      <h3>Scope</h3>
+      <h3 id="scope">Scope</h3>
       <p>
         The pattern is for bundles with <code>enableCrossAddress = 1</code>, in practice Ironwood-pool bundles. For other
         bundles, ZIP 2006 sets the pairs by expanded receiver.
@@ -130,14 +130,14 @@ key_out   = BLAKE2b-256("Zcash_PairingOrd", d ‖ 0x01 ‖ rseed)</code></pre>
 
       <h2 id="cost">Cost</h2>
       <ul>
-        <li><strong>Chain.</strong> Zero. A canonical bundle has the same size and the same fee as a standard bundle.</li>
-        <li><strong>Build.</strong> A small number of BLAKE2b hashes for each action, and one sort.</li>
+        <li><strong>Chain</strong> Zero. A canonical bundle has the same size and the same fee as a standard bundle.</li>
+        <li><strong>Build</strong> A small number of BLAKE2b hashes for each action, and one sort.</li>
         <li>
-          <strong>Builders.</strong> The builder must accept a pairing key and a context. The <code>orchard</code> crate
+          <strong>Builders</strong> The builder must accept a pairing key and a context. The <code>orchard</code> crate
           pairs at random. A fork of the crate implements this pattern, and an upstream PR is pending.
         </li>
         <li>
-          <strong>PCZT.</strong> The Constructor role makes the canonical build. A signer with <code>k</code> can build the
+          <strong>PCZT</strong> The Constructor role makes the canonical build. A signer with <code>k</code> can build the
           bundle again and compare <code>nf</code>, <code>cmx</code> and <code>epk</code> of each action before it signs.
         </li>
       </ul>

@@ -39,9 +39,10 @@
         Give each app role one FROST group key. Any <code>t</code> of <code>n</code> members can sign for the role. The
         chain sees one usual spend signature.
       </p>
-      <div class="notice">
+      <div class="notice warning">
+        <p class="notice-title">Warning</p>
         <p>
-          <strong>WARNING:</strong> FROST on the Ironwood pool is unaudited, and ZIP 312 is a draft. The nested
+          FROST on the Ironwood pool is unaudited, and ZIP 312 is a draft. The nested
           construction on this page needs review by a cryptographer. Use it on Testnet only.
         </p>
       </div>
@@ -69,7 +70,7 @@ object id ──→ public tweak t ─────┤
                                                     ├─ 2-of-2 ──→ ak ──→ address of the object
 owner share A_O ────────────────────────────────────┘</code></pre>
 
-      <h3>1. One group key for each role</h3>
+      <h3 id="1-one-group-key-for-each-role">1. One group key for each role</h3>
       <ol>
         <li>The <code>n</code> members of a role make a FROST key over RedPallas (ZIP 312). Use a distributed key generation (DKG). Then no person holds the full secret.</li>
         <li>The group key is the <code>ak</code> of the role account. Each role has its own <code>ak</code>, nullifier key and commit-ivk randomness.</li>
@@ -81,9 +82,9 @@ owner share A_O ─────────────────────�
         changes the members and keeps the group key.
       </p>
 
-      <h3>2. A public tweak for each object</h3>
+      <h3 id="2-a-public-tweak-for-each-object">2. A public tweak for each object</h3>
       <p>Some apps need one key for each object: each title, each deed, each account. A public tweak gives each object its own key:</p>
-      <pre><code>t          = ToScalar(BLAKE2b-512(domain, object id))
+      <pre class="formula"><code>t          = ToScalar(BLAKE2b-512(domain, object id))
 object key = A_G + [t]G</code></pre>
       <ul>
         <li>Anyone can calculate the object key from the group key and the object ID.</li>
@@ -92,13 +93,13 @@ object key = A_G + [t]G</code></pre>
         <li>To sign for an object, the group adds <code>t</code> to its secret. The coordinator adds the public term one time.</li>
       </ul>
 
-      <h3>3. A group inside a 2-of-2 key</h3>
+      <h3 id="3-a-group-inside-a-2-of-2-key">3. A group inside a 2-of-2 key</h3>
       <p>
         An object can need two parties: an owner and a group. For example, the owner moves the object, and the group
         examines each move for the rules of the app. Make a FROST 2-of-2 key. The owner is identifier 1. The group is
         identifier 2:
       </p>
-      <pre><code>ak = ±([2]A_O − (A_G + [t]G))</code></pre>
+      <pre class="formula"><code>ak = ±([2]A_O − (A_G + [t]G))</code></pre>
       <p>
         The coefficients 2 and −1 come from Lagrange interpolation at zero over identifiers 1 and 2. Orchard requires an
         <code>ak</code> with sign bit 0. When the sign bit is 1, both sides negate their shares.
@@ -109,7 +110,7 @@ object key = A_G + [t]G</code></pre>
         <li>The outer commitment of the group is the sum of the member commitments.</li>
         <li>
           Each member calculates its answer from the outer round:
-          <pre><code>z_j = d_j + ρ₂·e_j + λ₂·c·(±μ_j·σ_j)</code></pre>
+          <pre class="formula"><code>z_j = d_j + ρ₂·e_j + λ₂·c·(±μ_j·σ_j)</code></pre>
           ρ₂, <code>c</code> and λ₂ are the binding factor, the challenge and the Lagrange coefficient of identifier 2.
           μ<sub>j</sub> is the Lagrange coefficient of the member in the group. σ<sub>j</sub> is the share of the member.
         </li>
@@ -124,10 +125,10 @@ object key = A_G + [t]G</code></pre>
 
       <h2 id="cost">Cost</h2>
       <ul>
-        <li><strong>Chain.</strong> Zero. The spend has one usual RedPallas signature. To outsiders, it looks like a spend with one key.</li>
-        <li><strong>Rounds.</strong> Two FROST rounds. A nested group adds one hash round before the commitments.</li>
-        <li><strong>Liveness.</strong> <code>t</code> members must be online for each spend.</li>
-        <li><strong>Keygen.</strong> One DKG for each role. A new object uses its public tweak, with zero keygen.</li>
+        <li><strong>Chain</strong> Zero. The spend has one usual RedPallas signature. To outsiders, it looks like a spend with one key.</li>
+        <li><strong>Rounds</strong> Two FROST rounds. A nested group adds one hash round before the commitments.</li>
+        <li><strong>Liveness</strong> <code>t</code> members must be online for each spend.</li>
+        <li><strong>Keygen</strong> One DKG for each role. A new object uses its public tweak, with zero keygen.</li>
       </ul>
 
       <h2 id="limits">Limits</h2>
@@ -155,15 +156,15 @@ object key = A_G + [t]G</code></pre>
         <div class="actions">
           <button type="button" id="keys-button" disabled>Make new keys</button>
         </div>
-        <h3>1. Keygen</h3>
+        <h3 id="1-keygen">1. Keygen</h3>
         <dl class="values" id="keygen-values"></dl>
 
-        <h3>2. Object key</h3>
+        <h3 id="2-object-key">2. Object key</h3>
         <label for="object-input">Deed ID</label>
         <input id="object-input" type="text" value="deed 0001" autocomplete="off" spellcheck="false" disabled />
         <dl class="values" id="object-values"></dl>
 
-        <h3>3. Sign</h3>
+        <h3 id="3-sign">3. Sign</h3>
         <fieldset class="signers" id="signers" disabled>
           <legend>Guard members who sign</legend>
           <label><input type="checkbox" value="1" checked /> Member 1</label>
