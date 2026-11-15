@@ -480,3 +480,7 @@ pre {
 .capability-table td {
   text-align: center;
 }
+
+footer .licenses {
+  font-size: 0.85rem;
+}

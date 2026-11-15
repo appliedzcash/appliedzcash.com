@@ -3,6 +3,7 @@ name = "demo"
 version = "0.1.0"
 edition = "2021"
 publish = false
+license = "0BSD"
 description = "In-browser demos for appliedzcash.com, built to WASM"
 
 [lib]

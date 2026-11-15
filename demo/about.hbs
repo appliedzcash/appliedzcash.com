@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Third-party notices | Applied Zcash</title>
+    <meta name="robots" content="noindex" />
+    <link rel="stylesheet" href="../styles/main.css" />
+  </head>
+  <body>
+    <header>
+      <a class="site-name" href="../">Applied Zcash</a>
+    </header>
+    <main>
+      <p class="kicker">Notices</p>
+      <h1>Third-party notices</h1>
+      <p>
+        The demo file <code>wasm/demo_bg.wasm</code> includes the crates below. Each crate keeps its own license. This
+        page gives the license text and the crates that use it. CI makes this page from <code>demo/Cargo.lock</code>.
+      </p>
+      <h2>Licenses</h2>
+      <ul>
+        {{#each overview}}
+        <li><a href="#{{id}}">{{name}}</a>: {{count}}</li>
+        {{/each}}
+      </ul>
+      {{#each licenses}}
+      <h2 id="{{id}}">{{name}}</h2>
+      <ul>
+        {{#each used_by}}
+        <li><a href="{{#if crate.repository}}{{crate.repository}}{{else}}https://crates.io/crates/{{crate.name}}{{/if}}">{{crate.name}} {{crate.version}}</a></li>
+        {{/each}}
+      </ul>
+      <pre>{{text}}</pre>
+      {{/each}}
+    </main>
+  </body>
+</html>

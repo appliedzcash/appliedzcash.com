@@ -36,12 +36,16 @@ jobs:
         working-directory: demo
         run: cargo install wasm-bindgen-cli --locked --version "$(cargo pkgid wasm-bindgen | sed 's/.*[@#]//')"
 
+      - name: Install cargo-about
+        run: cargo install cargo-about --locked --features cli --version 0.9.3
+
       - name: Assemble the site
         run: |
           mkdir _site
           cp -r index.html robots.txt sitemap.xml basics patterns styles scripts images _site/
           wasm-bindgen --target web --no-typescript --out-dir _site/wasm \
             demo/target/wasm32-unknown-unknown/release/demo.wasm
+          (cd demo && cargo about generate --frozen --fail -o ../_site/wasm/notices.html about.hbs)
 
       - uses: actions/upload-pages-artifact@v5.0.0
 
