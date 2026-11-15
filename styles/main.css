@@ -1464,3 +1464,109 @@ figure.hero-figure svg {
 .diagram text.m {
   font-size: 11px;
 }
+
+/* Forced colors (for example, Windows High Contrast): keep the shapes that carry meaning. */
+@media (forced-colors: active) {
+  .diagram text {
+    fill: CanvasText;
+    stroke: none;
+  }
+
+  .diagram .v,
+  .diagram .c,
+  .diagram .f {
+    fill: Canvas;
+    stroke: CanvasText;
+  }
+
+  .diagram .k {
+    fill: Canvas;
+    stroke: Highlight;
+    stroke-width: 2.5;
+  }
+
+  .diagram .e path,
+  .diagram .life {
+    stroke: CanvasText;
+  }
+
+  .diagram marker path {
+    fill: CanvasText;
+  }
+
+  .demo .status::before,
+  .bar {
+    forced-color-adjust: none;
+    background: CanvasText;
+  }
+
+  .bar {
+    color: Canvas;
+  }
+
+  .fingerprint {
+    display: none;
+  }
+
+  .tag,
+  .notice,
+  .demo .result,
+  .bytes,
+  .chain li {
+    border: 1px solid CanvasText;
+  }
+}
+
+/* Print: the text, the formulas and the figures. The demos and the site chrome stay off paper. */
+@media print {
+  header,
+  footer,
+  .skip,
+  .demo,
+  .pager,
+  .edit,
+  .anchor,
+  .buttons {
+    display: none !important;
+  }
+
+  :root {
+    --bg: #fff;
+    --surface: #fff;
+    --surface-2: #f4f4f4;
+    --text: #000;
+    --muted: #444;
+    --accent: #000;
+  }
+
+  body {
+    font-size: 11pt;
+  }
+
+  main {
+    max-width: none;
+  }
+
+  pre {
+    white-space: pre-wrap;
+    break-inside: avoid;
+  }
+
+  figure.diagram,
+  .bytes,
+  .notice,
+  #cost + ul > li {
+    break-inside: avoid;
+  }
+
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+
+  main a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+    word-break: break-all;
+  }
+}

@@ -21,6 +21,9 @@ jobs:
     steps:
       - uses: actions/checkout@v7.0.1
 
+      - name: Check the shared chrome
+        run: python3 tools/check_chrome.py
+
       - name: Add the wasm32 target
         run: rustup target add wasm32-unknown-unknown
 
@@ -42,7 +45,7 @@ jobs:
       - name: Assemble the site
         run: |
           mkdir _site
-          cp -r index.html robots.txt sitemap.xml basics patterns styles scripts images fonts _site/
+          cp -r index.html 404.html robots.txt sitemap.xml basics patterns styles scripts images fonts _site/
           wasm-bindgen --target web --no-typescript --out-dir _site/wasm \
             demo/target/wasm32-unknown-unknown/release/demo.wasm
           (cd demo && cargo about generate --locked --fail -o ../_site/wasm/notices.html about.hbs)
