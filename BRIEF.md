@@ -92,21 +92,21 @@ CONTRIBUTING.md     how to propose a pattern
 - Keep the round 6 testers' names private.
 - Mark creates the GitHub org and changes DNS.
 - Style: no em-dashes, no explanation by negation, short active sentences.
+- Site copy (pages, `CONTRIBUTING.md`, demo UI text) is 100% ASD-STE100: dead-simple technical writing (Mark, Nov 14).
 
 ## Now
 
-- [ ] **Start here: build L0.**: skeleton, home page, CSS, Pages workflow with a stub WASM demo.
+- [ ] **Start here: build L1.** The bound-notes page, spec and demo. It needs Mark's review of `draft-bound-notes.md` (Soon).
+- [ ] Mark merges the L0 PR. Then Mark sets Settings, then Pages, then the source "GitHub Actions". The site then serves at the org's `github.io` URL.
 - [ ] Mark picks licenses: code (MIT/Apache, like Zodiac) and page text (for example CC BY 4.0).
 
 ## Soon
 
 - [ ] Mark reviews `draft-bound-notes.md` for public release. Ask Julian about the ZcashNames credit.
-- [ ] Build L1: the bound-notes page, spec and demo.
 - [ ] Build L2: the polite-actions page and calculator.
 - [ ] Mark reviews the wallet-native orders ZIP. Build L3.
 - [ ] Align Zodiac's `set_canonical_pairing` with its ZIP (Zodiac BRIEF, Soon). Mark reviews the ZIP. Build L4.
 - [ ] Mark clears the FROST material from the art market build. Build L5 with an "experimental" label until a cryptographer reviews the nested construction.
-- [ ] Write `CONTRIBUTING.md`: the pattern page template and the PR flow.
 
 ## Later
 
@@ -120,3 +120,4 @@ CONTRIBUTING.md     how to propose a pattern
 
 - [x] Nov 14: plan the site with Mark (this brief). Mark approved it as written.
 - [x] Nov 14: Mark created the `appliedzcash` org. The empty public repo is https://github.com/appliedzcash/appliedzcash.com, set as `origin`. First commit `84538ee` pushed to `main`.
+- [x] Nov 14: L0 skeleton. Home page, five pattern stubs, `styles/main.css` (light and dark), `scripts/wasm.js` loader, `demo/` crate (BLAKE2b-256 pipeline check, built to WASM), `pages.yml` workflow, `CONTRIBUTING.md` stub. Licenses still wait for Mark.
