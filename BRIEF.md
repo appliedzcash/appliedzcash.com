@@ -99,6 +99,7 @@ CONTRIBUTING.md     how to propose a pattern
 - [ ] **Start here: Mark reviews `draft-bound-notes.md` for public release.** Also fix its Motivation claim "a note commitment appears once" (consensus enforces uniqueness for nullifiers only; the site page was corrected in PR #2). Ask Julian about the ZcashNames credit. Then add `/specs/bound-notes/` and link it from the page's Spec section. That closes L1.
 - [ ] Merge the L5 PR (threshold keys page and nested FROST demo, Experimental label). Mark cleared the art market's tweak and nesting recipe for publication on Nov 15. The page names neither the art market, the estate, Zodiac nor SRA.
 - [ ] Mark turns on "Enforce HTTPS" for Pages (repo settings).
+- [ ] Mark submits https://appliedzcash.com/sitemap.xml in Google Search Console.
 - [ ] Mark picks licenses: code (MIT/Apache, like Zodiac) and page text (for example CC BY 4.0).
 
 ## Soon
@@ -111,6 +112,7 @@ CONTRIBUTING.md     how to propose a pattern
 
 - [ ] L6: Mark announces the site.
 - [ ] Vale in CI for STE: sentence length, passive voice, and a vocabulary from the ASD-STE100 approved-word list (free from ASD on request).
+- [ ] A favicon and an og:image, so shared links show a picture.
 - [ ] `/wishlist/`: ZIP 68, ZIP 231 memo bundles, ZSAs, and what each would unlock.
 - [ ] Case studies: Zodiac Markets after Mark clears it; ZcashNames after Julian agrees.
 - [ ] Link each spec page to its `zcash/zips` PR once one exists.
@@ -127,3 +129,4 @@ CONTRIBUTING.md     how to propose a pattern
 - [x] Nov 14: L3 merged (appliedzcash/appliedzcash.com#4) and live: wallet-native orders page in 100% STE and the toy-poll demo.
 - [x] Nov 15: donation address (Mark's Noir wallet, Mainnet UA) and its QR code in every footer (appliedzcash/appliedzcash.com#5).
 - [x] Nov 15: L4 merged (appliedzcash/appliedzcash.com#6) and live: canonical action pairing page in 100% STE and the rebuild demo (ZIP retry rule included). Copilot review fixed: retry rule, live result, CSS brace, mobile fields.
+- [x] Nov 15: SEO merged (appliedzcash/appliedzcash.com#7): keyword-led titles and descriptions, canonical URLs, Open Graph and JSON-LD, `sitemap.xml` and `robots.txt`. Copilot's "demo for each pattern" comment declined, because the L5 demo comes next.
