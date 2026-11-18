@@ -108,12 +108,12 @@ impl TryFromAddress for Inspection {
 mod tests {
     use super::*;
 
-    /// The donation address in the footer of the site.
-    const DONATE: &str = "u1j8gmxccf6g59x2er94h7ym959ehr7dmavhsk5vu9lu3wmtltffcwdlc7pa32mj0dxtrcans43hr6sl8d3w4mhn6klxry4w3kz6lkzwphvthrhwak506ah6fzmxzlsaeu7ghky3xcq23nt6fhwrnwc8rtupggntn4hfhjprfxtvaz6nkx";
+    /// An example mainnet Unified Address.
+    const EXAMPLE: &str = "u1j8gmxccf6g59x2er94h7ym959ehr7dmavhsk5vu9lu3wmtltffcwdlc7pa32mj0dxtrcans43hr6sl8d3w4mhn6klxry4w3kz6lkzwphvthrhwak506ah6fzmxzlsaeu7ghky3xcq23nt6fhwrnwc8rtupggntn4hfhjprfxtvaz6nkx";
 
     #[test]
     fn unified_address_lists_its_receivers() {
-        let parts = parse(DONATE).unwrap();
+        let parts = parse(EXAMPLE).unwrap();
         assert_eq!(parts.kind, "Unified address");
         assert_eq!(parts.network, "Mainnet");
         assert!(parts.memo);
@@ -140,6 +140,6 @@ mod tests {
     fn bad_text_fails() {
         assert!(parse("").is_err());
         assert!(parse("zcash").is_err());
-        assert!(parse(&DONATE[..DONATE.len() - 1]).is_err());
+        assert!(parse(&EXAMPLE[..EXAMPLE.len() - 1]).is_err());
     }
 }
