@@ -12,6 +12,7 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 base64 = "0.22"
 blake2b_simd = "1"
+f4jumble = "0.1"
 frost-core = { version = "=3.0.0", features = ["internals"] }
 frost-rerandomized = "=3.0.0"
 hex = "0.4.3"
@@ -26,6 +27,9 @@ zcash_address = "0.14"
 zcash_protocol = "0.11"
 zip32 = "0.3"
 zip321 = "0.10"
+
+[dev-dependencies]
+bech32 = "0.11"
 
 [profile.release]
 opt-level = "s"

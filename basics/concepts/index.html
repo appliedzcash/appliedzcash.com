@@ -4,12 +4,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Zcash concepts for app developers | Applied Zcash</title>
-    <meta name="description" content="The parts of a shielded Zcash payment: notes, pools, actions, memos, keys, addresses and trial decryption. The demo shows the receivers in a unified address." />
+    <meta name="description" content="The parts of a shielded Zcash payment: notes, pools, actions, memos, keys, addresses and trial decryption. The demo builds a unified address from its receivers." />
     <link rel="canonical" href="https://appliedzcash.com/basics/concepts/" />
     <meta property="og:type" content="article" />
     <meta property="og:site_name" content="Applied Zcash" />
     <meta property="og:title" content="Zcash concepts for app developers" />
-    <meta property="og:description" content="The parts of a shielded Zcash payment: notes, pools, actions, memos, keys, addresses and trial decryption. The demo shows the receivers in a unified address." />
+    <meta property="og:description" content="The parts of a shielded Zcash payment: notes, pools, actions, memos, keys, addresses and trial decryption. The demo builds a unified address from its receivers." />
     <meta property="og:url" content="https://appliedzcash.com/basics/concepts/" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta property="og:image" content="https://appliedzcash.com/images/og.png" />
@@ -20,7 +20,7 @@
     <meta name="theme-color" content="#0f1011" media="(prefers-color-scheme: dark)" />
     <link rel="icon" href="../../images/mark.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="../../images/apple-touch-icon.png" />
-    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Concepts", "description": "The parts of a shielded Zcash payment: notes, pools, actions, memos, keys, addresses and trial decryption. The demo shows the receivers in a unified address.", "url": "https://appliedzcash.com/basics/concepts/", "inLanguage": "en", "about": "Zcash", "isPartOf": {"@type": "WebSite", "name": "Applied Zcash", "url": "https://appliedzcash.com/"}}</script>
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Concepts", "description": "The parts of a shielded Zcash payment: notes, pools, actions, memos, keys, addresses and trial decryption. The demo builds a unified address from its receivers.", "url": "https://appliedzcash.com/basics/concepts/", "inLanguage": "en", "about": "Zcash", "isPartOf": {"@type": "WebSite", "name": "Applied Zcash", "url": "https://appliedzcash.com/"}}</script>
     <link rel="preload" href="../../fonts/source-serif-4.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="../../styles/main.css" />
     <script type="module" src="../../scripts/site.js"></script>
@@ -115,11 +115,32 @@
         URI from a link or a QR code. See <a href="../payment-links/">Payment links</a>.
       </p>
 
-      <h2 id="demo">Demo: look into an address</h2>
+      <h2 id="demo">Demo: build a unified address</h2>
+      <p>A wallet builds a unified address in three steps (ZIP 316):</p>
+      <ol>
+        <li>
+          The wallet puts the receivers in sequence, from the lowest typecode to the highest. Each receiver has a
+          typecode, a length and its data. The padding is last: the prefix of the address and zero bytes, 16 bytes in
+          total.
+        </li>
+        <li>
+          The wallet mixes all the bytes with F4Jumble. Thus, when one receiver changes, almost all the characters
+          after the prefix change. The prefix stays the same.
+        </li>
+        <li>The wallet encodes the result as a Bech32m string with the prefix.</li>
+      </ol>
       <p>
         Type or paste a Zcash address. The demo decodes it with the <code>zcash_address</code> crate, compiled to
-        WebAssembly. It shows the network, the receivers and the memo support. The first address is an example Unified Address.
+        WebAssembly. For a unified address, each receiver has its own color. Clear the box of a receiver. The demo then
+        builds the address again with the other receivers.
       </p>
+      <div class="notice caution">
+        <p class="notice-title">Caution</p>
+        <p>
+          The first address is a test address from the Zcash test vectors. Its keys are public. Do not send funds to
+          it.
+        </p>
+      </div>
 
       <div class="demo" id="inspect-demo">
         <div class="demo-head">
@@ -127,13 +148,30 @@
           <p class="status" id="demo-status" role="status" data-state="loading">Wait</p>
         </div>
         <label for="address-input">Address</label>
-        <textarea id="address-input" rows="3" spellcheck="false" disabled>u1j8gmxccf6g59x2er94h7ym959ehr7dmavhsk5vu9lu3wmtltffcwdlc7pa32mj0dxtrcans43hr6sl8d3w4mhn6klxry4w3kz6lkzwphvthrhwak506ah6fzmxzlsaeu7ghky3xcq23nt6fhwrnwc8rtupggntn4hfhjprfxtvaz6nkx</textarea>
+        <textarea id="address-input" rows="3" spellcheck="false" disabled>u1pg2aaph7jp8rpf6yhsza25722sg5fcn3vaca6ze27hqjw7jvvhhuxkpcg0ge9xh6drsgdkda8qjq5chpehkcpxf87rnjryjqwymdheptpvnljqqrjqzjwkc2ma6hcq666kgwfytxwac8eyex6ndgr6ezte66706e3vaqrd25dzvzkc69kw0jgywtd0cmq52q5lkw6uh7hyvzjse8ksx</textarea>
         <div class="actions">
+          <button type="button" class="secondary" data-example="u1pg2aaph7jp8rpf6yhsza25722sg5fcn3vaca6ze27hqjw7jvvhhuxkpcg0ge9xh6drsgdkda8qjq5chpehkcpxf87rnjryjqwymdheptpvnljqqrjqzjwkc2ma6hcq666kgwfytxwac8eyex6ndgr6ezte66706e3vaqrd25dzvzkc69kw0jgywtd0cmq52q5lkw6uh7hyvzjse8ksx" disabled>Test address</button>
           <button type="button" class="secondary" data-example="u1j8gmxccf6g59x2er94h7ym959ehr7dmavhsk5vu9lu3wmtltffcwdlc7pa32mj0dxtrcans43hr6sl8d3w4mhn6klxry4w3kz6lkzwphvthrhwak506ah6fzmxzlsaeu7ghky3xcq23nt6fhwrnwc8rtupggntn4hfhjprfxtvaz6nkx" disabled>Donation address</button>
           <button type="button" class="secondary" data-example="t1Hsc1LR8yKnbbe3twRp88p6vFfC5t7DLbs" disabled>Transparent address</button>
         </div>
 
-        <h3 id="parts">Parts</h3>
+        <div class="steps" id="builder" hidden>
+          <h3 id="1-receivers">1. Receivers</h3>
+          <fieldset class="signers" id="receiver-switches">
+            <legend>Receivers in the address</legend>
+          </fieldset>
+          <div class="ua-bar" id="ua-bar" aria-hidden="true"></div>
+          <ol class="ua-parts" id="ua-parts"></ol>
+          <p class="bytes-note">The first bytes of each receiver, in color, are its typecode and its length.</p>
+
+          <h3 id="2-f4jumble">2. F4Jumble</h3>
+          <dl class="values" id="jumble-values"></dl>
+
+          <h3 id="3-bech32m">3. Bech32m</h3>
+          <dl class="values" id="built-values"></dl>
+        </div>
+
+        <h3 id="summary">Summary</h3>
         <dl class="values" id="address-values"></dl>
 
       </div>

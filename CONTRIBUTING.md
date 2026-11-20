@@ -24,13 +24,7 @@ Put each pattern in `patterns/<name>/index.html`. Each page has these sections, 
 
 ## Writing rules
 
-- Write in ASD-STE100 Simplified Technical English.
-- Use short sentences. Use one idea in each sentence.
-- Use the active voice when a person or software does the action.
-- Use an action verb only when its subject is a person or software: a wallet, a node, an app, a server, a builder, a demo.
-- For a thing (a note, a key, a memo, an address, a ZIP), use "is", "has", "contains" or the passive voice. Write "The format is in ZIP 321".
-- Use one word for one concept.
-- Show math as Unicode or in code blocks.
+The writing rules are in [`.github/copilot-instructions.md`](.github/copilot-instructions.md). Copilot uses the same file when it reviews a PR.
 
 ## Demos
 
