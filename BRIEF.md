@@ -121,6 +121,7 @@ CONTRIBUTING.md     how to propose a pattern
 
 - [ ] **Start here: Mark merges branch `launch-polish`, then posts the site to X (L6).**
 - [ ] Mark merges appliedzcash/appliedzcash.com#25 (Daniel Gorgonha: verifier rules for bound note chains). The claims match orchard 0.16.0: `circuit.rs:358` (zero-value spends skip the anchor check), `builder.rs:415` and the builder shuffle.
+- [ ] Mark merges the PR from branch `signal-group`: a third hero button on the home page, "Go to the Signal group", and one sentence in the footer of all 11 pages. The link is the public invite to the Signal group for builders (Mark, Nov 20). The button text uses "Go to" because "join" is doubtful as an STE verb.
 
 ## Soon
 
