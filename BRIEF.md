@@ -121,7 +121,7 @@ CONTRIBUTING.md     how to propose a pattern
 
 - [ ] **Start here: Mark posts the site to X (L6).**
 - [ ] Compare the Pages build time of a PR run before and after #27 (merged Nov 20: `Swatinem/rust-cache` v2.9.3, pinned by commit, `workspaces: demo`). The first run on `main` fills the cache.
-- [ ] Mark merges appliedzcash/appliedzcash.com#28: a third hero button on the home page, "Go to the Signal group", and one sentence in the footer of all 11 pages. The link is the public invite to the Signal group for builders (Mark, Nov 20). The button text uses "Go to" because "join" is doubtful as an STE verb.
+- [ ] Mark merges branch `hero-buttons`: the three hero buttons are on one line at desktop width (`.button` side padding 16 px, was 24 px).
 
 ## Soon
 
@@ -172,3 +172,4 @@ CONTRIBUTING.md     how to propose a pattern
 - [x] Nov 20: first outside contributor, Daniel Gorgonha (danielgorgonha). Merged: the 25-second block time since NU7 on polite actions (#23) and the ZIP 2009 fee for two actions (#24).
 - [x] Nov 20: launch polish (#26), merged. The home hero is general: new lede (parts of a payment, three app functions), a figure that maps note, memo and key to record, order and shared role, and general meta descriptions. The bound notes page starts with Mark's lay copy, then "In technical terms". The home page has a Contributors section: Mark, Daniel, and Julian (craftsoldier) as the source of the bound notes pattern (Mark's call, Nov 20; ZcashNames stays unnamed). `images/og.png` has the new figure; its source is `tools/og.svg` (render with static TTF copies of the two site fonts, `PANGOCAIRO_BACKEND=fc`).
 - [x] Nov 20: Mark merged #25 (Daniel Gorgonha): verifier rules for bound note chains. The claims match orchard 0.16.0: `circuit.rs:358` (zero-value spends skip the anchor check), `builder.rs:415` and the builder shuffle.
+- [x] Nov 20: Mark merged #28: the Signal group invite for builders. The home page has a third hero button, "Go to the Signal group", and the footer of all 11 pages has one sentence with the link. The button text uses "Go to" because "join" is doubtful as an STE verb.
