@@ -4,12 +4,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Build apps on Zcash: shielded app patterns | Applied Zcash</title>
-    <meta name="description" content="Patterns for Zcash developers: bind app data and rules to shielded notes. Anyone can verify them from chain data. Each pattern has a live demo." />
+    <meta name="description" content="Patterns for Zcash developers: build apps from shielded notes, memos and keys. The patterns operate with the consensus rules of today. Each pattern has a live demo." />
     <link rel="canonical" href="https://appliedzcash.com/" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Applied Zcash" />
     <meta property="og:title" content="Build apps on Zcash: shielded app patterns" />
-    <meta property="og:description" content="Patterns for Zcash developers: bind app data and rules to shielded notes. Anyone can verify them from chain data. Each pattern has a live demo." />
+    <meta property="og:description" content="Patterns for Zcash developers: build apps from shielded notes, memos and keys. The patterns operate with the consensus rules of today. Each pattern has a live demo." />
     <meta property="og:url" content="https://appliedzcash.com/" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta property="og:image" content="https://appliedzcash.com/images/og.png" />
@@ -20,7 +20,7 @@
     <meta name="theme-color" content="#0f1011" media="(prefers-color-scheme: dark)" />
     <link rel="icon" href="images/mark.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="images/apple-touch-icon.png" />
-    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "Applied Zcash", "url": "https://appliedzcash.com/", "description": "Patterns for Zcash developers: bind app data and rules to shielded notes. Anyone can verify them from chain data. Each pattern has a live demo.", "inLanguage": "en"}</script>
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "Applied Zcash", "url": "https://appliedzcash.com/", "description": "Patterns for Zcash developers: build apps from shielded notes, memos and keys. The patterns operate with the consensus rules of today. Each pattern has a live demo.", "inLanguage": "en"}</script>
     <link rel="preload" href="fonts/source-serif-4.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="styles/main.css" />
     <script type="module" src="scripts/site.js"></script>
@@ -35,8 +35,8 @@
       <p class="kicker">A community reference</p>
       <h1>Build apps on Zcash</h1>
       <p class="lede">
-        An app on Zcash can attach data and rules to shielded notes. Anyone can use chain data to verify
-        the data and the rules. We call this near-programmability.
+        An app on Zcash uses the parts of a shielded payment: notes, memos, keys and addresses. With these parts, an
+        app can keep a record, receive orders and share a role. We call this near-programmability.
       </p>
       <p class="hero-sub">
         This site is for developers who look for smart contracts on Zcash. Its patterns operate with the consensus
@@ -48,27 +48,37 @@
       </p>
 
       <figure class="diagram hero-figure">
-        <svg viewBox="0 0 360 130" role="img" aria-labelledby="fig-home-title fig-home-desc">
-          <title id="fig-home-title">Bind, send and verify</title>
-          <desc id="fig-home-desc">The app puts a hash of its data in the rseed of a note. A standard wallet sends the note, and the chain keeps its cmx. Anyone with the data can calculate cmx again and compare it with the chain.</desc>
+        <svg viewBox="0 0 400 152" role="img" aria-labelledby="fig-home-title fig-home-desc">
+          <title id="fig-home-title">From the parts of a payment to the functions of an app</title>
+          <desc id="fig-home-desc">A bound note makes a record from a note. A wallet-native order puts an order in a memo. A threshold key makes a shared role from a key.</desc>
           <defs><marker id="fig-home-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 8 4 0 8z" /></marker></defs>
           <g class="e" marker-end="url(#fig-home-arrow)">
-            <path d="M100 49H133" />
-            <path d="M225 49H258" />
-            <path d="M55 64V96H305V66" />
+            <path d="M100 49H150" marker-end="none" />
+            <path d="M234 49H283" />
+            <path d="M100 89H121" marker-end="none" />
+            <path d="M263 89H283" />
+            <path d="M100 129H141" marker-end="none" />
+            <path d="M243 129H283" />
           </g>
-          <text class="m" x="55" y="18">your record</text>
-          <text class="m" x="180" y="18">rseed = hash</text>
-          <text class="m" x="305" y="18">on the chain</text>
+          <text class="m" x="55" y="18">a payment has</text>
+          <text class="m" x="340" y="18">an app gets</text>
           <rect class="v" x="10" y="34" width="90" height="30" rx="7" />
-          <text x="55" y="49">app data</text>
-          <rect class="c" x="135" y="34" width="90" height="30" rx="7" />
-          <text x="180" y="49">note</text>
-          <rect class="k" x="260" y="34" width="90" height="30" rx="7" />
-          <text x="305" y="49">cmx</text>
-          <text class="m" x="180" y="114">anyone can calculate cmx again</text>
+          <text x="55" y="49">a note</text>
+          <text class="m s" x="192" y="49">bound notes</text>
+          <rect class="k" x="285" y="34" width="110" height="30" rx="7" />
+          <text x="340" y="49">a record</text>
+          <rect class="v" x="10" y="74" width="90" height="30" rx="7" />
+          <text x="55" y="89">a memo</text>
+          <text class="m s" x="192" y="89">wallet-native orders</text>
+          <rect class="k" x="285" y="74" width="110" height="30" rx="7" />
+          <text x="340" y="89">an order</text>
+          <rect class="v" x="10" y="114" width="90" height="30" rx="7" />
+          <text x="55" y="129">a key</text>
+          <text class="m s" x="192" y="129">threshold keys</text>
+          <rect class="k" x="285" y="114" width="110" height="30" rx="7" />
+          <text x="340" y="129">a shared role</text>
         </svg>
-        <figcaption>A bound note: the chain keeps a commitment to the data of the app.</figcaption>
+        <figcaption>Three of the patterns, and the part of a payment that each pattern uses.</figcaption>
       </figure>
 
       <h2 id="basics">The basics</h2>
@@ -125,6 +135,15 @@
           <p>Give each app role one FROST group key. Any t of n members can sign for the role.</p>
         </li>
       </ul>
+
+      <h2 id="contributors">Contributors</h2>
+      <p class="section-intro">
+        These people wrote or corrected the pages:
+        <a href="https://github.com/aphelionz">Mark Henderson</a> and
+        <a href="https://github.com/danielgorgonha">Daniel Gorgonha</a>. The bound notes pattern is the work of
+        <a href="https://github.com/craftsoldier">Julian (craftsoldier)</a>. To add or correct a pattern, read the
+        <a href="https://github.com/appliedzcash/appliedzcash.com/blob/main/CONTRIBUTING.md">contribution guide</a>.
+      </p>
     </main>
     <footer>
       <p>

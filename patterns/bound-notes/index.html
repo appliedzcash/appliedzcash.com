@@ -36,8 +36,24 @@
       <p class="kicker">Pattern</p>
       <h1>Bound notes</h1>
       <p class="lede">
-        An app puts a hash of its data in the <code>rseed</code> of a note. ZIP 212 calculates ψ and rcm from
-        <code>rseed</code>. Thus, the note commitment <code>cmx</code> is a commitment to the data.
+        Zcash keeps money in sealed notes. Each note has a seal that only its contents can make.
+      </p>
+      <p>
+        A bound note puts an app's data into that seal. If someone changes the data, the seal stops matching. Everyone
+        can see the change.
+      </p>
+      <p>
+        Each new note also includes the seal of the note before it. To make the new note, the app must use up the old
+        one. Zcash lets a note be used one time only.
+      </p>
+      <p>
+        So the app's record is a single chain. Each link is sealed, and each link can come only once. Anyone with the
+        data can check the whole chain.
+      </p>
+      <p>
+        In technical terms, the seal is the note commitment <code>cmx</code>. An app puts a hash of its data in the
+        <code>rseed</code> of a note. ZIP 212 calculates ψ and rcm from <code>rseed</code>. Thus, <code>cmx</code> is a
+        commitment to the data.
       </p>
       <p>
         Standard wallets can decrypt a bound note. Anyone with the data can calculate <code>cmx</code> again and

@@ -1,0 +1,45 @@
+<!-- Source of images/og.png (1200 x 630). Fonts: Source Serif 4 and JetBrains Mono, as static files named AZSerif<weight> and AZMono<weight>. Render: PANGOCAIRO_BACKEND=fc rsvg-convert tools/og.svg -o images/og.png -->
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs><marker id="a" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 8 4 0 8z" fill="#585d61" /></marker></defs>
+  <rect width="1200" height="630" fill="#f6f4ee" />
+  <rect y="620" width="1200" height="10" fill="#e8a317" />
+
+  <rect x="98" y="84" width="44" height="44" rx="12" fill="none" stroke="#16171a" stroke-width="4.25" />
+  <circle cx="128" cy="114" r="6.75" fill="#e8a317" />
+  <text x="164" y="119" font-family="AZSerif600" font-size="36" fill="#16171a">Applied Zcash</text>
+
+  <text font-family="AZSerif700" font-size="104" fill="#16171a" letter-spacing="-1.5">
+    <tspan x="94" y="280">Build apps</tspan>
+    <tspan x="94" y="388">on Zcash</tspan>
+  </text>
+  <text x="96" y="456" font-family="AZSerif400" font-size="27" fill="#585d61">Patterns and live demos for developers.</text>
+  <text x="96" y="548" font-family="AZMono400" font-size="24" fill="#8a5a00">appliedzcash.com</text>
+
+  <g font-family="AZMono400" font-size="24" text-anchor="middle">
+    <text x="742" y="186" font-size="20" fill="#585d61">a payment has</text>
+    <text x="999" y="186" font-size="20" fill="#585d61">an app gets</text>
+    <g fill="none" stroke="#585d61" stroke-width="2.5" marker-end="url(#a)">
+      <path d="M814 246H888" />
+      <path d="M814 334H888" />
+      <path d="M814 422H888" />
+    </g>
+    <g fill="#fffdf8" stroke="#c9c3b4" stroke-width="2.5">
+      <rect x="670" y="214" width="144" height="64" rx="14" />
+      <rect x="670" y="302" width="144" height="64" rx="14" />
+      <rect x="670" y="390" width="144" height="64" rx="14" />
+    </g>
+    <g fill="#f5ead1" stroke="#8a5a00" stroke-width="3">
+      <rect x="892" y="214" width="214" height="64" rx="14" />
+      <rect x="892" y="302" width="214" height="64" rx="14" />
+      <rect x="892" y="390" width="214" height="64" rx="14" />
+    </g>
+    <g fill="#16171a">
+      <text x="742" y="254">a note</text>
+      <text x="999" y="254">a record</text>
+      <text x="742" y="342">a memo</text>
+      <text x="999" y="342">an order</text>
+      <text x="742" y="430">a key</text>
+      <text x="999" y="430">a shared role</text>
+    </g>
+  </g>
+</svg>

@@ -6,6 +6,24 @@ Mark bought appliedzcash.com on Nov 14, 2026. The site is a community reference 
 
 Zcash has no smart contracts. Apps can still bind data and rules to shielded notes and let anyone verify them from chain data. The site teaches these patterns, one page each, with a live demo per pattern.
 
+### Bound notes copy (Mark, Nov 17)
+
+Lay explanation, at the top of the bound notes page. The home hero stays general: it covers all patterns (Mark, Nov 20).
+
+> Zcash keeps money in sealed notes. Each note has a seal that only its contents can make.
+>
+> A bound note puts an app's data into that seal. If someone changes the data, the seal stops matching. Everyone can see the change.
+>
+> Each new note also includes the seal of the note before it. To make the new note, the app must use up the old one. Zcash lets a note be used one time only.
+>
+> So the app's record is a single chain. Each link is sealed, and each link can come only once. Anyone with the data can check the whole chain.
+
+Slide line: "Each record is sealed into Zcash, and Zcash allows only one next record."
+
+Technical framing: `rseed` = H(domain ‖ kind ‖ fields ‖ predecessor `cmx`), and ZIP 212 derives ψ and rcm from it. The hash binds the memo's data to the commitment. The binding domain keeps each app's notes separate. The chain, plus spending the predecessor, gives one history that consensus enforces. Signed memos give authenticity; the single history comes from bound notes alone.
+
+Limits the page states: about 505 data bytes per memo, one more action per extra chunk. Verification is recomputation from the revealed fields. A reveal exposes that note, so guessable data needs a secret salt. The app enforces `cmx` uniqueness (consensus enforces nullifiers). Builders need `add_output_with_rseed` (craftsoldier/orchard); any standard wallet decrypts the notes.
+
 ## Plan (decided with Mark, Nov 14)
 
 | Decision | Choice |
@@ -101,7 +119,8 @@ CONTRIBUTING.md     how to propose a pattern
 
 ## Now
 
-- [ ] **Start here: Mark shares the site with friends (L6).** HTTPS works and the sitemap is in Search Console.
+- [ ] **Start here: Mark merges branch `launch-polish`, then posts the site to X (L6).**
+- [ ] Mark merges appliedzcash/appliedzcash.com#25 (Daniel Gorgonha: verifier rules for bound note chains). The claims match orchard 0.16.0: `circuit.rs:358` (zero-value spends skip the anchor check), `builder.rs:415` and the builder shuffle.
 
 ## Soon
 
@@ -148,3 +167,6 @@ CONTRIBUTING.md     how to propose a pattern
 - [x] Nov 15: "On this page" rail on pages with 10 or more headings (orders, pairing), at 72rem and wider, built by `scripts/site.js`.
 - [x] Nov 15: action-pairing table: the seed uses the shared grouped hex view, each nf and cmx has a color swatch, and a cmx that changed since the last build flashes (all four on a second standard build, none on a canonical one).
 - [x] Nov 15: pattern glyphs on the home cards (Mark approved the mockup): a chain of notes, a short row of actions, a memo note, a joined pair, and three signers with two sealed. The seal parts use the amber seal color, and the system highlight color in forced colors.
+- [x] Nov 18: the donation footer is removed (#22).
+- [x] Nov 20: first outside contributor, Daniel Gorgonha (danielgorgonha). Merged: the 25-second block time since NU7 on polite actions (#23) and the ZIP 2009 fee for two actions (#24).
+- [x] Nov 20: launch polish on branch `launch-polish`. The home hero is general: new lede (parts of a payment, three app functions), a figure that maps note, memo and key to record, order and shared role, and general meta descriptions. The bound notes page starts with Mark's lay copy, then "In technical terms". The home page has a Contributors section: Mark, Daniel, and Julian (craftsoldier) as the source of the bound notes pattern (Mark's call, Nov 20; ZcashNames stays unnamed). `images/og.png` has the new figure; its source is `tools/og.svg` (render with static TTF copies of the two site fonts, `PANGOCAIRO_BACKEND=fc`).
