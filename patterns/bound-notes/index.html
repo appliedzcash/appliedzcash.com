@@ -145,8 +145,20 @@
         <code>prev</code> is 32 zero bytes.
       </p>
       <p>
-        The transaction of a successor must spend its predecessor. Consensus accepts each nullifier one time. Thus, one
-        transaction at most extends each tip. The chain is an append-only record.
+        The successor must be the output of the action that spends its predecessor. Then ρ of the successor is the
+        nullifier of the predecessor. Consensus accepts each nullifier one time. Thus, one note at most extends each tip.
+        The chain is an append-only record.
+      </p>
+      <p>
+        A rule that only asks the transaction of the successor to spend the predecessor is not sufficient. With that rule,
+        one transaction can make two successors of one tip, and both successors pass the lineage check.
+      </p>
+      <p>
+        For Ironwood-pool bundles, the <code>orchard</code> builder pairs spends with outputs at random. A builder for
+        bound notes must put the successor in the action that spends the predecessor. Then a rebuild of the transaction
+        keeps the <code>cmx</code> of the successor, if the rebuild spends the same predecessor. A rebuild can happen
+        after a reorg. The <code>cmx</code> of the change note can change. For stable <code>cmx</code> values in all
+        outputs, see <a href="../action-pairing/">Action pairing</a>.
       </p>
 
       <h3 id="verification">Verification</h3>
@@ -164,14 +176,23 @@
       <p>
         This check needs only public data. To check lineage, the verifier also needs the nullifier key <code>nk</code> of
         the account that holds the chain. With <code>nk</code>, the verifier calculates the nullifier of the predecessor
-        and finds it in the transaction of the successor. An app with a public chain publishes its full viewing key.
+        and finds it as <code>nf_old</code> in the action of the successor. An app with a public chain publishes its full
+        viewing key.
+      </p>
+      <p>
+        The verifier must also find each transaction of the chain in a block, and the transaction of each successor must
+        come after the transaction of its predecessor. "After" means a later block, or a later place in the same block.
+        Lineage alone does not give this order. The Orchard circuit checks
+        the Merkle path of a spent note only if the value of the note is not zero. Thus, a transaction can spend a
+        zero-value note that is not in a block. A successor of such a note passes the checks above.
       </p>
 
       <h3 id="authority">Authority</h3>
       <p>
         Anyone can send a bound note to a published address. Thus, each app must define which notes count. This rule is
-        sufficient: the app pins a genesis note by its transaction ID and <code>cmx</code>. A note counts only if it
-        descends from that genesis note. A false note costs its sender a fee, and the record stays the same.
+        sufficient to select the notes: the app pins a genesis note by its transaction ID and <code>cmx</code>. A note counts only if it
+        descends from that genesis note. A false note costs its sender a fee, and the record stays the same. The pin does not give the order of the chain. See
+        <a href="#verification">Verification</a>.
       </p>
 
       <h3 id="privacy">Privacy</h3>
@@ -200,7 +221,8 @@
           this work in your browser.
         </li>
         <li>
-          <strong>Builders</strong> The transaction builder must accept an <code>rseed</code> from its caller. The
+          <strong>Builders</strong> The transaction builder must accept an <code>rseed</code> from its caller. It must
+          also let the caller put the successor in the action that spends the predecessor. The
           <code>orchard</code> crate samples <code>rseed</code> at random. A patch adds
           <code>add_output_with_rseed</code>. The patch is pending upstream. A PCZT (ZIP 374) carries a bound output in
           its usual <code>rseed</code> field.
