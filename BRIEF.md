@@ -36,7 +36,7 @@ Limits the page states: about 505 data bytes per memo, one more action per extra
 | Specs | Mark reviews a ZIP draft, then the site hosts the cleared text. When a `zcash/zips` PR exists, the page links there. |
 | Stack | Plain HTML, one CSS file, vanilla JS modules, like sras.io. Math as Unicode and code blocks. |
 | Demo build | A Rust crate in `demo/`. GitHub Actions builds the WASM and places it beside the HTML. |
-| Repo | A public repo in a new `appliedzcash` GitHub org. Anyone opens a PR; Mark merges. |
+| Repo | A public repo in a new `appliedzcash` GitHub org. Anyone opens a PR; Mark merges. Copilot review is by request only (Nov 20): request it on a PR that changes demo code (Rust, WASM) or a protocol claim. |
 | Hosting | GitHub Pages from that repo. DNS changes wait for Mark. |
 
 ### Site map
@@ -116,12 +116,15 @@ CONTRIBUTING.md     how to propose a pattern
 - Mark creates the GitHub org and changes DNS.
 - Style: no em-dashes, no explanation by negation, short active sentences.
 - Site copy (pages, `CONTRIBUTING.md`, demo UI text) is 100% ASD-STE100: dead-simple technical writing (Mark, Nov 14).
+- Actors (Mark, Nov 20): the subject of an action verb is a person or deployed software (a wallet, a node, an app, a server, a builder, the demo). A thing (a note, a key, a memo, a ZIP, the chain) has a state verb or the passive. The rule is in `CONTRIBUTING.md`.
 
 ## Now
 
 - [ ] **Start here: Mark posts the site to X (L6).**
 - [ ] Compare the Pages build time of a PR run before and after #27 (merged Nov 20: `Swatinem/rust-cache` v2.9.3, pinned by commit, `workspaces: demo`). The first run on `main` fills the cache.
-- [ ] Mark merges branch `hero-buttons`: the three hero buttons are on one line at desktop width (`.button` side padding 16 px, was 24 px).
+- [ ] Mark merges #30 (concepts trim) and #31 (strict STE). The two PRs change different lines, so the order is free.
+- [ ] Mark decides: move his four lay paragraphs on bound notes to strict STE, or keep his wording. #31 keeps it.
+- [ ] Mark decides on the unified address demo: change the concepts demo into a builder (receiver switches, raw bytes with one color for each receiver, then F4Jumble and Bech32m). Recommendation: one demo on the concepts page, and no separate receivers page.
 
 ## Soon
 
@@ -173,3 +176,6 @@ CONTRIBUTING.md     how to propose a pattern
 - [x] Nov 20: launch polish (#26), merged. The home hero is general: new lede (parts of a payment, three app functions), a figure that maps note, memo and key to record, order and shared role, and general meta descriptions. The bound notes page starts with Mark's lay copy, then "In technical terms". The home page has a Contributors section: Mark, Daniel, and Julian (craftsoldier) as the source of the bound notes pattern (Mark's call, Nov 20; ZcashNames stays unnamed). `images/og.png` has the new figure; its source is `tools/og.svg` (render with static TTF copies of the two site fonts, `PANGOCAIRO_BACKEND=fc`).
 - [x] Nov 20: Mark merged #25 (Daniel Gorgonha): verifier rules for bound note chains. The claims match orchard 0.16.0: `circuit.rs:358` (zero-value spends skip the anchor check), `builder.rs:415` and the builder shuffle.
 - [x] Nov 20: Mark merged #28: the Signal group invite for builders. The home page has a third hero button, "Go to the Signal group", and the footer of all 11 pages has one sentence with the link. The button text uses "Go to" because "join" is doubtful as an STE verb.
+- [x] Nov 20: Mark merged #29: the three hero buttons are on one line at desktop width (`.button` side padding 16 px, was 24 px).
+- [x] Nov 20: #30 opened: the concepts lede is one sentence, Pools has Ironwood and transparent only (Sapling and Orchard in a footnote, class `footnote`), and the Yes and No cells of both key tables have a green or red tint (`.capability-table .yes` and `.no`).
+- [x] Nov 20: #31 opened: all site copy follows the actor rule (10 pages, `CONTRIBUTING.md`, UI strings in `scripts/` and `demo/src/`). The spec sentence on three pattern pages is now "The draft will be published after review".
