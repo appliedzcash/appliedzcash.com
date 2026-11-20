@@ -56,7 +56,13 @@ try {
   };
 
   // The bytes before F4Jumble: a bar to scale, then one row for each item.
-  const showBytes = (built) => {
+  const showBytes = (construction) => {
+    const built = {
+      names: construction.names,
+      heads: construction.heads,
+      data: construction.data,
+      kinds: construction.kinds,
+    };
     const sizes = built.names.map((_, i) => (built.heads[i].length + built.data[i].length) / 2);
     bar.replaceChildren(
       ...built.kinds.map((kind, i) => {
