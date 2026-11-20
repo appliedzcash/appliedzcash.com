@@ -27,6 +27,11 @@ jobs:
       - name: Add the wasm32 target
         run: rustup target add wasm32-unknown-unknown
 
+      - name: Cache the Cargo registry, the build output and the installed tools
+        uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+        with:
+          workspaces: demo
+
       - name: Test the demo crate
         working-directory: demo
         run: cargo test --locked
