@@ -36,8 +36,7 @@
       <p class="kicker">Basic</p>
       <h1>Concepts</h1>
       <p class="lede">
-        A shielded payment has a small set of parts: notes, actions, memos, keys and addresses. This page gives each part
-        in a few lines. All other pages use these words.
+        A shielded payment has a small set of parts: notes, actions, memos, keys and addresses.
       </p>
 
       <h2 id="notes">Notes</h2>
@@ -51,18 +50,16 @@
       </p>
 
       <h2 id="pools">Pools</h2>
-      <p>A pool is a set of notes with one protocol. Zcash has these pools:</p>
+      <p>A pool is a set of notes with one protocol. Two pools are important for new apps:</p>
       <dl class="terms">
         <dt>Ironwood</dt>
-        <dd>The newest shielded pool. It uses the Orchard protocol. Use it for new apps.</dd>
-        <dt>Orchard</dt>
-        <dd>The first pool of the Orchard protocol. The Ironwood pool replaces it.</dd>
-        <dt>Sapling</dt>
-        <dd>An older shielded pool.</dd>
+        <dd>The newest shielded pool. Its protocol is Orchard. Use it for new apps.</dd>
         <dt>Transparent</dt>
         <dd>A public pool. All values and addresses are visible, as in Bitcoin.</dd>
       </dl>
-      <p>This site uses the Orchard protocol. The pages say "Ironwood pool" when the pool is important.</p>
+      <p class="footnote">
+        Zcash also has two older shielded pools: Sapling and Orchard. Orchard is the first pool of the Orchard protocol.
+      </p>
 
       <h2 id="actions">Actions and bundles</h2>
       <p>
@@ -86,9 +83,9 @@
             <tr><th scope="col">Key</th><th scope="col">Spend</th><th scope="col">See payments in</th><th scope="col">See payments out</th><th scope="col">Make addresses</th></tr>
           </thead>
           <tbody>
-            <tr><th scope="row">Spending key</th><td>Yes</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
-            <tr><th scope="row">Full viewing key</th><td>No</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
-            <tr><th scope="row">Incoming viewing key</th><td>No</td><td>Yes</td><td>No</td><td>Yes</td></tr>
+            <tr><th scope="row">Spending key</th><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+            <tr><th scope="row">Full viewing key</th><td class="no">No</td><td class="yes">Yes</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+            <tr><th scope="row">Incoming viewing key</th><td class="no">No</td><td class="yes">Yes</td><td class="no">No</td><td class="yes">Yes</td></tr>
           </tbody>
         </table>
       </div>
