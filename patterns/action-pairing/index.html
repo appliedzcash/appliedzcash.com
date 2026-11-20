@@ -70,7 +70,7 @@
       <figure class="diagram">
         <svg viewBox="0 0 360 400" role="img" aria-labelledby="fig-pair-title fig-pair-desc">
           <title id="fig-pair-title">From the pairing seed to the same cmx</title>
-          <desc id="fig-pair-desc">The pairing seed d is a hash of the pairing key, the context and the real nullifiers. The dummy notes and the output rseeds are values of PRF_d. The pairs are the result of the keyed sort. The ρ of each output is the nullifier of its pair. Thus, the cmx is the same for the same inputs.</desc>
+          <desc id="fig-pair-desc">The pairing seed d is a hash of the pairing key, the context and the real nullifiers. The dummy notes and the output rseeds are calculated from PRF_d values. The pairs are the result of the keyed sort. The ρ of each output is the nullifier of its pair. Thus, the cmx is the same for the same inputs.</desc>
           <defs><marker id="fig-pair-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 8 4 0 8z" /></marker></defs>
           <g class="e" marker-end="url(#fig-pair-arrow)">
             <path d="M65 40V58H180" marker-end="none" />
@@ -133,9 +133,9 @@
           <pre class="formula"><code>PRF_d(t, i, c) = BLAKE2b-512("Zcash_PairingPRF", d ‖ t ‖ i ‖ c)</code></pre>
           <code>c</code> is a counter. It increases only when a value is invalid, for example a spending key.
         </li>
-        <li>Make <code>n − m</code> dummy spends of value zero. The spending key, ρ and <code>rseed</code> of each dummy spend are PRF values.</li>
+        <li>Make <code>n − m</code> dummy spends of value zero. The spending key, ρ and <code>rseed</code> of each dummy spend are calculated from PRF values.</li>
         <li>Give each real output an <code>rseed</code> from the PRF. A caller can give its own <code>rseed</code>, for example for a bound note.</li>
-        <li>Make the dummy outputs of value zero. The recipient and the <code>rseed</code> of each dummy output are PRF values.</li>
+        <li>Make the dummy outputs of value zero. The recipient and the <code>rseed</code> of each dummy output are calculated from PRF values.</li>
         <li>
           Calculate a keyed sort key for each spend and each output:
           <pre class="formula"><code>key_spend = BLAKE2b-256("Zcash_PairingOrd", d ‖ 0x00 ‖ nf)
