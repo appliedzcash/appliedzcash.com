@@ -135,7 +135,7 @@
       </ul>
       <p>
         The calculator pays the fee from a shielded note. With a transparent fee, the per-player design uses one action
-        fewer. The mainnet target block time is 75 seconds. Thus, the chain makes about 1,152 blocks each day.
+        fewer. Since the NU7 network upgrade, the mainnet target block time is 25 seconds. Thus, the chain makes about 3,456 blocks each day.
       </p>
 
       <div class="demo" id="cost-demo">
@@ -143,7 +143,7 @@
           <span class="demo-label">Demo</span>
         </div>
         <label for="tx-input">Transactions each day</label>
-        <input id="tx-input" type="number" min="0" step="1" value="1152" inputmode="numeric" />
+        <input id="tx-input" type="number" min="0" step="1" value="3456" inputmode="numeric" />
         <label for="users-input">Changed players in each transaction</label>
         <input id="users-input" type="number" min="0" step="1" value="20" inputmode="numeric" />
         <label for="chunks-input">Chunk notes in each transaction</label>
@@ -179,8 +179,8 @@
             </tr>
           </thead>
           <tbody>
-            <tr><th scope="row">One note per player, each block</th><td>25,344</td><td>3.75 MB</td></tr>
-            <tr><th scope="row">One note per epoch, each block</th><td>2,304</td><td>341 kB</td></tr>
+            <tr><th scope="row">One note per player, each block</th><td>76,032</td><td>11.3 MB</td></tr>
+            <tr><th scope="row">One note per epoch, each block</th><td>6,912</td><td>1.02 MB</td></tr>
             <tr><th scope="row">One note per epoch, each 10 minutes</th><td>288</td><td>42.6 kB</td></tr>
           </tbody>
         </table>
