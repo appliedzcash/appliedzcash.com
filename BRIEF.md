@@ -122,9 +122,8 @@ CONTRIBUTING.md     how to propose a pattern
 
 - [ ] **Start here: Mark posts the site to X (L6).**
 - [ ] Compare the Pages build time of a PR run before and after #27 (merged Nov 20: `Swatinem/rust-cache` v2.9.3, pinned by commit, `workspaces: demo`). The first run on `main` fills the cache.
-- [ ] Mark merges #30 (concepts trim) and #31 (strict STE). The two PRs change different lines, so the order is free.
+- [ ] Mark merges #31 (strict STE), then #32 (unified address builder). #32 is stacked on #31: its base branch is `ste-strict`, and GitHub moves it to `main` when #31 merges.
 - [ ] Mark decides: move his four lay paragraphs on bound notes to strict STE, or keep his wording. #31 keeps it.
-- [ ] Mark decides on the unified address demo: change the concepts demo into a builder (receiver switches, raw bytes with one color for each receiver, then F4Jumble and Bech32m). Recommendation: one demo on the concepts page, and no separate receivers page.
 
 ## Soon
 
@@ -177,5 +176,6 @@ CONTRIBUTING.md     how to propose a pattern
 - [x] Nov 20: Mark merged #25 (Daniel Gorgonha): verifier rules for bound note chains. The claims match orchard 0.16.0: `circuit.rs:358` (zero-value spends skip the anchor check), `builder.rs:415` and the builder shuffle.
 - [x] Nov 20: Mark merged #28: the Signal group invite for builders. The home page has a third hero button, "Go to the Signal group", and the footer of all 11 pages has one sentence with the link. The button text uses "Go to" because "join" is doubtful as an STE verb.
 - [x] Nov 20: Mark merged #29: the three hero buttons are on one line at desktop width (`.button` side padding 16 px, was 24 px).
-- [x] Nov 20: #30 opened: the concepts lede is one sentence, Pools has Ironwood and transparent only (Sapling and Orchard in a footnote, class `footnote`), and the Yes and No cells of both key tables have a green or red tint (`.capability-table .yes` and `.no`).
+- [x] Nov 20: Mark merged #30: the concepts lede is one sentence, Pools has Ironwood and transparent only (Sapling and Orchard in a footnote, class `footnote`), and the Yes and No cells of the concepts key table have a green or red tint (`.capability-table .yes` and `.no`). The same tint for the watch-only keys table came after the merge, so it is in #32.
 - [x] Nov 20: #31 opened: all site copy follows the actor rule (10 pages, `CONTRIBUTING.md`, UI strings in `scripts/` and `demo/src/`). The spec sentence on three pattern pages is now "The draft will be published after review".
+- [x] Nov 20: #32 opened: the concepts demo is a unified address builder (Mark's call: one demo on the concepts page, no receivers page). `construct` in `demo/src/inspect.rs` leaves out the receivers that are off and returns the items, the padding, the F4Jumble bytes and the Bech32m string. A test compares the F4Jumble bytes with the Bech32m payload of the library. The first example is a ZIP 316 test vector with a transparent, a Sapling and an Orchard receiver (zcash-test-vectors `unified_address.py`). Receiver colors are `--rc-transparent`, `--rc-sapling` and `--rc-orchard`. New deps: `f4jumble`, and `bech32` for tests. A local WASM build needs `wasm-bindgen-cli` 0.2.130, which is not installed on this Mac outside a scratch folder.

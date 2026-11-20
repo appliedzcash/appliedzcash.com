@@ -303,7 +303,9 @@ name = "demo"
 version = "0.1.0"
 dependencies = [
  "base64",
+ "bech32",
  "blake2b_simd",
+ "f4jumble",
  "frost-core",
  "frost-rerandomized",
  "hex",
