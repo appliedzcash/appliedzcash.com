@@ -119,8 +119,8 @@ CONTRIBUTING.md     how to propose a pattern
 
 ## Now
 
-- [ ] **Start here: Mark merges branch `launch-polish`, then posts the site to X (L6).**
-- [ ] Mark merges appliedzcash/appliedzcash.com#25 (Daniel Gorgonha: verifier rules for bound note chains). The claims match orchard 0.16.0: `circuit.rs:358` (zero-value spends skip the anchor check), `builder.rs:415` and the builder shuffle.
+- [ ] **Start here: Mark posts the site to X (L6).**
+- [ ] Mark merges appliedzcash/appliedzcash.com#27: the Pages workflow caches the Rust build (`Swatinem/rust-cache` v2.9.3, pinned by commit, `workspaces: demo`). The first run on `main` fills the cache. Then compare the build time of a later PR run.
 
 ## Soon
 
@@ -169,4 +169,5 @@ CONTRIBUTING.md     how to propose a pattern
 - [x] Nov 15: pattern glyphs on the home cards (Mark approved the mockup): a chain of notes, a short row of actions, a memo note, a joined pair, and three signers with two sealed. The seal parts use the amber seal color, and the system highlight color in forced colors.
 - [x] Nov 18: the donation footer is removed (#22).
 - [x] Nov 20: first outside contributor, Daniel Gorgonha (danielgorgonha). Merged: the 25-second block time since NU7 on polite actions (#23) and the ZIP 2009 fee for two actions (#24).
-- [x] Nov 20: launch polish on branch `launch-polish`. The home hero is general: new lede (parts of a payment, three app functions), a figure that maps note, memo and key to record, order and shared role, and general meta descriptions. The bound notes page starts with Mark's lay copy, then "In technical terms". The home page has a Contributors section: Mark, Daniel, and Julian (craftsoldier) as the source of the bound notes pattern (Mark's call, Nov 20; ZcashNames stays unnamed). `images/og.png` has the new figure; its source is `tools/og.svg` (render with static TTF copies of the two site fonts, `PANGOCAIRO_BACKEND=fc`).
+- [x] Nov 20: launch polish (#26), merged. The home hero is general: new lede (parts of a payment, three app functions), a figure that maps note, memo and key to record, order and shared role, and general meta descriptions. The bound notes page starts with Mark's lay copy, then "In technical terms". The home page has a Contributors section: Mark, Daniel, and Julian (craftsoldier) as the source of the bound notes pattern (Mark's call, Nov 20; ZcashNames stays unnamed). `images/og.png` has the new figure; its source is `tools/og.svg` (render with static TTF copies of the two site fonts, `PANGOCAIRO_BACKEND=fc`).
+- [x] Nov 20: Mark merged #25 (Daniel Gorgonha): verifier rules for bound note chains. The claims match orchard 0.16.0: `circuit.rs:358` (zero-value spends skip the anchor check), `builder.rs:415` and the builder shuffle.
