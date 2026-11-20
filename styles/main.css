@@ -512,7 +512,7 @@ main > ol:not(.bytes) > li:not(:last-child)::after {
   display: inline-flex;
   align-items: center;
   min-height: 2.75rem;
-  padding: 0 var(--space-4);
+  padding: 0 var(--space-3);
   color: var(--surface);
   background: var(--accent);
   border: 1px solid var(--accent);
