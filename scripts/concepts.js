@@ -17,7 +17,7 @@ try {
       showValues(values, [
         ["Type", parts.kind],
         ["Network", parts.network],
-        ["Memo", parts.memo ? "Yes, a payment can carry a memo." : "No. A payment to this address has no memo."],
+        ["Memo", parts.memo ? "Yes. A payment to this address can have a memo." : "No. A payment to this address has no memo."],
         ...parts.names.map((name, i) => [name, parts.values[i]]),
       ]);
       setStatus(status);
@@ -37,5 +37,5 @@ try {
   for (const el of [input, ...examples]) el.disabled = false;
   update();
 } catch (error) {
-  setStatus(status, `the WASM module failed to load (${error.message}).`);
+  setStatus(status, `the browser cannot load the WASM module (${error.message}).`);
 }

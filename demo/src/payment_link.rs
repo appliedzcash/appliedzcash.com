@@ -54,12 +54,12 @@ fn build(address: &str, amount: &str, memo: &str, label: &str, message: &str) ->
     let memo = (!memo.is_empty())
         .then(|| MemoBytes::from_bytes(memo.as_bytes()))
         .transpose()
-        .map_err(|_| format!("The memo is {memo_length} bytes. A memo holds 512 bytes or fewer."))?;
+        .map_err(|_| format!("The memo is {memo_length} bytes. The limit is 512 bytes."))?;
 
     let payment = Payment::new(recipient, amount, memo, some(label), some(message), vec![])
-        .map_err(|_| "A transparent address cannot receive a memo. Clear the memo, or use a shielded address.".to_string())?;
+        .map_err(|_| "A payment to a transparent address has no memo. Clear the memo, or use a shielded address.".to_string())?;
     let uri = TransactionRequest::new(vec![payment])
-        .map_err(|error| format!("The request failed: {error}."))?
+        .map_err(|error| format!("The demo cannot make the request: {error}."))?
         .to_uri();
     let qr_svg = crate::qr_svg(&uri)?;
 

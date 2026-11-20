@@ -52,12 +52,11 @@
       </p>
       <p>
         In technical terms, the seal is the note commitment <code>cmx</code>. An app puts a hash of its data in the
-        <code>rseed</code> of a note. ZIP 212 calculates ψ and rcm from <code>rseed</code>. Thus, <code>cmx</code> is a
-        commitment to the data.
+        <code>rseed</code> of a note. ψ and rcm are calculated from <code>rseed</code> (ZIP 212). Thus, <code>cmx</code> is a commitment to the data.
       </p>
       <p>
         Standard wallets can decrypt a bound note. Anyone with the data can calculate <code>cmx</code> again and
-        compare it with the chain. The pattern operates with the consensus rules of today.
+        compare it with the chain. The pattern is possible with the consensus rules of today.
       </p>
 
       <h2 id="problem">Problem</h2>
@@ -67,19 +66,19 @@
       </p>
       <p>
         A memo is a weak place for a record. The memo is in the note ciphertext, outside the note commitment. To read a
-        memo, a verifier needs a viewing key. Compact blocks hold only the first part of each ciphertext.
+        memo, a verifier needs a viewing key. Compact blocks contain only the first part of each ciphertext.
       </p>
       <p>
-        The note commitment is a strong place for a record. Consensus adds each note commitment to the note commitment
-        tree. Consensus accepts each nullifier one time, so each note can be spent one time only. A record in the note
-        commitment gets these two properties.
+        The note commitment is a strong place for a record. Nodes add each note commitment to the note commitment tree.
+        Nodes accept each nullifier one time only, so each note can be spent one time only. A record in the note
+        commitment has these two properties.
       </p>
 
       <h2 id="mechanism">Mechanism</h2>
       <figure class="diagram">
         <svg viewBox="0 0 360 495" role="img" aria-labelledby="fig-bn-title fig-bn-desc">
           <title id="fig-bn-title">From app data to cmx</title>
-          <desc id="fig-bn-desc">The app hashes kind, fields and prev into rseed. ZIP 212 and ZIP 2005 calculate esk, ψ and rcm from rseed and ρ. NoteCommit calculates cmx from the recipient, the value, ρ, ψ and rcm. The chain keeps cmx.</desc>
+          <desc id="fig-bn-desc">The app hashes kind, fields and prev into rseed. esk, ψ and rcm are calculated from rseed and ρ (ZIP 212, ZIP 2005). cmx is the NoteCommit of the recipient, the value, ρ, ψ and rcm. cmx is on the chain.</desc>
           <defs>
             <marker id="fig-bn-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 8 4 0 8z" /></marker>
           </defs>
@@ -145,13 +144,13 @@
       <p class="bytes-note"><code>len(fields)</code> is little-endian. <code>prev</code> is the cmx of the predecessor, or 32 zero bytes.</p>
       <ol start="5">
         <li>
-          The wallet builds a usual Orchard-protocol output with this <code>rseed</code>. ZIP 212 and ZIP 2005 calculate
-          esk, ψ and rcm from <code>rseed</code> and ρ. ρ is the nullifier of the note that the same action spends.
+          The wallet builds a usual Orchard-protocol output with this <code>rseed</code>. It calculates esk, ψ and rcm
+          from <code>rseed</code> and ρ (ZIP 212, ZIP 2005). ρ is the nullifier of the note that is spent in the same
+          action.
         </li>
       </ol>
       <p>
-        The length prefix makes the encoding injective. Two different records always give two different inputs to the
-        hash.
+        With the length prefix, the encoding is injective. Two different records always have two different hash inputs.
       </p>
 
       <h3 id="chains">Chains</h3>
@@ -161,19 +160,22 @@
         <code>prev</code> is 32 zero bytes.
       </p>
       <p>
-        The successor must be the output of the action that spends its predecessor. Then ρ of the successor is the
-        nullifier of the predecessor. Consensus accepts each nullifier one time. Thus, one note at most extends each tip.
+        The successor must be the output of the action in which its predecessor is spent. Then ρ of the successor is the
+        nullifier of the predecessor. Nodes accept each nullifier one time only. Thus, each tip has one successor at
+        most.
         The chain is an append-only record.
       </p>
       <p>
-        A rule that only asks the transaction of the successor to spend the predecessor is not sufficient. With that rule,
-        one transaction can make two successors of one tip, and both successors pass the lineage check.
+        This weaker rule is not sufficient: the predecessor is spent in the transaction of the successor. With the
+        weaker rule, one transaction can contain two successors of one tip, and the lineage check is successful for both
+        successors.
       </p>
       <p>
         For Ironwood-pool bundles, the <code>orchard</code> builder pairs spends with outputs at random. A builder for
-        bound notes must put the successor in the action that spends the predecessor. Then a rebuild of the transaction
-        keeps the <code>cmx</code> of the successor, if the rebuild spends the same predecessor. A rebuild can happen
-        after a reorg. The <code>cmx</code> of the change note can change. For stable <code>cmx</code> values in all
+        bound notes must put the successor in the action in which the predecessor is spent. Then the <code>cmx</code> of
+        the successor stays the same after a rebuild of the transaction, if the same predecessor is spent in the
+        rebuild. A rebuild can be necessary after a reorg. The <code>cmx</code> of the change note can change. For
+        stable <code>cmx</code> values in all
         outputs, see <a href="../action-pairing/">Action pairing</a>.
       </p>
 
@@ -190,24 +192,27 @@
         <li>compares its x-coordinate with <code>cmx</code>.</li>
       </ol>
       <p>
-        This check needs only public data. To check lineage, the verifier also needs the nullifier key <code>nk</code> of
-        the account that holds the chain. With <code>nk</code>, the verifier calculates the nullifier of the predecessor
+        Only public data is necessary for this check. To check lineage, the verifier also needs the nullifier key
+        <code>nk</code> of the account of the chain. With <code>nk</code>, the verifier calculates the nullifier of the
+        predecessor
         and finds it as <code>nf_old</code> in the action of the successor. An app with a public chain publishes its full
         viewing key.
       </p>
       <p>
         The verifier must also find each transaction of the chain in a block, and the transaction of each successor must
-        come after the transaction of its predecessor. "After" means a later block, or a later place in the same block.
-        Lineage alone does not give this order. The Orchard circuit checks
-        the Merkle path of a spent note only if the value of the note is not zero. Thus, a transaction can spend a
-        zero-value note that is not in a block. A successor of such a note passes the checks above.
+        be after the transaction of its predecessor. "After" is a later block, or a later place in the same block. This
+        order is not a result of lineage alone. The Merkle path of a spent note is checked in the Orchard circuit only
+        if the value of the note is not zero. Thus, a zero-value note that is not in a block can be spent in a
+        transaction. The checks above are successful for a successor of such a note.
       </p>
 
       <h3 id="authority">Authority</h3>
       <p>
-        Anyone can send a bound note to a published address. Thus, each app must define which notes count. This rule is
-        sufficient to select the notes: the app pins a genesis note by its transaction ID and <code>cmx</code>. A note counts only if it
-        descends from that genesis note. A false note costs its sender a fee, and the record stays the same. The pin does not give the order of the chain. See
+        Anyone can send a bound note to a published address. Thus, each app must define which notes are part of its
+        record. This rule is
+        sufficient to select the notes: the app pins a genesis note by its transaction ID and <code>cmx</code>. A note
+        is part of the record only if it is a descendant of that genesis note. The sender of a false note pays a fee,
+        and the record stays the same. The order of the chain is not known from the pin. See
         <a href="#verification">Verification</a>.
       </p>
 
@@ -225,8 +230,7 @@
       <h2 id="cost">Cost</h2>
       <ul>
         <li>
-          <strong>Fee</strong> A usual record transaction spends the tip and one funding note. It makes the new note and a
-          change note. That is two actions. Since block 3,590,000, wallets use the ZIP 2009 fee rule. The fee for two actions is 2,000 zatoshis (0.00002 ZEC).
+          <strong>Fee</strong> In a usual record transaction, the tip and one funding note are spent. The outputs are the new note and a change note. That is two actions. Since block 3,590,000, wallets use the ZIP 2009 fee rule. The fee for two actions is 2,000 zatoshis (0.00002 ZEC).
         </li>
         <li>
           <strong>Wallets</strong> Each wallet tries to decrypt each action on the chain. Keep the number of records
@@ -238,22 +242,23 @@
         </li>
         <li>
           <strong>Builders</strong> The transaction builder must accept an <code>rseed</code> from its caller. It must
-          also let the caller put the successor in the action that spends the predecessor. The
-          <code>orchard</code> crate samples <code>rseed</code> at random. A patch adds
-          <code>add_output_with_rseed</code>. The patch is pending upstream. A PCZT (ZIP 374) carries a bound output in
-          its usual <code>rseed</code> field.
+          also let the caller put the successor in the action in which the predecessor is spent. The
+          <code>orchard</code> crate samples <code>rseed</code> at random. <code>add_output_with_rseed</code> is in a
+          patch. The patch is pending upstream. In a PCZT (ZIP 374), the usual <code>rseed</code> field is sufficient
+          for a bound output.
         </li>
       </ul>
 
       <h2 id="spec">Spec</h2>
       <p>
         The full spec is a draft ZIP. It includes the binding domain rules, the amendment to ZIP 212, the lineage check
-        and the security analysis. This site will publish the draft after review.
+        and the security analysis. The draft will be published after review.
       </p>
 
       <h2 id="demo">Demo: a timestamp registry</h2>
       <p>
-        The registry proves that a document existed at a block height. Each stamp is a zero-value note to the registry
+        With the registry, anyone can prove that a document existed at a block height. Each stamp is a zero-value note
+        to the registry
         address.
       </p>
       <figure class="code">
@@ -265,8 +270,8 @@ prev    the cmx of the previous stamp</code></pre>
       </figure>
       <p>
         The demo uses the <code>orchard</code> crate, compiled to WebAssembly. The registry key is a demo key. The ρ of the
-        first stamp is a demo value. Each next stamp spends the previous stamp in the same action. Thus, its ρ is the
-        nullifier of the previous stamp.
+        first stamp is a demo value. The previous stamp is spent in the action of each next stamp. Thus, the ρ of the
+        next stamp is the nullifier of the previous stamp.
       </p>
 
       <div class="demo" id="stamp-demo">

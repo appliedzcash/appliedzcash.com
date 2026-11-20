@@ -36,7 +36,7 @@ fn parse(address: &str) -> Result<Inspection, String> {
         .convert::<Inspection>()
         .map_err(|error| match error {
             ConversionError::Unsupported(kind) => format!("The demo cannot show this address type: {kind}."),
-            other => format!("The address failed to decode: {other}."),
+            other => format!("The demo cannot decode the address: {other}."),
         })
 }
 

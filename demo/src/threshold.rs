@@ -85,13 +85,13 @@ fn lagrange(j: u16, signers: &[u16]) -> Result<Scalar, String> {
         num *= o;
         den *= o - x;
     }
-    Ok(num * PallasScalarField::invert(&den).map_err(|_| "Two signers share an identifier.")?)
+    Ok(num * PallasScalarField::invert(&den).map_err(|_| "Two signers have the same identifier.")?)
 }
 
 /// The hash a member sends before it reveals its commitments, so that no member can choose
 /// its nonces after it sees the nonces of the others.
 fn commitment_hash(session: &[u8; 32], j: u16, commitments: &SigningCommitments) -> Result<[u8; 32], String> {
-    let encoded = commitments.serialize().map_err(|_| "A commitment failed to encode.")?;
+    let encoded = commitments.serialize().map_err(|_| "The demo cannot encode a commitment.")?;
     Ok(blake2b(NEST_PERSONAL, &[session.as_slice(), &j.to_le_bytes(), &encoded].concat()))
 }
 
@@ -114,11 +114,11 @@ fn check_reveal(
     revealed: &BTreeMap<u16, SigningCommitments>,
 ) -> Result<(), String> {
     if !hashes.keys().eq(revealed.keys()) {
-        return Err("The revealed set differs from the hashed set.".into());
+        return Err("The revealed set is different from the hashed set.".into());
     }
     for (j, c) in revealed {
         if commitment_hash(session, *j, c)? != hashes[j] {
-            return Err(format!("The commitments of member {j} differ from its hash."));
+            return Err(format!("The commitments of member {j} are different from its hash."));
         }
     }
     Ok(())
@@ -166,7 +166,7 @@ impl ObjectKey {
 }
 
 fn fail<E>(_: E) -> String {
-    "The outer round failed.".to_string()
+    "The demo cannot complete the outer round.".to_string()
 }
 
 /// ρ₂, c and λ₂ of the outer 2-of-2 round for identifier 2, over rk = ak + [α]G.
@@ -304,7 +304,7 @@ fn run(key_seed: &str, nonce_seed: &str, object_id: &str, signers: &[u16], messa
         let r = &revealed[&j];
         let expected = r.hiding().value() + r.binding().value() * rho + member_public(j)? * (lambda * c * key.sign() * mu);
         if PallasGroup::generator() * z != expected {
-            return Err(format!("The answer of member {j} failed its check."));
+            return Err(format!("The answer of member {j} is incorrect."));
         }
         sum += z;
     }
@@ -323,7 +323,7 @@ fn run(key_seed: &str, nonce_seed: &str, object_id: &str, signers: &[u16], messa
     let randomizer = Randomizer::deserialize(&scalar_bytes(&alpha)).map_err(|_| "α is invalid.")?;
     #[allow(deprecated)]
     let owner_sig = frost_rerandomized::sign(&package, &owner_nonces, &owner_package, randomizer)
-        .map_err(|_| "The owner share failed.")?;
+        .map_err(|_| "The demo cannot sign with the owner share.")?;
     let params = RandomizedParams::from_randomizer(&key.verifying_key()?, randomizer);
     let signature = frost::rerandomized::aggregate(
         &package,
@@ -331,12 +331,12 @@ fn run(key_seed: &str, nonce_seed: &str, object_id: &str, signers: &[u16], messa
         &key.public_package()?,
         &params,
     )
-    .map_err(|_| "The aggregate signature failed.")?;
+    .map_err(|_| "The demo cannot make the aggregate signature.")?;
 
     // Anyone checks the signature under rk = ak + [α]G.
     let rk = key.ak + PallasGroup::generator() * alpha;
     let rk_key = VerifyingKey::deserialize(&bytes(&rk)?).map_err(|_| "rk is invalid.")?;
-    let signature_bytes = signature.serialize().map_err(|_| "The signature failed to encode.")?;
+    let signature_bytes = signature.serialize().map_err(|_| "The demo cannot encode the signature.")?;
     let verified = rk_key.verify(&sighash, &Signature::deserialize(&signature_bytes).map_err(|_| "Bad signature.")?).is_ok();
 
     Ok(Threshold {

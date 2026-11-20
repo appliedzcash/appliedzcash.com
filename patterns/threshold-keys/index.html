@@ -4,12 +4,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Threshold keys: FROST multisig on Zcash | Applied Zcash</title>
-    <meta name="description" content="Multisig for Zcash apps: FROST gives each app role one RedPallas group key, and any t of n members sign. Per-object tweaks and nested groups. Experimental." />
+    <meta name="description" content="Multisig for Zcash apps: with FROST, each app role has one RedPallas group key, and any t of n members sign. Per-object tweaks and nested groups. Experimental." />
     <link rel="canonical" href="https://appliedzcash.com/patterns/threshold-keys/" />
     <meta property="og:type" content="article" />
     <meta property="og:site_name" content="Applied Zcash" />
     <meta property="og:title" content="Threshold keys: FROST multisig on Zcash" />
-    <meta property="og:description" content="Multisig for Zcash apps: FROST gives each app role one RedPallas group key, and any t of n members sign. Per-object tweaks and nested groups. Experimental." />
+    <meta property="og:description" content="Multisig for Zcash apps: with FROST, each app role has one RedPallas group key, and any t of n members sign. Per-object tweaks and nested groups. Experimental." />
     <meta property="og:url" content="https://appliedzcash.com/patterns/threshold-keys/" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta property="og:image" content="https://appliedzcash.com/images/og.png" />
@@ -20,7 +20,7 @@
     <meta name="theme-color" content="#0f1011" media="(prefers-color-scheme: dark)" />
     <link rel="icon" href="../../images/mark.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="../../images/apple-touch-icon.png" />
-    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Threshold keys", "description": "Multisig for Zcash apps: FROST gives each app role one RedPallas group key, and any t of n members sign. Per-object tweaks and nested groups. Experimental.", "url": "https://appliedzcash.com/patterns/threshold-keys/", "inLanguage": "en", "about": "Zcash", "isPartOf": {"@type": "WebSite", "name": "Applied Zcash", "url": "https://appliedzcash.com/"}}</script>
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Threshold keys", "description": "Multisig for Zcash apps: with FROST, each app role has one RedPallas group key, and any t of n members sign. Per-object tweaks and nested groups. Experimental.", "url": "https://appliedzcash.com/patterns/threshold-keys/", "inLanguage": "en", "about": "Zcash", "isPartOf": {"@type": "WebSite", "name": "Applied Zcash", "url": "https://appliedzcash.com/"}}</script>
     <link rel="preload" href="../../fonts/source-serif-4.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="../../styles/main.css" />
     <script type="module" src="../../scripts/site.js"></script>
@@ -36,20 +36,20 @@
       <p class="kicker">Pattern · Experimental</p>
       <h1>Threshold keys</h1>
       <p class="lede">
-        Give each app role one FROST group key. Any <code>t</code> of <code>n</code> members can sign for the role. The
-        chain sees one usual spend signature.
+        Give each app role one FROST group key. Any <code>t</code> of <code>n</code> members can sign for the role.
+        Nodes see one usual spend signature.
       </p>
       <div class="notice warning">
         <p class="notice-title">Warning</p>
         <p>
-          FROST on the Ironwood pool is unaudited, and ZIP 312 is a draft. The nested
-          construction on this page needs review by a cryptographer. Use it on Testnet only.
+          FROST on the Ironwood pool is unaudited, and ZIP 312 is a draft. Review by a cryptographer is necessary for
+          the nested construction on this page. Use it on Testnet only.
         </p>
       </div>
 
       <h2 id="problem">Problem</h2>
       <p>
-        An Orchard-protocol spend examines one signature under one key <code>ak</code>. Thus, shared control of a note must
+        An Orchard-protocol spend has one signature under one key <code>ak</code>. Thus, shared control of a note must
         be inside the key.
       </p>
       <p>
@@ -57,7 +57,7 @@
         The person can lose the key, a thief can take it, or the person can be away when the app must sign.
       </p>
       <p>
-        Zcash applies <code>nLockTime</code> only to transactions with transparent inputs. Thus, for a shielded note, the
+        <code>nLockTime</code> is in effect only for transactions with transparent inputs. Thus, for a shielded note, the
         structure of the signers is the only path to liveness.
       </p>
 
@@ -65,7 +65,7 @@
       <figure class="diagram">
         <svg viewBox="0 0 360 450" role="img" aria-labelledby="fig-tk-title fig-tk-desc">
           <title id="fig-tk-title">From the members to the address of an object</title>
-          <desc id="fig-tk-desc">Members 1, 2 and 3 make the group key A_G with 2-of-3 FROST. The object id gives the public tweak t. A_G + [t]G is the group key of the object. It and the owner share A_O make ak with 2-of-2 FROST. ak gives the address of the object.</desc>
+          <desc id="fig-tk-desc">Members 1, 2 and 3 make the group key A_G with 2-of-3 FROST. The public tweak t is a hash of the object id. A_G + [t]G is the group key of the object. ak is made from it and the owner share A_O with 2-of-2 FROST. The address of the object is made from ak.</desc>
           <defs><marker id="fig-tk-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 8 4 0 8z" /></marker></defs>
           <g class="e" marker-end="url(#fig-tk-arrow)">
             <path d="M95 40V68" />
@@ -101,23 +101,23 @@
           <rect class="v" x="85" y="410" width="190" height="30" rx="7" />
           <text x="180" y="425">address of the object</text>
         </svg>
-        <figcaption>Dashed: a key that FROST or the tweak calculates. Each object gets its own key from a public tweak.</figcaption>
+        <figcaption>Dashed: a key that is calculated with FROST or the tweak. Each object has its own key from a public tweak.</figcaption>
       </figure>
 
       <h3 id="1-one-group-key-for-each-role">1. One group key for each role</h3>
       <ol>
-        <li>The <code>n</code> members of a role make a FROST key over RedPallas (ZIP 312). Use a distributed key generation (DKG). Then no person holds the full secret.</li>
+        <li>The <code>n</code> members of a role make a FROST key over RedPallas (ZIP 312). Use a distributed key generation (DKG). Then each person has only a share of the secret.</li>
         <li>The group key is the <code>ak</code> of the role account. Each role has its own <code>ak</code>, nullifier key and commit-ivk randomness.</li>
         <li>To spend, a coordinator makes a PCZT. Each member examines the transaction on its own and calculates the sighash.</li>
-        <li>Any <code>t</code> members sign in two rounds. The PCZT gives the randomizer α, so the signature verifies under <code>rk = ak + [α]G</code>.</li>
+        <li>Any <code>t</code> members sign in two rounds. The randomizer α is in the PCZT, so the signature is valid under <code>rk = ak + [α]G</code>.</li>
       </ol>
       <p>
-        The coordinator holds zero shares. The role continues while <code>t</code> members are available. A share refresh
-        changes the members and keeps the group key.
+        The coordinator has zero shares. The role continues while <code>t</code> members are available. After a share
+        refresh, the members are different and the group key is the same.
       </p>
 
       <h3 id="2-a-public-tweak-for-each-object">2. A public tweak for each object</h3>
-      <p>Some apps need one key for each object: each title, each deed, each account. A public tweak gives each object its own key:</p>
+      <p>Some apps need one key for each object: each title, each deed, each account. With a public tweak, each object has its own key:</p>
       <pre class="formula"><code>t          = ToScalar(BLAKE2b-512(domain, object id))
 object key = A_G + [t]G</code></pre>
       <ul>
@@ -129,14 +129,16 @@ object key = A_G + [t]G</code></pre>
 
       <h3 id="3-a-group-inside-a-2-of-2-key">3. A group inside a 2-of-2 key</h3>
       <p>
-        An object can need two parties: an owner and a group. For example, the owner moves the object, and the group
+        Two parties can be necessary for an object: an owner and a group. For example, the owner moves the object, and
+        the group
         examines each move for the rules of the app. Make a FROST 2-of-2 key. The owner is identifier 1. The group is
         identifier 2:
       </p>
       <pre class="formula"><code>ak = ±([2]A_O − (A_G + [t]G))</code></pre>
       <p>
-        The coefficients 2 and −1 come from Lagrange interpolation at zero over identifiers 1 and 2. Orchard requires an
-        <code>ak</code> with sign bit 0. When the sign bit is 1, both sides negate their shares.
+        The coefficients 2 and −1 are the result of Lagrange interpolation at zero over identifiers 1 and 2. In the
+        Orchard protocol, the sign bit of <code>ak</code> must be 0. When the sign bit is 1, both sides negate their
+        shares.
       </p>
       <p>The group signs as one participant of the outer round:</p>
       <ol>
@@ -148,13 +150,13 @@ object key = A_G + [t]G</code></pre>
           ρ₂, <code>c</code> and λ₂ are the binding factor, the challenge and the Lagrange coefficient of identifier 2.
           μ<sub>j</sub> is the Lagrange coefficient of the member in the group. σ<sub>j</sub> is the share of the member.
         </li>
-        <li>The coordinator examines each answer against the verifying share of the member. A bad answer identifies its member.</li>
+        <li>The coordinator examines each answer against the verifying share of the member. Thus, the coordinator knows the member of a bad answer.</li>
         <li>The coordinator adds the answers and the public term <code>λ₂·c·(±t + α)</code>. The result is the share of identifier 2.</li>
-        <li>The owner signs as identifier 1. A usual FROST aggregate makes the spend signature.</li>
+        <li>The owner signs as identifier 1. The spend signature is a usual FROST aggregate.</li>
       </ol>
       <p>
         The owner must prove possession of its share. A dishonest owner can choose <code>A_O</code> from the group key,
-        and then know the full secret of <code>ak</code>. The proof of possession stops this attack.
+        and then know the full secret of <code>ak</code>. The proof of possession is the defense against this attack.
       </p>
 
       <h2 id="cost">Cost</h2>
@@ -162,12 +164,12 @@ object key = A_G + [t]G</code></pre>
         <li><strong>Chain</strong> Zero. The spend has one usual RedPallas signature. To outsiders, it looks like a spend with one key.</li>
         <li><strong>Rounds</strong> Two FROST rounds. A nested group adds one hash round before the commitments.</li>
         <li><strong>Liveness</strong> <code>t</code> members must be online for each spend.</li>
-        <li><strong>Keygen</strong> One DKG for each role. A new object uses its public tweak, with zero keygen.</li>
+        <li><strong>Keygen</strong> One DKG for each role. A new object has a public tweak, with zero keygen.</li>
       </ul>
 
       <h2 id="limits">Limits</h2>
       <ul>
-        <li><strong>Audit.</strong> FROST on the Ironwood pool is unaudited. ZIP 312 is a draft. The nested construction follows the recipe of the <code>frostito</code> crate, and it needs review.</li>
+        <li><strong>Audit.</strong> FROST on the Ironwood pool is unaudited. ZIP 312 is a draft. The nested construction is from the recipe of the <code>frostito</code> crate, and review is necessary.</li>
         <li><strong>Trust.</strong> A group is one unit of trust. <code>t</code> bad members are a bad role.</li>
         <li><strong>Refusal.</strong> If all members refuse, the object stays frozen. The remedy is outside the chain, for example in law.</li>
         <li><strong>Coordinator.</strong> Each member must examine the request on its own. Each member must also sign the set of commitments that it saw, so that the coordinator shows the same set to each member.</li>
@@ -175,13 +177,14 @@ object key = A_G + [t]G</code></pre>
 
       <h2 id="spec">Spec</h2>
       <p>
-        ZIP 312 specifies FROST for spend authorization. This page is a design note for the tweak and the nested group,
+        FROST for spend authorization is specified in ZIP 312. This page is a design note for the tweak and the nested
+        group,
         for experiments only.
       </p>
 
       <h2 id="demo">Demo: a deed with a guard group</h2>
       <p>
-        A toy registry gives each deed its own key. The owner holds one side. A guard group of three members holds the
+        In a toy registry, each deed has its own key. The owner has one side. A guard group of three members has the
         other side, and any two of them sign. The demo uses the <code>reddsa</code> crate (RedPallas FROST), compiled to
         WebAssembly. A trusted dealer makes the demo keys from a random seed. A real group uses a DKG.
       </p>

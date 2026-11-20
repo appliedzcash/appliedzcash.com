@@ -100,7 +100,7 @@ fn build(
         return Err("Add one command or more.".into());
     }
     if commands.len() > MAX_COMMANDS {
-        return Err("A memo holds 9 commands or fewer.".into());
+        return Err("The limit is 9 commands in each memo.".into());
     }
     if let Some(bad) = commands.iter().find(|command| !valid_command(command)) {
         return Err(format!("Use q1 to q9, then YES or NO. This line has an error: {bad}"));

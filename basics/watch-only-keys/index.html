@@ -36,8 +36,8 @@
       <p class="kicker">Basic</p>
       <h1>Watch-only keys</h1>
       <p class="lede">
-        A server that receives payments needs a viewing key only. The viewing key shows the payments and makes new
-        addresses. The spending key stays offline.
+        A server that receives payments needs a viewing key only. With the viewing key, the server sees the payments and
+        makes new addresses. The spending key stays offline.
       </p>
 
       <h2 id="use">Use</h2>
@@ -50,8 +50,8 @@
       <h2 id="mechanism">Mechanism</h2>
       <figure class="diagram">
         <svg viewBox="0 0 360 310" role="img" aria-labelledby="fig-wok-title fig-wok-desc">
-          <title id="fig-wok-title">Each key makes the keys below it</title>
-          <desc id="fig-wok-desc">ZIP 32 makes the spending key from the seed. The spending key makes the full viewing key. The full viewing key makes the incoming viewing key.</desc>
+          <title id="fig-wok-title">Each key is made from the key above it</title>
+          <desc id="fig-wok-desc">The spending key is made from the seed with ZIP 32. The full viewing key is made from the spending key. The incoming viewing key is made from the full viewing key.</desc>
           <defs><marker id="fig-wok-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 8 4 0 8z" /></marker></defs>
           <g class="e" marker-end="url(#fig-wok-arrow)">
             <path d="M110 40V68" />
@@ -75,11 +75,11 @@
           <text class="m start" x="210" y="278">see in</text>
           <text class="m start" x="210" y="294">make addresses</text>
         </svg>
-        <figcaption>A key can make each key below it. A key cannot make a key above it.</figcaption>
+        <figcaption>The holder of a key can make each key below it, and no key above it.</figcaption>
       </figure>
       <p>
-        Each key comes from the key on its left. The derivation goes in one direction only. Thus, each step removes a
-        power:
+        Each key is made from the key above it. The derivation is possible in one direction only. Thus, each key has
+        less power than the key above it:
       </p>
       <div class="table-wrap">
         <table class="cost-table capability-table">
@@ -94,8 +94,9 @@
         </table>
       </div>
       <p>
-        ZIP 316 encodes a viewing key as a unified key, like a unified address. A UFVK starts with <code>uview1</code>. A
-        UIVK starts with <code>uivk1</code>. On Testnet, the prefixes end in <code>test1</code>.
+        A unified key (ZIP 316) is the encoding of a viewing key, like a unified address. The prefix of a UFVK is
+        <code>uview1</code>. The prefix of a UIVK is <code>uivk1</code>. On Testnet, the prefixes are
+        <code>uviewtest1</code> and <code>uivktest1</code>.
       </p>
       <p>Select the smallest key for each task:</p>
       <ol>
@@ -107,16 +108,15 @@
       <h2 id="limits">Limits</h2>
       <ul>
         <li>
-          <strong>All or nothing.</strong> A viewing key shows all the past and future payments of the account. To show
+          <strong>All or nothing.</strong> The holder of a viewing key sees all the past and future payments of the account. To show
           one payment only, use a payment disclosure (ZIP 311, draft).
         </li>
         <li>
           <strong>Permanent access.</strong> A key that you give out stays valid. To stop new access, move the funds to a
-          new account. The old key still shows the old payments.
+          new account. The old payments stay visible with the old key.
         </li>
         <li>
-          <strong>Balances.</strong> The UIVK sees each note in. The full viewing key also sees each spend. A balance
-          needs the full viewing key.
+          <strong>Balances.</strong> A server with the UIVK sees each note in. A server with the full viewing key also sees each spend. The full viewing key is necessary for a balance.
         </li>
       </ul>
 
@@ -129,7 +129,7 @@
       <div class="notice warning">
         <p class="notice-title">Warning</p>
         <p>
-          Type only demo seeds here. A seed gives full control of its funds. Keep real seeds in
+          Type only demo seeds here. The holder of a seed has full control of its funds. Keep real seeds in
           a wallet.
         </p>
       </div>

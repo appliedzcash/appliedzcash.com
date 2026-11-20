@@ -161,7 +161,7 @@ fn build(
         return Err(format!("Use {MAX_ACTIONS} actions or fewer."));
     }
     if actions < spends.max(outputs).max(2) {
-        return Err("The bundle needs 2 actions or more, and at least one action for each real spend and output.".into());
+        return Err("Use 2 actions or more, and one action or more for each real spend and each real output.".into());
     }
 
     let real_nfs: Vec<[u8; 32]> = (0..spends).map(|i| demo_value(b"spend", i)).collect();
@@ -240,7 +240,7 @@ fn attempt(d: &[u8; 32], real_nfs: &[[u8; 32]], outputs: u32, actions: u32) -> R
     if !distinct(all_spends.iter().map(|s| sort_key(0x00, &s.nf)).collect())
         || !distinct(all_outputs.iter().map(|o| sort_key(0x01, &o.rseed)).collect())
     {
-        return Err(Failure::Fatal("Two sort keys are equal. The build fails.".into()));
+        return Err(Failure::Fatal("Two sort keys are equal. Thus, the build is invalid.".into()));
     }
 
     // Action a: spend a and output a. The output takes ρ from the spend's nullifier.

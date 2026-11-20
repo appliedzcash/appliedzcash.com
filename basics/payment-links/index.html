@@ -36,8 +36,8 @@
       <p class="kicker">Basic</p>
       <h1>Payment links</h1>
       <p class="lede">
-        A payment link asks a wallet for a payment. ZIP 321 sets the format. The link holds the address, the amount and a
-        memo. A QR code of the link lets a phone wallet read it.
+        A payment link is a request for a payment. The format is in ZIP 321. The link contains the address, the amount
+        and a memo. A phone wallet can read the link from a QR code.
       </p>
 
       <h2 id="use">Use</h2>
@@ -47,7 +47,7 @@
         <li>a donation button.</li>
       </ul>
       <p>
-        Put the order number in the memo. When the payment arrives, the shop reads the memo and finds the order.
+        Put the order number in the memo. When the shop receives the payment, it reads the memo and finds the order.
       </p>
 
       <h2 id="mechanism">Mechanism</h2>
@@ -58,15 +58,15 @@
         <dt><code>amount</code></dt>
         <dd>The value in ZEC, with 8 decimal places or fewer. For example, <code>0.25</code>.</dd>
         <dt><code>memo</code></dt>
-        <dd>The memo bytes in base64url, 512 bytes or fewer. Only a shielded address can receive a memo.</dd>
+        <dd>The memo bytes in base64url, 512 bytes or fewer. Only a payment to a shielded address can have a memo.</dd>
         <dt><code>label</code></dt>
         <dd>A name for the recipient. The wallet shows it to the payer.</dd>
         <dt><code>message</code></dt>
         <dd>A note for the payer. The wallet shows it to the payer.</dd>
       </dl>
       <p>
-        The label and the message stay in the wallet of the payer. The memo goes on the chain, in the note ciphertext.
-        The URI encodes the label and the message with percent escapes.
+        The label and the message stay in the wallet of the payer. The memo is put on the chain, in the note ciphertext.
+        In the URI, the label and the message have percent escapes.
       </p>
       <p>A shop uses this sequence:</p>
       <ol>
@@ -77,7 +77,7 @@
         <li>The shop finds the payment with its viewing key. See <a href="../watch-only-keys/">Watch-only keys</a>.</li>
       </ol>
       <p>
-        A request can hold more than one payment. Each added payment puts an index on its names, for example
+        A request can contain more than one payment. The names of each added payment have an index, for example
         <code>amount.1</code>.
       </p>
 
@@ -105,7 +105,8 @@
         </li>
       </ul>
       <p>
-        <a href="../../patterns/wallet-native-orders/">Wallet-native orders</a> uses payment links to send app orders.
+        In <a href="../../patterns/wallet-native-orders/">Wallet-native orders</a>, a participant sends app orders with
+        payment links.
       </p>
 
       <h2 id="demo">Demo: a shop link</h2>

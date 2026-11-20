@@ -86,7 +86,7 @@ function update() {
     ratio.textContent = `${decimal.format(perPlayer.perDay / perEpoch.perDay)}×`;
     result.replaceChildren(ratio, " fewer actions with one note per epoch");
   } else {
-    result.textContent = "The two designs use the same number of actions.";
+    result.textContent = "The two designs have the same number of actions.";
   }
 }
 

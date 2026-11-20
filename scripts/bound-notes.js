@@ -75,8 +75,8 @@ function run(demo) {
   const match = claimed.cmx === onChain;
   verifyResult.className = `result ${match ? "match" : "mismatch"}`;
   verifyResult.textContent = match
-    ? "The two values are equal. The stamp binds this document."
-    : "The two values are different. The stamp binds a different document.";
+    ? "The two values are equal. This document is bound in the stamp."
+    : "The two values are different. A different document is bound in the stamp.";
 }
 
 try {
@@ -115,5 +115,5 @@ try {
   showChain();
   update();
 } catch (error) {
-  setStatus(status, `the WASM module failed to load (${error.message}).`);
+  setStatus(status, `the browser cannot load the WASM module (${error.message}).`);
 }

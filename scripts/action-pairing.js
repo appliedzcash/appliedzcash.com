@@ -105,5 +105,5 @@ try {
   }
   run(demo, "canonical");
 } catch (error) {
-  setStatus(status, `the WASM module failed to load (${error.message}).`);
+  setStatus(status, `the browser cannot load the WASM module (${error.message}).`);
 }

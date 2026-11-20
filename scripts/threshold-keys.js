@@ -50,8 +50,8 @@ function run(demo, sign) {
       ]);
       result.className = `result ${out.verified ? "match" : "mismatch"}`;
       result.textContent = out.verified
-        ? `The owner and members ${members.slice(0, -1).join(", ")} and ${members.at(-1)} made one signature. It verifies under rk.`
-        : "The signature failed to verify.";
+        ? `The owner and members ${members.slice(0, -1).join(", ")} and ${members.at(-1)} made one signature. It is valid under rk.`
+        : "The signature is invalid.";
     }
     setStatus(status);
   } catch (error) {
@@ -87,5 +87,5 @@ try {
   }
   run(demo, false);
 } catch (error) {
-  setStatus(status, `the WASM module failed to load (${error.message}).`);
+  setStatus(status, `the browser cannot load the WASM module (${error.message}).`);
 }

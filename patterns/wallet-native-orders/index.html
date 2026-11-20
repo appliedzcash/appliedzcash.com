@@ -40,25 +40,25 @@
         wallet shows the memo before the participant approves the payment.
       </p>
       <p>
-        A MAC under a session key identifies the participant. The keys that control the funds of the participant stay in
-        the wallet.
+        The operator identifies the participant by a MAC under a session key. The keys for the funds of the participant
+        stay in the wallet.
       </p>
 
       <h2 id="problem">Problem</h2>
       <p>
-        An app must know which participant sent each order. A shielded payment hides its sender. Wallets sign messages
-        with transparent keys at most. ZIP 304 covers only Sapling keys.
+        An app must know which participant sent each order. The sender of a shielded payment is secret. Wallets sign
+        messages with transparent keys at most. ZIP 304 is for Sapling keys only.
       </p>
       <p>
         Thus, many apps ask for a seed phrase, or keep a secret key in the browser. Participants with real funds refuse
         to put a seed phrase in a web page.
       </p>
       <p>
-        Wallets already send ZIP 321 payments with memos. A wallet shows the memo before it sends the payment. This
-        pattern uses these two functions. A survey of wallets in November 2026 found these limits:
+        Wallets already send ZIP 321 payments with memos. A wallet shows the memo before it sends the payment. These two
+        functions are the base of this pattern. A survey of wallets in November 2026 had these results:
       </p>
       <ul>
-        <li>a memo of one line of printable ASCII arrives intact;</li>
+        <li>wallets send a memo of one line of printable ASCII unchanged;</li>
         <li>some wallets refuse or change binary memos and control characters;</li>
         <li>some wallets refuse a request with a second payment or a zero amount.</li>
       </ul>
@@ -77,7 +77,7 @@
         <dt>Session key</dt>
         <dd>A 32-byte key <code>k_i</code> for participant <code>i</code>. It is valid for one round.</dd>
         <dt>Sign-in code</dt>
-        <dd>A one-time code of 8 digits. It moves <code>k_i</code> to one page.</dd>
+        <dd>A one-time code of 8 digits. With it, one page gets <code>k_i</code>.</dd>
       </dl>
 
       <h3 id="sequence">Sequence</h3>
@@ -125,7 +125,7 @@
           <text class="m" x="14" y="392">8</text>
           <text class="s" x="180" y="383">payout</text>
         </svg>
-        <figcaption>Each arrow is one message. The steps go from top to bottom.</figcaption>
+        <figcaption>Each arrow is one message. The steps are in sequence from top to bottom.</figcaption>
       </figure>
 
       <h3 id="join">Join</h3>
@@ -135,18 +135,18 @@
         <li>The operator makes a session key <code>k_i</code> from 32 random bytes.</li>
         <li>The operator calculates the owner tag τ, a hash of <code>k_i</code>.</li>
         <li>The operator signs <code>i</code>, τ and a salted hash of the payout address.</li>
-        <li>The operator sends <code>i</code>, τ, the salt and the signature to the participant. This step keeps <code>k_i</code> back.</li>
+        <li>The operator sends <code>i</code>, τ, the salt and the signature to the participant. The operator keeps <code>k_i</code> back in this step.</li>
       </ol>
       <p>
-        Each Orchard receiver can join one time in a round. The operator then sends a welcome to the payout address. The
-        welcome can carry funds for the first orders.
+        A participant can join one time in a round with each Orchard receiver. The operator then sends a welcome to the
+        payout address. The welcome can contain funds for the first orders.
       </p>
 
       <h3 id="sign-in">Sign-in</h3>
       <ol>
         <li>The page makes a 32-byte secret <code>s</code> and keeps it.</li>
         <li>The page sends the hash of <code>s</code> to the operator.</li>
-        <li>The operator sends an 8-digit code in a memo to the payout address. The memo shows the first 4 bytes of the hash.</li>
+        <li>The operator sends an 8-digit code in a memo to the payout address. The memo contains the first 4 bytes of the hash.</li>
         <li>The participant reads the code in the wallet and types it on the page.</li>
         <li>The page sends <code>s</code> and the code to the operator.</li>
         <li>The operator sends <code>k_i</code> to the page. The code is then used.</li>
@@ -157,8 +157,8 @@
         that asked for it. The operator stops a code after the first correct try or after the fifth incorrect try.
       </p>
       <p>
-        A new device needs a new code. The participant pays a code request to the Inbox from the wallet. The memo of the
-        request carries the new hash and the payout address.
+        A new code is necessary for a new device. The participant pays a code request to the Inbox from the wallet. The
+        memo of the request contains the new hash and the payout address.
       </p>
 
       <h3 id="order-memo">Order memo</h3>
@@ -172,8 +172,8 @@ nonce   4 random bytes, hex, new for each memo
 expiry  the last close height at which the memo counts
 mac     MAC_k_i(P_mac, all bytes before " | mac="), 8 bytes, hex</code></pre>
       <p>
-        The MAC is keyed BLAKE2b with an 8-byte output. The scheme of the app sets the commands and the personalization
-        <code>P_mac</code>. The memo is a ZIP 302 text memo of 512 bytes or fewer.
+        The MAC is keyed BLAKE2b with an 8-byte output. The commands and the personalization <code>P_mac</code> are part
+        of the scheme of the app. The memo is a ZIP 302 text memo of 512 bytes or fewer.
       </p>
 
       <h3 id="payment-request">Payment request</h3>
@@ -182,23 +182,24 @@ mac     MAC_k_i(P_mac, all bytes before " | mac="), 8 bytes, hex</code></pre>
         memo. The page shows the request as a QR code. The page also shows the URI, the address and the memo for copy.
       </p>
       <p>
-        A request is a finished order. The first payment of a request places the order. Thus, the page shows a request
+        A request is a finished order. The order is placed with the first payment of the request. Thus, the page shows a
+        request
         only when the participant asks for it.
       </p>
 
       <h3 id="windows-and-status">Windows and status</h3>
       <p>
-        The rules set a lag <code>c</code> in blocks. Epoch <code>e</code> closes at height <code>H_e</code>. Epoch
-        <code>e</code> counts the Inbox notes at heights <code>h</code> with:
+        The lag <code>c</code> is a number of blocks from the rules. The close height of epoch <code>e</code> is
+        <code>H_e</code>. The Inbox notes of epoch <code>e</code> are at heights <code>h</code> with:
       </p>
       <pre class="formula"><code>H_(e-1) - c  &lt;  h  ≤  H_e - c</code></pre>
       <p>
-        Each Inbox note is in one window. Anyone who knows the close heights can calculate each window. A reorg of fewer
-        than <code>c</code> blocks keeps each closed window the same.
+        Each Inbox note is in one window. Anyone who knows the close heights can calculate each window. After a reorg of
+        fewer than <code>c</code> blocks, each closed window stays the same.
       </p>
       <p>
-        The operator gives each Inbox note one status. It examines the notes in chain order. The first check that fails
-        sets the status:
+        The operator gives each Inbox note one status. It examines the notes in chain order. The status is the result of
+        the first failed check:
       </p>
       <div class="table-wrap">
         <table class="cost-table status-table">
@@ -207,18 +208,19 @@ mac     MAC_k_i(P_mac, all bytes before " | mac="), 8 bytes, hex</code></pre>
           </thead>
           <tbody>
             <tr><th scope="row">1</th><td>oversize</td><td>A field is too long, or the memo has too many commands.</td></tr>
-            <tr><th scope="row">2</th><td>out of bounds</td><td><code>t</code> identifies no participant, or a command is outside the scheme limits.</td></tr>
-            <tr><th scope="row">3</th><td>malformed</td><td>The memo fails the grammar, or a new encoding of the memo gives different bytes.</td></tr>
+            <tr><th scope="row">2</th><td>out of bounds</td><td>No participant has the number <code>t</code>, or a command is outside the scheme limits.</td></tr>
+            <tr><th scope="row">3</th><td>malformed</td><td>The memo is incorrect for the grammar, or a new encoding of the memo has different bytes.</td></tr>
             <tr><th scope="row">4</th><td>wrong value</td><td>The note value is different from the order amount.</td></tr>
             <tr><th scope="row">5</th><td>expired</td><td><code>x</code> is less than <code>H_e</code>.</td></tr>
             <tr><th scope="row">7</th><td>bad MAC</td><td>The MAC is different from the MAC under <code>k_t</code>.</td></tr>
             <tr><th scope="row">6</th><td>duplicate</td><td>An earlier counted memo has the same pair (<code>t</code>, <code>n</code>).</td></tr>
-            <tr><th scope="row">0</th><td>counted</td><td>All the checks above pass.</td></tr>
+            <tr><th scope="row">0</th><td>counted</td><td>All the checks above are successful.</td></tr>
           </tbody>
         </table>
       </div>
       <p>
-        Only counted memos use a nonce. Only a holder of <code>k_t</code> can make a valid MAC. Thus, each participant
+        A nonce is used only when its memo is counted. Only a holder of <code>k_t</code> can make a valid MAC. Thus,
+        each participant
         controls their own nonces.
       </p>
 
@@ -226,17 +228,16 @@ mac     MAC_k_i(P_mac, all bytes before " | mac="), 8 bytes, hex</code></pre>
       <p>
         For each window, the operator publishes a leaf list. Each leaf is the <code>cmx</code> of one Inbox note and its
         status code. The operator puts the Merkle root of the list in the record of the epoch, for example in a
-        <a href="../bound-notes/">bound note</a>. The leaf list shows which notes went to the Inbox. It keeps the senders
-        and the memos secret.
+        <a href="../bound-notes/">bound note</a>. The notes of the Inbox are known from the leaf list. The senders and the memos stay secret.
       </p>
       <p>A participant can show that the operator omitted an order or gave it an incorrect status:</p>
       <ol>
         <li>The participant gives the transaction ID, the action index and the ephemeral secret key <code>esk</code> of the order note. The wallet gets <code>esk</code> with its outgoing viewing key.</li>
         <li>A verifier decrypts the note with <code>esk</code> and the Inbox receiver.</li>
         <li>The verifier calculates <code>cmx</code> again and finds the window of the note.</li>
-        <li>The verifier examines the leaf list. A missing leaf shows an omission. A status that disagrees with the memo and the record shows an error.</li>
+        <li>The verifier examines the leaf list. A missing leaf is an omission. A status that is incorrect for the memo and the record is an error.</li>
       </ol>
-      <p>The disclosure opens one note only. The other notes of the wallet stay secret.</p>
+      <p>Only one note is disclosed. The other notes of the wallet stay secret.</p>
 
       <h3 id="payout">Payout</h3>
       <p>
@@ -254,8 +255,7 @@ mac     MAC_k_i(P_mac, all bytes before " | mac="), 8 bytes, hex</code></pre>
           <a href="../polite-actions/">Polite actions</a>.
         </li>
         <li>
-          <strong>Sign-in on a new device</strong> One code request. Its amount pays for the code note and its part of the
-          epoch transaction.
+          <strong>Sign-in on a new device</strong> One code request. Its amount is the cost of the code note and its part of the epoch transaction.
         </li>
         <li>
           <strong>Wallet support</strong> ZIP 321 with memos. The wallet must send the memo bytes unchanged.
@@ -277,32 +277,29 @@ mac     MAC_k_i(P_mac, all bytes before " | mac="), 8 bytes, hex</code></pre>
           memo log of the page. Other persons see only the word of the participant against the word of the operator.
         </li>
         <li>
-          <strong>Copies.</strong> A copy of a memo or a QR code is a finished order. The nonce rule counts it one time.
-          The expiry sets how long a copy stays valid.
+          <strong>Copies.</strong> A copy of a memo or a QR code is a finished order. With the nonce rule, it is counted one time only. A copy stays valid until the expiry.
         </li>
         <li>
           <strong>Viewing keys.</strong> A holder of the incoming viewing key of the payout address can get a code, and
           then <code>k_i</code>. Use a payout address with a private viewing key, for example a new account.
         </li>
         <li>
-          <strong>Phishing.</strong> Anyone can send a memo that looks like a code or a payout. A false code fails at
-          sign-in. A clone page can still ask the participant for a real code. Wallets and pages must show the host of each
+          <strong>Phishing.</strong> Anyone can send a memo that looks like a code or a payout. The operator refuses a false code at sign-in. A clone page can still ask the participant for a real code. Wallets and pages must show the host of each
           link.
         </li>
         <li>
-          <strong>Privacy.</strong> Outsiders see a usual Ironwood-pool transaction. The leaf list shows the number of
-          orders in each window. The operator knows the payout address and the time of each order.
+          <strong>Privacy.</strong> Outsiders see a usual Ironwood-pool transaction. The number of orders in each window is visible in the leaf list. The operator knows the payout address and the time of each order.
         </li>
       </ul>
 
       <h2 id="spec">Spec</h2>
       <p>
         The full spec is a draft ZIP. It includes the grammar of code requests, the code quota, the lifetime of codes and
-        the open questions. This site will publish the draft after review.
+        the open questions. The draft will be published after review.
       </p>
 
       <h2 id="demo">Demo: a toy poll</h2>
-      <p>A toy poll uses this scheme:</p>
+      <p>This is the scheme of a toy poll:</p>
       <figure class="code">
         <figcaption>Demo parameters</figcaption>
         <pre><code>scheme   toypoll1

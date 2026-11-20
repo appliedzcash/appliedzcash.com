@@ -4,12 +4,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Address per customer: diversified Zcash addresses | Applied Zcash</title>
-    <meta name="description" content="One Zcash key gives many unlinkable addresses. Give each customer or order its own address, and find the customer from the address. Live demo." />
+    <meta name="description" content="Make many unlinkable addresses from one Zcash key. Give each customer or order its own address, and find the customer from the address. Live demo." />
     <link rel="canonical" href="https://appliedzcash.com/basics/address-per-customer/" />
     <meta property="og:type" content="article" />
     <meta property="og:site_name" content="Applied Zcash" />
     <meta property="og:title" content="Address per customer: diversified Zcash addresses" />
-    <meta property="og:description" content="One Zcash key gives many unlinkable addresses. Give each customer or order its own address, and find the customer from the address. Live demo." />
+    <meta property="og:description" content="Make many unlinkable addresses from one Zcash key. Give each customer or order its own address, and find the customer from the address. Live demo." />
     <meta property="og:url" content="https://appliedzcash.com/basics/address-per-customer/" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta property="og:image" content="https://appliedzcash.com/images/og.png" />
@@ -20,7 +20,7 @@
     <meta name="theme-color" content="#0f1011" media="(prefers-color-scheme: dark)" />
     <link rel="icon" href="../../images/mark.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="../../images/apple-touch-icon.png" />
-    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Address per customer", "description": "One Zcash key gives many unlinkable addresses. Give each customer or order its own address, and find the customer from the address. Live demo.", "url": "https://appliedzcash.com/basics/address-per-customer/", "inLanguage": "en", "about": "Zcash", "isPartOf": {"@type": "WebSite", "name": "Applied Zcash", "url": "https://appliedzcash.com/"}}</script>
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Address per customer", "description": "Make many unlinkable addresses from one Zcash key. Give each customer or order its own address, and find the customer from the address. Live demo.", "url": "https://appliedzcash.com/basics/address-per-customer/", "inLanguage": "en", "about": "Zcash", "isPartOf": {"@type": "WebSite", "name": "Applied Zcash", "url": "https://appliedzcash.com/"}}</script>
     <link rel="preload" href="../../fonts/source-serif-4.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="../../styles/main.css" />
     <script type="module" src="../../scripts/site.js"></script>
@@ -36,8 +36,8 @@
       <p class="kicker">Basic</p>
       <h1>Address per customer</h1>
       <p class="lede">
-        One key gives many addresses. Give each customer or each order its own address. The shop knows which address got
-        each payment. Outsiders see unrelated addresses.
+        A shop can make many addresses from one key. Give each customer or each order its own address. The shop knows
+        the address of each payment. Outsiders see unrelated addresses.
       </p>
 
       <h2 id="use">Use</h2>
@@ -47,7 +47,7 @@
         <li>an address for each place where you publish a donation link.</li>
       </ul>
       <p>
-        The address identifies the payment. Thus, the payer can send a payment with no memo, and the shop still finds the
+        Each address is for one order. Thus, the payer can send a payment with no memo, and the shop still finds the
         order.
       </p>
 
@@ -55,7 +55,7 @@
       <figure class="diagram">
         <svg viewBox="0 0 360 330" role="img" aria-labelledby="fig-apc-title fig-apc-desc">
           <title id="fig-apc-title">Make an address and find its customer</title>
-          <desc id="fig-apc-desc">The full viewing key and the incoming viewing key both give the diversifier key dk. FF1 with dk and j makes address j. The inverse of FF1 with dk finds j from the address.</desc>
+          <desc id="fig-apc-desc">The diversifier key dk is made from the full viewing key or from the incoming viewing key. Address j is made with FF1 from dk and j. The index j is found from the address with the inverse of FF1 and dk.</desc>
           <defs><marker id="fig-apc-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 8 4 0 8z" /></marker></defs>
           <g class="e" marker-end="url(#fig-apc-arrow)">
             <path d="M95 40V58H180" marker-end="none" />
@@ -87,25 +87,24 @@
       </figure>
       <ol>
         <li>The shop gives each customer a number <code>j</code>, the diversifier index.</li>
-        <li>The key encrypts <code>j</code> into an 11-byte diversifier <code>d_j</code>.</li>
-        <li>The diversifier and the key give a receiver. The receiver goes in a unified address.</li>
-        <li>A payment arrives. The wallet decrypts the note with its incoming viewing key, one key for all addresses.</li>
+        <li>The wallet encrypts <code>j</code> with the key. The result is an 11-byte diversifier <code>d_j</code>.</li>
+        <li>The wallet makes a receiver from the diversifier and the key. It puts the receiver in a unified address.</li>
+        <li>The wallet receives a payment. It decrypts the note with its incoming viewing key, one key for all addresses.</li>
         <li>The wallet decrypts the diversifier of the note to get <code>j</code> again.</li>
       </ol>
       <p>
-        Each index from 0 to 2<sup>88</sup> − 1 gives a valid Orchard address. The wallet scans one time for all
-        addresses. Thus, many addresses cost the same scan work as one address.
+        Each index from 0 to 2<sup>88</sup> − 1 has a valid Orchard address. The wallet scans one time for all
+        addresses. Thus, the scan work for many addresses is the same as for one address.
       </p>
       <p>
-        The shop keeps a table of <code>j</code> and the customer. The table is the only shop data that this pattern
-        needs.
+        The shop keeps a table of <code>j</code> and the customer. The table is the only shop data that is necessary for
+        this pattern.
       </p>
 
       <h2 id="limits">Limits</h2>
       <ul>
         <li>
-          <strong>Transparent receivers.</strong> A unified address with a transparent receiver shows that receiver on the
-          chain. Use addresses with shielded receivers only.
+          <strong>Transparent receivers.</strong> With a transparent receiver in a unified address, that receiver is visible on the chain. Use addresses with shielded receivers only.
         </li>
         <li>
           <strong>Viewing keys.</strong> A holder of the incoming viewing key can link all the addresses. Keep the key
@@ -120,12 +119,12 @@
       <h2 id="demo">Demo: a demo shop</h2>
       <p>
         The demo uses the <code>orchard</code> crate, compiled to WebAssembly. It makes addresses of the demo shop key from
-        a first index. Copy an address into the second field. The shop key finds the index of the address.
+        a first index. Copy an address into the second field. The demo finds the index of the address with the shop key.
       </p>
       <div class="notice caution">
         <p class="notice-title">Caution</p>
         <p>
-          The demo shop uses Testnet. Its seed is 32 bytes of 0x07, in the public source of this
+          The demo shop is on Testnet. Its seed is 32 bytes of 0x07, in the public source of this
           site. Do not send real funds to it.
         </p>
       </div>

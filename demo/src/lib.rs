@@ -39,7 +39,7 @@ pub(crate) const TESTNET_COIN_TYPE: u32 = 1;
 /// The Orchard spending key of account 0 for a ZIP 32 seed, on Testnet.
 pub(crate) fn testnet_spending_key(seed: &[u8]) -> Result<SpendingKey, String> {
     SpendingKey::from_zip32_seed(seed, TESTNET_COIN_TYPE, zip32::AccountId::ZERO)
-        .map_err(|error| format!("The key derivation failed: {error}."))
+        .map_err(|error| format!("The demo cannot make the keys: {error}."))
 }
 
 /// A Testnet unified address with one Orchard receiver.

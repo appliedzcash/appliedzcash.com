@@ -36,10 +36,10 @@ try {
     try {
       const j = demo.find_customer(find.value);
       if (j === undefined) {
-        result.textContent = "A different key made this address.";
+        result.textContent = "This address is from a different key.";
         result.classList.add("mismatch");
       } else {
-        result.textContent = `The shop key made this address. It is customer j = ${j}.`;
+        result.textContent = `This address is from the shop key. It is the address of customer j = ${j}.`;
         result.classList.add("match");
       }
     } catch (error) {
@@ -56,5 +56,5 @@ try {
   find.value = first.addresses[first.addresses.length - 1];
   lookup();
 } catch (error) {
-  setStatus(status, `the WASM module failed to load (${error.message}).`);
+  setStatus(status, `the browser cannot load the WASM module (${error.message}).`);
 }

@@ -30,7 +30,7 @@ try {
       ]);
       const same = keys.wallet_address === keys.watch_address;
       result.textContent = same
-        ? "The two addresses are the same. The UIVK makes the addresses of the wallet."
+        ? "The two addresses are the same. Thus, a server with the UIVK only can make the addresses of the wallet."
         : "The two addresses are different.";
       result.classList.add(same ? "match" : "mismatch");
       setStatus(status);
@@ -54,5 +54,5 @@ try {
   seed.value = SHOP_SEED;
   update();
 } catch (error) {
-  setStatus(status, `the WASM module failed to load (${error.message}).`);
+  setStatus(status, `the browser cannot load the WASM module (${error.message}).`);
 }

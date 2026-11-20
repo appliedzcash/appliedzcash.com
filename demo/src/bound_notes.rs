@@ -91,7 +91,7 @@ pub fn stamp(document: &str, prev: &str, rho: &str, ironwood: bool) -> Result<St
             let recipient = fvk.address_at(0u32, Scope::External);
             Note::from_parts(recipient, NoteValue::ZERO, rho, seed, version).into_option()
         })
-        .ok_or_else(|| JsError::new("This rseed gives no valid note. Change the document."))?;
+        .ok_or_else(|| JsError::new("No valid note has this rseed. Change the document."))?;
 
     Ok(Stamp {
         doc_hash: hex::encode(doc_hash),

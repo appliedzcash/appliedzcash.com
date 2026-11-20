@@ -36,8 +36,8 @@
       <p class="kicker">Pattern</p>
       <h1>Polite actions</h1>
       <p class="lede">
-        Each shielded wallet must try to decrypt each action on the chain. Each action that an app adds increases the
-        scan work of all wallets. Thus, an app must keep its number of actions small.
+        Each shielded wallet must try to decrypt each action on the chain. Thus, each action that an app adds is more
+        scan work for all wallets. An app must keep its number of actions small.
       </p>
 
       <h2 id="problem">Problem</h2>
@@ -53,7 +53,7 @@
 
       <h2 id="mechanism">Mechanism</h2>
       <p>
-        A light wallet downloads compact blocks. A compact block keeps about 148 bytes of each Orchard-protocol action:
+        A light wallet downloads compact blocks. A compact block has about 148 bytes of each Orchard-protocol action:
       </p>
       <ol class="bytes">
         <li style="--n: 32"><code>nullifier</code> <span>32 bytes</span></li>
@@ -63,11 +63,11 @@
       </ol>
       <p class="bytes-total">Total: 148 bytes</p>
       <p>
-        The wallet tries to decrypt each action with each key that it holds. This is trial decryption. The compact block
-        drops the memo. Thus, in the compact-block scan:
+        The wallet tries to decrypt each action with each key that it holds. This is trial decryption. The memo is not
+        in the compact block. Thus, in the compact-block scan:
       </p>
       <ul>
-        <li>each action costs one trial decryption for each key, and 148 bytes of download;</li>
+        <li>the cost of each action is one trial decryption for each key, and 148 bytes of download;</li>
         <li>memo bytes are free.</li>
       </ul>
       <p>
@@ -79,23 +79,23 @@
       <ol>
         <li>
           <strong>Put user state in leaves.</strong> Put the state of each user in a leaf of a Merkle tree. Bind the root
-          in one <a href="../bound-notes/">bound note</a>. A change to a user changes a leaf, and the root note changes
-          one time for each epoch. Each user gets a leaf proof from the app and compares the leaf with the bound root.
+          in one <a href="../bound-notes/">bound note</a>. When a user changes, one leaf changes, and the root note
+          changes one time for each epoch. Each user gets a leaf proof from the app and compares the leaf with the bound
+          root.
         </li>
         <li>
-          <strong>Put records in the memo.</strong> A memo holds 512 bytes, and the compact-block scan skips it. Put
+          <strong>Put records in the memo.</strong> A memo has 512 bytes, and it is not in the compact-block scan. Put
           the public record of the epoch in the memo of the root note. When the record is too long, add chunk notes to
-          the same transaction. Bind a hash of the full record in the root note. Thus, the binding covers each chunk.
+          the same transaction. Bind a hash of the full record in the root note. Thus, each chunk is in the binding.
         </li>
         <li>
           <strong>Use the free action.</strong> An Orchard-protocol bundle has two actions or more. The builder adds a
-          padding action to a bundle with one action. The root note (spend and output) fills one action. A fee from a
-          shielded note and its change fill the second action. With a transparent fee, the second action is padding.
-          Thus, a record that fits in one memo costs two actions, and each chunk adds one action.
+          padding action to a bundle with one action. The root note (spend and output) is in one action. A fee from a
+          shielded note and its change are in the second action. With a transparent fee, the second action is padding.
+          Thus, the cost of a record of one memo is two actions, and the cost of each chunk is one more action.
         </li>
         <li>
-          <strong>Use epochs.</strong> Collect the changes of a period in one transaction. A longer epoch makes fewer
-          transactions each day.
+          <strong>Use epochs.</strong> Collect the changes of a period in one transaction. With a longer epoch, the app makes fewer transactions each day.
         </li>
       </ol>
 
@@ -106,21 +106,21 @@
           32 × log₂(N) bytes for N users. If the app holds back a proof, the user must wait. The user can see the delay.
         </li>
         <li>
-          <strong>Privacy</strong> The result is better privacy. With one note for each user, the action count shows how
-          many users changed in each epoch. With leaves, the action count stays the same.
+          <strong>Privacy</strong> The result is better privacy. With one note for each user, outsiders see from the action count how many users changed in each epoch. With leaves, the action count stays the same.
         </li>
         <li>
           <strong>Payouts</strong> A payment to a user wallet is one action for each payment. The user must receive a
           usual note, so this cost stays.
         </li>
         <li>
-          <strong>Proving</strong> Fewer actions make faster transaction builds.
+          <strong>Proving</strong> A transaction with fewer actions is faster to build.
         </li>
       </ul>
 
       <h2 id="spec">Spec</h2>
       <p>
-        This pattern is a design rule. It uses the protocol of today: <a href="../bound-notes/">bound notes</a> for the
+        This pattern is a design rule. The protocol of today is sufficient: <a href="../bound-notes/">bound notes</a>
+        for the
         root, and the ZIP 302 memo format for the record.
       </p>
 
@@ -134,8 +134,9 @@
         <li><strong>One note per epoch:</strong> 2 actions, plus 1 action for each chunk note.</li>
       </ul>
       <p>
-        The calculator pays the fee from a shielded note. With a transparent fee, the per-player design uses one action
-        fewer. Since the NU7 network upgrade, the mainnet target block time is 25 seconds. Thus, the chain makes about 3,456 blocks each day.
+        In the calculator, the fee is from a shielded note. With a transparent fee, the per-player design has one action
+        fewer. Since the NU7 network upgrade, the mainnet target block time is 25 seconds. Thus, the chain has about
+        3,456 new blocks each day.
       </p>
 
       <div class="demo" id="cost-demo">
