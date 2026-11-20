@@ -1264,6 +1264,21 @@ code.hex .changed,
 
 .capability-table td {
   text-align: center;
+  background: color-mix(in srgb, var(--c) 8%, var(--bg));
+  color: var(--c);
+}
+
+.capability-table .yes {
+  --c: var(--ok);
+}
+
+.capability-table .no {
+  --c: var(--bad);
+}
+
+.footnote {
+  color: var(--muted);
+  font-size: 0.85rem;
 }
 
 footer .licenses {
