@@ -62,7 +62,7 @@
         <li>an auditor examines the full list of a service that gives "verified" marks.</li>
       </ul>
       <p>
-        A signed token from the service is sufficient while the service is online and honest. A dishonest service can
+        A signed token from the service is sufficient while the service is honest. A dishonest service can
         put an old date on a new token. It can also show different lists to different persons.
       </p>
       <p>
@@ -139,19 +139,25 @@
         <li>The user gives the receipt to each verifier that must examine the claim.</li>
       </ol>
       <p>
-        <code>P</code> is a personalization of 16 bytes. The address is the exact text that the user typed at login.
-        The salt has a fixed length. Thus, two different pairs of salt and address always have two different hash
+        <code>P</code> is a personalization of 16 bytes. The address is the text of the address from the login, with
+        no space before or after it. The salt has a fixed length. Thus, two different pairs of salt and address always have two different hash
         inputs.
       </p>
 
       <h3 id="public-list">Public list</h3>
       <p>
         The service publishes the claim and the place of each record. The place is the transaction ID and the action
-        index. With this list, anyone can examine the full chain and count the records.
+        index. With this list, anyone can examine each listed record and its lineage.
       </p>
       <p>
-        Each claim contains a secret salt of 256 bits. Thus, the address stays secret from a person who has only the
-        list.
+        Each claim is a hash of the address and a secret salt of 256 bits. Thus, the address stays secret from a person
+        who has only the list.
+      </p>
+      <p>
+        A service can publish only the first part of its chain. Thus, a count of the listed records is a minimum. For a
+        full audit, the auditor selects a block height as a checkpoint. With the full viewing key, the auditor
+        calculates the nullifier of the last listed record. The auditor accepts the list as complete only if that
+        nullifier is absent from the chain up to the checkpoint.
       </p>
 
       <h3 id="verification">Verification</h3>
@@ -231,8 +237,8 @@
           to other persons. Use a different address for each claim that must stay apart.
         </li>
         <li>
-          <strong>Salts.</strong> A check of a record is possible only with its salt. The service or the user must keep
-          each receipt.
+          <strong>Salts.</strong> A check of an address against a record is possible only with the salt. The service
+          or the user must keep each receipt.
         </li>
         <li>
           <strong>Public data.</strong> The number of records and the height of each record are public.
@@ -256,8 +262,9 @@ prev    the cmx of the previous record</code></pre>
       </figure>
       <p>
         The demo starts after a correct login code. It uses the <code>orchard</code> crate, compiled to WebAssembly.
-        The directory key is a demo key. The ρ of the first record is a demo value. The previous record is spent in the
-        action of each next record. Each record is an Ironwood-pool note.
+        The directory key is a demo key. The ρ of the first record is a demo value. The demo calculates the values of
+        each note only. For each next record, ρ is the nullifier of the previous record. Each record is an
+        Ironwood-pool note.
       </p>
 
       <div class="demo" id="directory-demo">

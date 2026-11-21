@@ -52,7 +52,7 @@ function showChain() {
   for (const el of [verifySelect, verifyAddress, verifySalt, resetButton]) el.disabled = chain.length === 0;
 }
 
-function run(demo) {
+function showNext(demo) {
   const tip = chain.at(-1)?.record;
   const next = recordAfter(demo, tip, addressInput.value, saltInput.value);
   showValues(nextValues, [
@@ -62,12 +62,16 @@ function run(demo) {
     ["rseed", next.rseed],
     ["cmx", next.cmx],
   ]);
+}
 
-  if (chain.length === 0) {
-    verifyValues.replaceChildren();
-    verifyResult.textContent = "";
-    return;
-  }
+function clearCheck() {
+  verifyValues.replaceChildren();
+  verifyResult.className = "result";
+  verifyResult.textContent = "";
+}
+
+function showCheck(demo) {
+  if (chain.length === 0) return clearCheck();
   const i = Number(verifySelect.value);
   const claimed = recordAfter(demo, chain[i - 1]?.record, verifyAddress.value, verifySalt.value);
   const onChain = chain[i].record.cmx;
@@ -84,13 +88,22 @@ function run(demo) {
 
 try {
   const demo = await loadDemo();
+  // The next record and the receipt check are independent. The status shows the first error.
   const update = () => {
+    const errors = [];
     try {
-      run(demo);
-      setStatus(status);
+      showNext(demo);
     } catch (error) {
-      setStatus(status, error.message);
+      nextValues.replaceChildren();
+      errors.push(error.message);
     }
+    try {
+      showCheck(demo);
+    } catch (error) {
+      clearCheck();
+      errors.push(error.message);
+    }
+    setStatus(status, errors[0]);
   };
 
   // The receipt fields show the address and the salt of the selected record.
