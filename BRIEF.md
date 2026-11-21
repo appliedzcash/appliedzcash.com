@@ -53,6 +53,7 @@ Limits the page states: about 505 data bytes per memo, one more action per extra
 /patterns/action-pairing/         Canonical action pairing
 /patterns/threshold-keys/         Threshold keys: FROST n-of-m app roles
 /patterns/log-in-with-zcash/      Log in with Zcash: a one-time code in a memo (ZcashMe)
+/patterns/verified-address/       Verified address: a login record in a bound note (experimental)
 /specs/<name>/                    Cleared ZIP drafts, one per pattern
 /wishlist/                        Later: primitives that would unlock more (ZIP 68, ZIP 231, ZSAs)
 ```
@@ -123,7 +124,8 @@ CONTRIBUTING.md     how to propose a pattern
 
 - [ ] **Start here: Mark posts the site to X (L6).** Credit Daniel as "Daniel Gorgonha (DeegaLabs)": X @danielgorgonha1, Discord @danielgorgonha1 (his request, Nov 20).
 - [ ] Compare the Pages build time of a PR run before and after #27 (merged Nov 20: `Swatinem/rust-cache` v2.9.3, pinned by commit, `workspaces: demo`). The first run on `main` fills the cache.
-- [ ] Mark reviews and merges the log in with Zcash PR (branch `log-in-with-zcash`, Nov 21). The page has protocol claims, so the PR gets a Copilot review.
+- [ ] Mark reviews and merges the log in with Zcash PR, #37 (branch `log-in-with-zcash`, Nov 21). The page has protocol claims, so the PR gets a Copilot review.
+- [ ] Mark reviews the verified address PR (branch `verified-address`, stacked on #37). Merge #37 first. The record format is a proposal from this session: Mark decides the claim hash, the receipt fields and the public list.
 - [ ] Julian checks the page. Get Zechariah's surname or handle for the credit (the page and the home page have the first name only).
 - [ ] Mark decides: move his four lay paragraphs on bound notes to strict STE, or keep his wording. #31 keeps it.
 
@@ -136,7 +138,6 @@ CONTRIBUTING.md     how to propose a pattern
 ## Later
 
 - [ ] Vale in CI for STE: sentence length, passive voice, and a vocabulary from the ASD-STE100 approved-word list (free from ASD on request).
-- [ ] Log in with Zcash, a verifiable record (Mark's question, Nov 21): after the code check, the worker writes a bound note with the session ID and a salted hash of the address. An open idea, absent from the page.
 - [ ] `/wishlist/`: ZIP 68, ZIP 231 memo bundles, ZSAs, and what each would unlock.
 - [ ] Case studies: Zodiac Markets after Mark clears it; ZcashNames after Julian agrees.
 - [ ] Link each spec page to its `zcash/zips` PR once one exists.
@@ -187,3 +188,4 @@ CONTRIBUTING.md     how to propose a pattern
 - [x] Nov 20: #33 opened: `README.md` in the Standard Readme format (RichardLitt/standard-readme), in STE. It points to `CONTRIBUTING.md` for the writing rules.
 - [x] Nov 20: Mark merged #33 and #34. The repo has "Automatically delete head branches" on, so GitHub deletes a PR's branch at merge and moves a stacked PR's base to `main`. Clean-up: all stale branches (remote and local), both old worktrees and 1.3 GB of `demo/target` are gone. After a merge, start new work from `main`.
 - [x] Nov 21: Julian agreed to add the OTP login flow of ZcashMe (source: zcashme/zcash-verification-service, MIT; the OTP idea is Zechariah's). Mark chose pattern page 6, named credits, and a demo with the login link and the code. Built on branch `log-in-with-zcash`: `/patterns/log-in-with-zcash/`, `scripts/log-in-with-zcash.js` (HMAC-SHA256 with Web Crypto; URI and QR code from the existing `payment_link` WASM, so the demo crate is unchanged), a sixth home card, a Contributors credit, the pager and the sitemap. `memoMeter` moved to `scripts/values.js`. The demo matches the test vector in `src/otp.rs` (880279). Local preview: copy the changed files to `/tmp/claude-501/site` (it has the WASM of Nov 20), then start `site` from `.claude/launch.json`.
+- [x] Nov 21: #37 opened: the log in with Zcash page. Mark then asked for a second pattern for a durable record. Built on branch `verified-address`: `/patterns/verified-address/` (Experimental), `demo/src/verified_address.rs` (`verified_record`: claim = BLAKE2b-256("VerifiedAddr_clm", salt ‖ address), binding domain "VerifiedAddr_v1_", kind 1) and `scripts/verified-address.js` (a toy directory and a receipt check). `bound_note` in `demo/src/bound_notes.rs` is now shared by both demos. The reasoning: a login is a fact between two parties and needs no record; a record is for deadlines, a second app and audits. A local WASM build works offline: `wasm-bindgen` 0.2.130 is in the scratch folder of session `aac9f8b0` under `/private/tmp/claude-501/`.
