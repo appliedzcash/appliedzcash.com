@@ -2,7 +2,8 @@
 
 Each page copies the header, the footer and the shared <head> links. This check
 fails when one copy drifts. It also checks that the deploy step copies each
-top-level folder that a page links to. Run: python3 tools/check_chrome.py
+top-level folder that a page links to, and that the social card of each page
+is a file in the repo. Run: python3 tools/check_chrome.py
 """
 
 import re
@@ -65,6 +66,12 @@ tracked = set(subprocess.run(["git", "ls-files"], cwd=ROOT, capture_output=True,
 for folder in sorted(linked):
     if any(t.startswith(folder + "/") for t in tracked) and folder not in copied:
         errors.append(f"pages.yml: the deploy step does not copy {folder}/")
+
+# The social card of each page must be a file in the repo. Make the cards with tools/og_cards.py.
+for page in pages:
+    for card in re.findall(r'og:image" content="https://appliedzcash\.com/([^"]*)', page.read_text()):
+        if not (ROOT / card).is_file():
+            errors.append(f"{page.relative_to(ROOT)}: no file {card}")
 
 if errors:
     print("\n".join(errors))
