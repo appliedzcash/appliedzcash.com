@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Signature login: log in with a shielded key | Applied Zcash</title>
+    <meta name="description" content="Log in to an app with a signature from a shielded Zcash key, off the chain. Two designs: a viewing key signature and an app key signature. Wallets need a new function." />
+    <link rel="canonical" href="https://appliedzcash.com/wishlist/signature-login/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Applied Zcash" />
+    <meta property="og:title" content="Signature login: log in with a shielded key" />
+    <meta property="og:description" content="Log in to an app with a signature from a shielded Zcash key, off the chain. Two designs: a viewing key signature and an app key signature. Wallets need a new function." />
+    <meta property="og:url" content="https://appliedzcash.com/wishlist/signature-login/" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="og:image" content="https://appliedzcash.com/images/og/signature-login.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Signature login: log in with a shielded key. Applied Zcash." />
+    <meta name="twitter:image:alt" content="Signature login: log in with a shielded key. Applied Zcash." />
+    <meta name="theme-color" content="#f6f4ee" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f1011" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="../../images/mark.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="../../images/apple-touch-icon.png" />
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Signature login", "description": "Log in to an app with a signature from a shielded Zcash key, off the chain. Two designs: a viewing key signature and an app key signature. Wallets need a new function.", "url": "https://appliedzcash.com/wishlist/signature-login/", "inLanguage": "en", "about": "Zcash", "isPartOf": {"@type": "WebSite", "name": "Applied Zcash", "url": "https://appliedzcash.com/"}}</script>
+    <link rel="preload" href="../../fonts/source-serif-4.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="../../styles/main.css" />
+    <script type="module" src="../../scripts/site.js"></script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Go to the content</a>
+    <header>
+      <a class="site-name" href="../../"><svg class="mark" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.75" /><circle cx="15.25" cy="15.25" r="2.75" /></svg>Applied Zcash</a>
+      <nav><a href="../../#basics">Basics</a> <a href="../../#patterns">Patterns</a> <a href="../../#wishlist">Wishlist</a> <a href="https://github.com/appliedzcash/appliedzcash.com">GitHub</a></nav>
+    </header>
+    <main id="main">
+      <p class="kicker">Wishlist</p>
+      <h1>Signature login</h1>
+      <p class="lede">
+        A wallet signs a login message with a shielded key. The app examines the signature. The login is off the
+        chain: it has zero transactions and zero fees.
+      </p>
+      <p>
+        Wallets do not have this function today. This page has two designs. The viewing key signature is from
+        <a href="https://github.com/craftsoldier">Julian (craftsoldier)</a>. The app key signature is from
+        <a href="https://x.com/colludingnode/status/2124218435143897495">c-node</a>.
+      </p>
+
+      <h2 id="necessary-changes">Necessary changes</h2>
+      <dl class="terms">
+        <dt>Improves</dt>
+        <dd><a href="../../patterns/log-in-with-zcash/">Log in with Zcash</a></dd>
+        <dt>Wallets</dt>
+        <dd>A new function: sign a login message with a shielded key.</dd>
+        <dt>ZIP</dt>
+        <dd>A new ZIP for the login message and the keys. See <a href="#spec-parts">Parts of a spec</a>.</dd>
+        <dt>Consensus</dt>
+        <dd>No change.</dd>
+        <dt>Status</dt>
+        <dd>Proposal. A spec is not written yet.</dd>
+      </dl>
+
+      <h2 id="problem">Problem</h2>
+      <p>
+        An app uses <a href="../../patterns/log-in-with-zcash/">Log in with Zcash</a> with the wallets of today.
+        Each login is two payments. Thus, each login has two transactions, two fees and a delay. The service also
+        needs a worker with a code key.
+      </p>
+      <p>
+        With a signature, these costs are zero. On Ethereum, apps use
+        <a href="https://eips.ethereum.org/EIPS/eip-4361">ERC-4361</a> for this function. On Zcash, wallets sign
+        messages with transparent keys at most. <a href="https://zips.z.cash/zip-0304">ZIP 304</a> is for Sapling keys
+        only.
+      </p>
+
+      <h2 id="mechanism">Mechanism</h2>
+      <h3 id="viewing-key-signature">Viewing key signature</h3>
+      <p>
+        Each shielded receiver of an address is already a public key. Its secret key is the incoming viewing key
+        <code>ivk</code>.
+      </p>
+      <pre><code>pk_d = [ivk]g_d
+
+g_d   the base point of the receiver, from its diversifier
+pk_d  the public key in the receiver</code></pre>
+      <p>
+        The wallet makes a Schnorr signature with <code>ivk</code> as the secret key and <code>g_d</code> as the base
+        point. The app has <code>g_d</code> and <code>pk_d</code> from the address, and it examines the signature
+        with them. Thus, the address is the account of the user, as in Log in with Zcash.
+      </p>
+
+      <h3 id="app-key-signature">App key signature</h3>
+      <p>
+        A shielded wallet has a spend authorizing key <code>ask</code> and its public key <code>ak</code>. In RedDSA,
+        a wallet can randomize this key pair with a secret number α. Each shielded spend already has a signature from
+        a randomized key.
+      </p>
+      <pre><code>α   = PRF(wallet secret, domain)
+rk  = ak + [α]G
+rsk = ask + α
+
+domain  the domain of the app, for example app.example
+G       the base point of the spend signatures
+rk      the public key of the user at this app
+rsk     the secret key of the user at this app</code></pre>
+      <p>
+        The wallet calculates α with a keyed hash, from a secret of the wallet and the domain of the app. Thus, the
+        wallet has a different key pair for each app. A wallet that the user restores from the seed calculates the
+        same keys again.
+      </p>
+
+      <h3 id="sequence">Sequence</h3>
+      <ol>
+        <li>The app makes a login message, as in <a href="https://eips.ethereum.org/EIPS/eip-4361">ERC-4361</a>. The message has the domain of the app, a nonce and an expiry time. The app makes a new nonce for each login.</li>
+        <li>The wallet shows the domain to the user. A wallet in the browser also compares the domain with the host of the page.</li>
+        <li>The wallet signs the message. The secret key is <code>ivk</code>, or the key <code>rsk</code> for the domain.</li>
+        <li>The wallet sends the signature to the app. It also sends the address, or the key <code>rk</code>.</li>
+        <li>The app examines the signature. It also examines the domain, the nonce and the expiry time. The app accepts each nonce one time only.</li>
+        <li>If all of them are correct, the user is logged in. The account of the user is the address, or the key <code>rk</code>.</li>
+      </ol>
+      <p>
+        A wallet on a different device cannot see the page. There, the user must compare the domain in the wallet with
+        the host of the page.
+      </p>
+
+      <h2 id="comparison">Comparison</h2>
+      <div class="table-wrap">
+        <table class="cost-table compare-table">
+          <thead>
+            <tr><th scope="col">Design</th><th scope="col">Transactions</th><th scope="col">Account</th><th scope="col">Necessary key</th><th scope="col">Wallet support</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row"><a href="../../patterns/log-in-with-zcash/">Code in a memo</a></th><td>2</td><td>The address</td><td>Incoming viewing key</td><td>All shielded wallets</td></tr>
+            <tr><th scope="row">Viewing key signature</th><td>0</td><td>The address</td><td>Incoming viewing key</td><td>A new wallet function</td></tr>
+            <tr><th scope="row">App key signature</th><td>0</td><td>One key for each app</td><td>Spend authorizing key</td><td>A new wallet function</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="what-each-signature-shows">What apps can find from each signature</h2>
+      <p>
+        The app uses a correct viewing key signature as proof that the wallet has the address's <code>ivk</code>.
+        With the memo code, the app checks that the user knows the code only.
+        Each holder of the incoming viewing key can log in as the address.
+        A user who gives the viewing key to a different person also gives the login.
+      </p>
+      <p>
+        The app uses a correct app key signature as proof that the user has the secret key <code>rsk</code>. Only a holder of
+        <code>ask</code> can calculate <code>rsk</code>. Thus, a viewing key is insufficient for a login.
+      </p>
+      <p>
+        With the app key signature, the app gets <code>rk</code> only. Because α is secret, two apps cannot calculate
+        that their keys are from the same <code>ak</code>. Thus, apps cannot link the accounts of one user.
+      </p>
+      <p>
+        There, the address of the user stays secret. To show that <code>rk</code> and an address are from the same
+        key, the wallet must also make a zero-knowledge proof. <a href="https://zips.z.cash/zip-0304">ZIP 304</a> has
+        this proof for Sapling keys only.
+      </p>
+
+      <h2 id="spec-parts">Parts of a spec</h2>
+      <ul>
+        <li>
+          <strong>Message format.</strong> The fields of the login message and their sequence, as in ERC-4361.
+        </li>
+        <li>
+          <strong>Receiver.</strong> For the viewing key signature. A unified address can have more than one shielded receiver.
+          Each receiver has its own <code>ivk</code>. Developers must give the receiver type in the spec.
+        </li>
+        <li>
+          <strong>Calculation of α.</strong> For the app key signature. One calculation for all wallets. Thus, a user
+          who moves to a different wallet keeps the same accounts.
+        </li>
+        <li>
+          <strong>Hash personalization.</strong> Wallets already use these keys in transactions. The wallet must use
+          a separate personalization to calculate the hash of the login message before it signs. Thus, a login signature is invalid for a
+          transaction.
+        </li>
+        <li>
+          <strong>Transport.</strong> A path from the app to the wallet and back. For example, a QR code for the
+          message and an HTTPS request for the signature.
+        </li>
+      </ul>
+
+      <nav class="pager" aria-label="Pages">
+        <a class="prev" href="../../patterns/log-in-with-zcash/"><span>Previous</span>Log in with Zcash</a>
+      </nav>
+      <p class="edit"><a href="https://github.com/appliedzcash/appliedzcash.com/blob/main/wishlist/signature-login/index.html">Change this page on GitHub</a></p>
+    </main>
+    <footer>
+      <p>
+        Applied Zcash is a community site. Anyone can propose a pattern. The
+        <a href="https://github.com/appliedzcash/appliedzcash.com">source</a> is on GitHub.
+        If you build on Zcash, go to the <a href="https://signal.group/#CjQKIGlpdEugkIjUIm3WGa_6V2Xhi6zEvJGB9UADaU3zNKGCEhCSrRufVMaAncHsqeeBZj_U">Signal group</a>.
+      </p>
+      <p class="licenses">
+        Text: <a href="https://github.com/appliedzcash/appliedzcash.com/blob/main/LICENSE-CC0">CC0 1.0</a>. Code: <a href="https://github.com/appliedzcash/appliedzcash.com/blob/main/LICENSE">0BSD</a>. The demos include
+        crates under their own licenses: <a href="../../wasm/notices.html">notices</a>.
+      </p>
+    </footer>
+  </body>
+</html>

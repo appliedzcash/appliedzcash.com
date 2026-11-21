@@ -70,7 +70,7 @@ for folder in sorted(linked):
 # The social card of each page must be a file in the repo. Make the cards with tools/og_cards.py.
 for page in pages:
     cards = re.findall(r'og:image" content="https://appliedzcash\.com/([^"]*)', page.read_text())
-    if page.parent.parent.name in ("basics", "patterns") and len(cards) != 1:
+    if page.parent.parent.name in ("basics", "patterns", "wishlist") and len(cards) != 1:
         errors.append(f"{page.relative_to(ROOT)}: expected one og:image")
     for card in cards:
         if not (ROOT / card).is_file():

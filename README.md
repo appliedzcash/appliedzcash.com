@@ -5,12 +5,13 @@
 
 Patterns for Zcash developers: build apps from shielded notes, memos and keys.
 
-This repository contains the source of [appliedzcash.com](https://appliedzcash.com). The site has two sections:
+This repository contains the source of [appliedzcash.com](https://appliedzcash.com). The site has three sections:
 
 - **Basics:** concepts, payment links, address per customer, and watch-only keys.
-- **Patterns:** bound notes, polite actions, wallet-native orders, canonical action pairing, and threshold keys.
+- **Patterns:** bound notes, polite actions, wallet-native orders, canonical action pairing, threshold keys, and log in with Zcash.
+- **Wishlist:** designs that need new software, for example a wallet function or a ZIP. The first page is signature login.
 
-Each pattern is possible with the consensus rules of today. Each page has a live demo in the browser.
+Each pattern is possible with the consensus rules of today. Each pattern page has a live demo in the browser.
 
 ## Table of Contents
 
@@ -34,6 +35,7 @@ The site is plain HTML, one stylesheet (`styles/main.css`), and vanilla JavaScri
 index.html            home page
 basics/<name>/        basics pages
 patterns/<name>/      pattern pages
+wishlist/<name>/      wishlist pages
 styles/main.css       the stylesheet
 scripts/              site modules and demo loaders
 demo/                 Rust crate for the demos

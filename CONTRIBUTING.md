@@ -22,6 +22,18 @@ Put each pattern in `patterns/<name>/index.html`. Each page has these sections, 
 5. **Demo:** a live demo in the browser.
 6. **Toy example:** a small app that uses the pattern, for example a timestamp registry or a counter.
 
+## Wishlist page template
+
+A wishlist page is for a design that needs new software: a wallet function, a ZIP or a consensus change. Put each design in `wishlist/<name>/index.html`. Each page has these sections, in this order:
+
+1. **Necessary changes:** the pattern to improve, the changes to wallets, ZIPs and consensus, and the status.
+2. **Problem:** the limit of the pattern of today.
+3. **Mechanism:** how wallets, nodes or apps use the design.
+4. **Comparison:** the design and the pattern of today, in one table.
+5. **Parts of a spec:** the items that a ZIP for the design must have.
+
+After you add a pattern page or a wishlist page, run `python3 tools/og_cards.py`. It makes the social card of the page.
+
 ## Writing rules
 
 The writing rules are in [`.github/copilot-instructions.md`](.github/copilot-instructions.md). Copilot uses the same file when it reviews a PR.
