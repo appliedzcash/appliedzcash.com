@@ -40,8 +40,8 @@
         sends a one-time code in a memo to the address.
       </p>
       <p>
-        The user types the code in the app. Only a person who can read the memos of the address has the code. Thus, the
-        address is the account of the user.
+        The user types the code in the app. The server wallet sends the code only to that address. Thus, the address
+        is the account of the user.
       </p>
       <p>
         This pattern is from <a href="https://zcash.me">ZcashMe</a>. The use of a one-time code in a memo for login is
@@ -153,14 +153,21 @@ address  the return address, as the user typed it</code></pre>
         The first 4 bytes of the HMAC are a big-endian number. The code is this number modulo 1,000,000, written as 6
         decimal digits. The address in the calculation is the exact text of the address in the memo.
       </p>
-      <p>The worker puts the code in the memo of the reply:</p>
-      <pre><code>(ZFA OTP)847291</code></pre>
+      <p>The worker puts the code in the memo of the reply. The memo contains the 6 digits only:</p>
+      <pre><code>847291</code></pre>
 
       <h3 id="what-the-code-shows">What the code shows</h3>
       <p>
-        Only a holder of the incoming viewing key of the return address can read the reply. Thus, a correct code shows
-        that the user can read the memos of that address. The login payment can come from any wallet, because its sender
-        is secret.
+        The reply is a shielded payment to the return address. Outside the service, only a holder of the incoming
+        viewing key of that address can read it. Thus, a correct code shows that the user can read the memos of that
+        address.
+      </p>
+      <p>
+        The service also knows the code. The worker and the app calculate it, and the worker can read the reply that it
+        sent. Thus, the result is correct only while the keys of the service are secret.
+      </p>
+      <p>
+        The login payment can come from any wallet, because its sender is secret.
       </p>
       <p>
         <a href="../wallet-native-orders/#sign-in">Wallet-native orders</a> has a different sign-in. There, the operator
@@ -170,8 +177,11 @@ address  the return address, as the user typed it</code></pre>
       <h3 id="worker">Worker</h3>
       <p>
         The worker examines the return address before it sends the reply. The address must be valid for the network of
-        the worker. The worker keeps a record of each reply on disk. Thus, after a failure, the worker sends each reply
-        one time only.
+        the worker. The reply at ZcashMe has an amount of 0.0005 ZEC.
+      </p>
+      <p>
+        The worker keeps a record of each reply on disk. Thus, the worker makes one reply transaction at most for each
+        login payment. After a failure, the worker sends the same transaction again.
       </p>
 
       <h3 id="openid-connect">OpenID Connect</h3>
@@ -184,11 +194,13 @@ address  the return address, as the user typed it</code></pre>
       <h2 id="cost">Cost</h2>
       <ul>
         <li>
-          <strong>Each login</strong> The login amount and the network fee. The login amount at ZcashMe is 0.002 ZEC. A
-          usual shielded payment with change has two actions. The ZIP 2009 fee for two actions is 2,000 zatoshis.
+          <strong>Each login</strong> The login amount and the network fee. The minimum login amount at ZcashMe is
+          0.002 ZEC. A usual shielded payment with change has two actions. The ZIP 2009 fee for two actions is 2,000
+          zatoshis. The user receives the reply amount.
         </li>
         <li>
-          <strong>The service</strong> The network fee of each reply. The login amount pays for it.
+          <strong>The service</strong> The reply amount and the network fee of each reply. At ZcashMe, the reply amount
+          is 0.0005 ZEC and the fee is 2,000 zatoshis. The worker pays both from the login amounts.
         </li>
         <li>
           <strong>Wallets</strong> Each login is two transactions on the chain. See
@@ -209,7 +221,8 @@ address  the return address, as the user typed it</code></pre>
         <p class="notice-title">Warning</p>
         <p>
           The code key is a shared secret. A person with the code key can calculate the code for each session and each
-          address. Keep the code key on the servers of the app and the worker only.
+          address. A person with the outgoing viewing key of the worker can read each reply. Keep these keys on the
+          servers of the app and the worker only.
         </p>
       </div>
       <ul>
@@ -230,8 +243,8 @@ address  the return address, as the user typed it</code></pre>
           The user must examine the host of the page before they type a code.
         </li>
         <li>
-          <strong>Mempool.</strong> A payment in the mempool can expire before it is in a block. Then the service paid
-          the fee of the reply and received no login amount.
+          <strong>Mempool.</strong> A payment in the mempool can expire before it is in a block. Thus, the service can
+          lose the reply amount and the reply fee, and receive no login amount.
         </li>
         <li>
           <strong>Privacy.</strong> Outsiders see two usual shielded transactions. The service knows the return address
@@ -254,7 +267,7 @@ address  the return address, as the user typed it</code></pre>
         <pre><code>amount   0.002 ZEC
 memo     "DO NOT MODIFY:{zvs/" session "," address "}"
 code     HMAC-SHA256(key, session ‖ address)[0..4] mod 10⁶
-reply    "(ZFA OTP)" code</code></pre>
+reply    code</code></pre>
       </figure>
       <p>
         The demo writes the login memo, makes the ZIP 321 URI and draws the QR code. It also calculates the code, as
