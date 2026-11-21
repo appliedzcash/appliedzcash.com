@@ -8,6 +8,7 @@ mod orders;
 mod pairing;
 mod payment_link;
 mod threshold;
+mod verified_address;
 mod viewing_keys;
 
 pub use bound_notes::{genesis_rho, stamp, Stamp};
@@ -17,6 +18,7 @@ pub use orders::{order, Order};
 pub use pairing::{pair, Bundle};
 pub use payment_link::{payment_link, PaymentLink};
 pub use threshold::{threshold, Threshold};
+pub use verified_address::{verified_record, VerifiedRecord};
 pub use viewing_keys::{viewing_keys, ViewingKeys};
 
 use orchard::keys::{FullViewingKey, SpendingKey};
