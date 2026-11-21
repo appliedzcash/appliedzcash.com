@@ -178,6 +178,13 @@ header nav a:hover {
   color: var(--text);
 }
 
+/* On a phone, the bar has the site name and the section links. The GitHub link is also in the footer. */
+@media (max-width: 32rem) {
+  header nav a[href^="https://github.com"] {
+    display: none;
+  }
+}
+
 main {
   padding-top: var(--space-4);
   padding-bottom: var(--space-5);

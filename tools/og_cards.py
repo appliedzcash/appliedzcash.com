@@ -1,4 +1,4 @@
-"""Render one social card for each basics page and each pattern page.
+"""Render one social card for each basics page, pattern page and wishlist page.
 
 The card of a page is images/og/<page folder>.png (1200 x 630). The card text
 is the kicker and the og:title of the page. The home page keeps images/og.png
@@ -105,7 +105,7 @@ def main():
         tmp = Path(tmp)
         fonts = static_fonts(tmp)
         env = {**os.environ, "PANGOCAIRO_BACKEND": "fc", "FONTCONFIG_FILE": str(tmp / "fonts.conf")}
-        for page in sorted([*ROOT.glob("basics/*/index.html"), *ROOT.glob("patterns/*/index.html")]):
+        for page in sorted(p for s in ("basics", "patterns", "wishlist") for p in ROOT.glob(f"{s}/*/index.html")):
             text = page.read_text()
             kicker = html.unescape(re.search(r'class="kicker">([^<]*)', text).group(1))
             title = html.unescape(re.search(r'og:title" content="([^"]*)', text).group(1))
