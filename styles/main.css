@@ -1192,6 +1192,11 @@ code.hex .changed,
   text-align: left;
 }
 
+.compare-table th,
+.compare-table td {
+  text-align: left;
+}
+
 .notice p {
   margin: 0;
 }
