@@ -232,6 +232,14 @@ address  the return address, as the user typed it</code></pre>
           Thus, this holder can log in as the address.
         </li>
         <li>
+          <strong>Receivers.</strong> A unified address can contain receivers from different wallets. The worker sends
+          the reply to one receiver of the address. Thus, a correct code is a claim about that receiver only.
+        </li>
+        <li>
+          <strong>Many addresses.</strong> One wallet can make many addresses, and an app cannot link them. Thus, one
+          user can have many accounts. See <a href="../../basics/address-per-customer/">Address per customer</a>.
+        </li>
+        <li>
           <strong>Guesses.</strong> A code has 6 digits. The app must stop a session after a small number of incorrect
           codes.
         </li>

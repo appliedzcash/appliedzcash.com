@@ -230,6 +230,14 @@
           record is a claim about the viewing key. The spending key can have a different holder.
         </li>
         <li>
+          <strong>Receivers.</strong> The service sends the login code to one receiver of the address. Thus, the record
+          is a claim about that receiver only. See <a href="../log-in-with-zcash/#limits">Log in with Zcash: Limits</a>.
+        </li>
+        <li>
+          <strong>Count.</strong> One user can register many addresses, and a verifier cannot link them. Thus, the
+          number of records is a number of addresses. The number of users can be smaller.
+        </li>
+        <li>
           <strong>Time.</strong> The record is correct for its height. The user can lose control of the address after
           that height. For a new claim, the user logs in again.
         </li>
