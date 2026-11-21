@@ -69,6 +69,8 @@ try {
 
   const update = async () => {
     const turn = ++run;
+    code = ""; // The last code is for the old inputs.
+    check();
     const session = sessionInput.value.trim();
     const address = addressInput.value.trim();
     const key = keyInput.value.trim().toLowerCase();
@@ -88,10 +90,7 @@ try {
         ["ZIP 321 URI", link.uri],
       ]);
       qr.innerHTML = link.qr_svg; // SVG from the demo crate: the QR code of the URI.
-      showValues(replyValues, [
-        ["Reply memo", `(ZFA OTP)${code}`],
-        ["Code", code],
-      ]);
+      showValues(replyValues, [["Reply memo", code]]);
       check();
       setStatus(status);
     } catch (error) {
