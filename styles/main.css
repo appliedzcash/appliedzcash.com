@@ -1681,6 +1681,12 @@ figure.hero-figure svg {
     color: Canvas;
   }
 
+  /* The Signal logo is a mask on a background. Below 24rem, the header link shows the logo only. */
+  .signal::before {
+    forced-color-adjust: none;
+    background: LinkText;
+  }
+
   .fingerprint,
   .swatch {
     display: none;
