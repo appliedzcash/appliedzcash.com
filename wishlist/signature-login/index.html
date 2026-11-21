@@ -171,8 +171,8 @@ rsk     the secret key of the user at this app</code></pre>
           who moves to a different wallet keeps the same accounts.
         </li>
         <li>
-          <strong>Hash personalization.</strong> Wallets already use these keys in transactions. The wallet must hash
-          the login message with a separate personalization before it signs. Thus, a login signature is invalid for a
+          <strong>Hash personalization.</strong> Wallets already use these keys in transactions. The wallet must use
+          a separate personalization to calculate the hash of the login message before it signs. Thus, a login signature is invalid for a
           transaction.
         </li>
         <li>
