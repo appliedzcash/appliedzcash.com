@@ -26,7 +26,7 @@ Put each pattern in `patterns/<name>/index.html`. Each page has these sections, 
 
 A wishlist page is for a design that needs new software: a wallet function, a ZIP or a consensus change. Put each design in `wishlist/<name>/index.html`. Each page has these sections, in this order:
 
-1. **Necessary changes:** the pattern that the design improves, the changes to wallets, ZIPs and consensus, and the status.
+1. **Necessary changes:** the pattern to improve, the changes to wallets, ZIPs and consensus, and the status.
 2. **Problem:** the limit of the pattern of today.
 3. **Mechanism:** how the design works.
 4. **Comparison:** the design and the pattern of today, in one table.
