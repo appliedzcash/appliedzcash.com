@@ -122,8 +122,9 @@ CONTRIBUTING.md     how to propose a pattern
 ## Now
 
 - [ ] **Start here: Mark posts the site to X (L6).** Credit Daniel as "Daniel Gorgonha (DeegaLabs)": X @danielgorgonha1, Discord @danielgorgonha1 (his request, Nov 20).
+- [ ] Signal group, easier to find (Nov 21: an X builder missed the hero button). Built and checked in the browser, in a PR from branch `signal-group`: a Signal link with the logo in every header (logo only below 384px; Wishlist is hidden on phones), the hero button on its own line ("Join the builders on Signal"), and an Ask box before the pager on the 11 basics, pattern and wishlist pages. Logo: `images/signal.svg` from Simple Icons (CC0).
 - [ ] Compare the Pages build time of a PR run before and after #27 (merged Nov 20: `Swatinem/rust-cache` v2.9.3, pinned by commit, `workspaces: demo`). The first run on `main` fills the cache.
-- [ ] Mark reviews the Wishlist section (branch `wishlist`, base `main`, uncommitted). The page has the protocol claims of #42 and no new ones. Mark sends the signature login page to c-node for a review.
+- [ ] Mark sends the signature login page to c-node for a review. The Wishlist section is merged (#43). The page has the protocol claims of #42 and no new ones.
 - [ ] Julian checks the log in with Zcash page (#37, merged). Get Zechariah's surname or handle for the credit (the page and the home page have the first name only).
 - [ ] Mark decides: move his four lay paragraphs on bound notes to strict STE, or keep his wording. #31 keeps it.
 - [ ] The `verified-address` branch needs its social card (#41 is merged): merge `main`, run `python3 tools/og_cards.py`, and set `og:image` on that page.

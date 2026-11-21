@@ -178,10 +178,28 @@ header nav a:hover {
   color: var(--text);
 }
 
-/* On a phone, the bar has the site name and the section links. The GitHub link is also in the footer. */
+header nav a.signal {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* On a phone, the bar has the site name, two section links and the Signal link. The home page links to the wishlist. The GitHub link is also in the footer. */
 @media (max-width: 32rem) {
+  header nav a[href$="#wishlist"],
   header nav a[href^="https://github.com"] {
     display: none;
+  }
+}
+
+/* On a narrow phone, the Signal link shows the logo only. The link text stays for screen readers. */
+@media (max-width: 24rem) {
+  header nav a.signal {
+    font-size: 0;
+  }
+
+  header nav a.signal::before {
+    width: 1.15rem;
+    height: 1.15rem;
   }
 }
 
@@ -547,6 +565,57 @@ main > ol:not(.bytes) > li:not(:last-child)::after {
 
 .button.secondary:hover {
   background: var(--accent-soft);
+}
+
+/* The Signal group: the Signal logo before the link text. */
+.signal {
+  display: inline-flex;
+  gap: 0.45em;
+  align-items: center;
+}
+
+.signal::before {
+  content: "";
+  flex: none;
+  width: 1.15em;
+  height: 1.15em;
+  background: currentColor;
+  -webkit-mask: url("../images/signal.svg") center / contain no-repeat;
+  mask: url("../images/signal.svg") center / contain no-repeat;
+}
+
+/* Home: the Signal button on its own line, below the other buttons. */
+.buttons:has(+ .join) {
+  margin-bottom: var(--space-3);
+}
+
+.join {
+  margin: 0 0 var(--space-5);
+}
+
+/* Ask box: the Signal group, at the end of each basics, pattern and wishlist page. */
+.ask {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--space-5);
+  padding: var(--space-3) var(--space-4);
+  background: var(--accent-soft);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--line));
+  border-radius: var(--radius);
+}
+
+.ask p {
+  flex: 1 1 18rem;
+  margin: 0;
+}
+
+.ask strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.125rem;
 }
 
 .pattern-list {
@@ -1645,7 +1714,9 @@ figure.hero-figure svg {
   .pager,
   .edit,
   .anchor,
-  .buttons {
+  .buttons,
+  .join,
+  .ask {
     display: none !important;
   }
 
