@@ -42,8 +42,22 @@
       <div class="notice warning">
         <p class="notice-title">Warning</p>
         <p>
-          FROST on the Ironwood pool is unaudited, and ZIP 312 is a draft. Review by a cryptographer is necessary for
+          FROST on the Ironwood pool is unaudited, and <a href="https://zips.z.cash/zip-0312">ZIP 312</a> is a draft. Review by a cryptographer is necessary for
           the nested construction on this page. Use it on Testnet only.
+        </p>
+      </div>
+      <div class="notice">
+        <p class="notice-title">Test coins</p>
+        <p>
+          You must have test coins (TAZ) to use a wallet on Testnet. To get TAZ, you must have Node.js 24.7 or later.
+          Run this command with an address of your Testnet wallet:
+        </p>
+        <pre><code>npx zcash-faucet@1.2.1 utest1your_testnet_address</code></pre>
+        <p>
+          Your computer calculates a short proof of work. Then the faucet server sends 0.1 TAZ to the address. No account
+          is necessary. The command has a fixed version. Thus, a later release cannot change the code that you run.
+          The options are in the
+          <a href="https://github.com/anukulpandey/zcash-faucet">zcash-faucet</a> repository.
         </p>
       </div>
 
@@ -177,7 +191,7 @@ object key = A_G + [t]G</code></pre>
 
       <h2 id="spec">Spec</h2>
       <p>
-        FROST for spend authorization is specified in ZIP 312. This page is a design note for the tweak and the nested
+        FROST for spend authorization is specified in <a href="https://zips.z.cash/zip-0312">ZIP 312</a>. This page is a design note for the tweak and the nested
         group,
         for experiments only.
       </p>

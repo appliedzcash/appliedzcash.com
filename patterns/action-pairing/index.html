@@ -142,7 +142,7 @@
 key_out   = BLAKE2b-256("Zcash_PairingOrd", d ‖ 0x01 ‖ rseed)</code></pre>
         </li>
         <li>Sort the spends and the outputs by their keys. Action <code>a</code> contains spend <code>a</code> and output <code>a</code>.</li>
-        <li>The ρ of each output is the nullifier of its action. Calculate esk, ψ, rcm and the note commitment (ZIP 212, ZIP 2005).</li>
+        <li>The ρ of each output is the nullifier of its action. Calculate esk, ψ, rcm and the note commitment (<a href="https://zips.z.cash/zip-0212">ZIP 212</a>, <a href="https://zips.z.cash/zip-2005">ZIP 2005</a>).</li>
       </ol>
       <p>
         A value can be invalid, for example an esk of zero. The chance is about 2<sup>−254</sup>. Then the builder
@@ -161,7 +161,7 @@ key_out   = BLAKE2b-256("Zcash_PairingOrd", d ‖ 0x01 ‖ rseed)</code></pre>
       <h3 id="scope">Scope</h3>
       <p>
         The pattern is for bundles with <code>enableCrossAddress = 1</code>, in practice Ironwood-pool bundles. For
-        other bundles, the pairs are set by expanded receiver (ZIP 2006).
+        other bundles, the pairs are set by expanded receiver (<a href="https://zips.z.cash/zip-2006">ZIP 2006</a>).
       </p>
 
       <h2 id="cost">Cost</h2>
