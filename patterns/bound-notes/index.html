@@ -52,7 +52,7 @@
       </p>
       <p>
         In technical terms, the seal is the note commitment <code>cmx</code>. An app puts a hash of its data in the
-        <code>rseed</code> of a note. ψ and rcm are calculated from <code>rseed</code> (ZIP 212). Thus, <code>cmx</code> is a commitment to the data.
+        <code>rseed</code> of a note. ψ and rcm are calculated from <code>rseed</code> (<a href="https://zips.z.cash/zip-0212">ZIP 212</a>). Thus, <code>cmx</code> is a commitment to the data.
       </p>
       <p>
         Standard wallets can decrypt a bound note. Anyone with the data can calculate <code>cmx</code> again and
@@ -145,7 +145,7 @@
       <ol start="5">
         <li>
           The wallet builds a usual Orchard-protocol output with this <code>rseed</code>. It calculates esk, ψ and rcm
-          from <code>rseed</code> and ρ (ZIP 212, ZIP 2005). ρ is the nullifier of the note that is spent in the same
+          from <code>rseed</code> and ρ (ZIP 212, <a href="https://zips.z.cash/zip-2005">ZIP 2005</a>). ρ is the nullifier of the note that is spent in the same
           action.
         </li>
       </ol>
@@ -230,7 +230,7 @@
       <h2 id="cost">Cost</h2>
       <ul>
         <li>
-          <strong>Fee</strong> In a usual record transaction, the tip and one funding note are spent. The outputs are the new note and a change note. That is two actions. Since block 3,590,000, wallets use the ZIP 2009 fee rule. The fee for two actions is 2,000 zatoshis (0.00002 ZEC).
+          <strong>Fee</strong> In a usual record transaction, the tip and one funding note are spent. The outputs are the new note and a change note. That is two actions. Since block 3,590,000, wallets use the <a href="https://zips.z.cash/zip-2009">ZIP 2009</a> fee rule. The fee for two actions is 2,000 zatoshis (0.00002 ZEC).
         </li>
         <li>
           <strong>Wallets</strong> Each wallet tries to decrypt each action on the chain. Keep the number of records
@@ -244,14 +244,14 @@
           <strong>Builders</strong> The transaction builder must accept an <code>rseed</code> from its caller. It must
           also let the caller put the successor in the action in which the predecessor is spent. The
           <code>orchard</code> crate samples <code>rseed</code> at random. <code>add_output_with_rseed</code> is in a
-          patch. The patch is pending upstream. In a PCZT (ZIP 374), the usual <code>rseed</code> field is sufficient
+          patch. The patch is pending upstream. In a PCZT (<a href="https://zips.z.cash/zip-0374">ZIP 374</a>), the usual <code>rseed</code> field is sufficient
           for a bound output.
         </li>
       </ul>
 
       <h2 id="spec">Spec</h2>
       <p>
-        The full spec is a draft ZIP. It includes the binding domain rules, the amendment to ZIP 212, the lineage check
+        The full spec is a draft ZIP. It includes the binding domain rules, the amendment to <a href="https://zips.z.cash/zip-0212">ZIP 212</a>, the lineage check
         and the security analysis. The draft will be published after review.
       </p>
 

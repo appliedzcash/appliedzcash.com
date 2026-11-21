@@ -36,7 +36,7 @@
       <p class="kicker">Pattern</p>
       <h1>Wallet-native orders</h1>
       <p class="lede">
-        A participant sends app orders from a usual Zcash wallet. Each order is a ZIP 321 payment with a memo. The
+        A participant sends app orders from a usual Zcash wallet. Each order is a <a href="https://zips.z.cash/zip-0321">ZIP 321</a> payment with a memo. The
         wallet shows the memo before the participant approves the payment.
       </p>
       <p>
@@ -47,7 +47,7 @@
       <h2 id="problem">Problem</h2>
       <p>
         An app must know which participant sent each order. The sender of a shielded payment is secret. Wallets sign
-        messages with transparent keys at most. ZIP 304 is for Sapling keys only.
+        messages with transparent keys at most. <a href="https://zips.z.cash/zip-0304">ZIP 304</a> is for Sapling keys only.
       </p>
       <p>
         Thus, many apps ask for a seed phrase, or keep a secret key in the browser. Participants with real funds refuse
@@ -173,7 +173,7 @@ expiry  the last close height at which the memo counts
 mac     MAC_k_i(P_mac, all bytes before " | mac="), 8 bytes, hex</code></pre>
       <p>
         The MAC is keyed BLAKE2b with an 8-byte output. The commands and the personalization <code>P_mac</code> are part
-        of the scheme of the app. The memo is a ZIP 302 text memo of 512 bytes or fewer.
+        of the scheme of the app. The memo is a <a href="https://zips.z.cash/zip-0302">ZIP 302</a> text memo of 512 bytes or fewer.
       </p>
 
       <h3 id="payment-request">Payment request</h3>
@@ -248,7 +248,7 @@ mac     MAC_k_i(P_mac, all bytes before " | mac="), 8 bytes, hex</code></pre>
       <ul>
         <li>
           <strong>Each order</strong> The order amount and the network fee. A usual shielded payment with change has two
-          actions. Since block 3,590,000, wallets use the ZIP 2009 fee rule. The fee for two actions is 2,000 zatoshis.
+          actions. Since block 3,590,000, wallets use the <a href="https://zips.z.cash/zip-2009">ZIP 2009</a> fee rule. The fee for two actions is 2,000 zatoshis.
         </li>
         <li>
           <strong>Wallets</strong> Each order is one transaction on the chain. Put several commands in one memo. See
