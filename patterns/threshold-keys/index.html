@@ -113,7 +113,7 @@
       </ol>
       <p>
         The coordinator has zero shares. The role continues while <code>t</code> members are available. After a share
-        refresh, each member has a new share, and the group key is the same. A refresh can also remove members.
+        refresh, each member has a new share. The group key stays the same. The members can also remove a member in a refresh.
       </p>
 
       <h3 id="2-a-public-tweak-for-each-object">2. A public tweak for each object</h3>
@@ -173,9 +173,9 @@ object key = A_G + [t]G</code></pre>
         <li><strong>Trust.</strong> A group is one unit of trust. <code>t</code> bad members are a bad role.</li>
         <li><strong>Refusal.</strong> If all members refuse, the object stays frozen. The remedy is outside the chain, for example in law.</li>
         <li><strong>Coordinator.</strong> Each member must examine the request on its own. Each member must also sign the set of commitments that it saw, so that the coordinator shows the same set to each member.</li>
-        <li><strong>Message.</strong> The signature share is calculated over the message in the signing package. The member software compares that message with its own sighash. Do this comparison in the function that signs, before the share is calculated. Software that compares in a different step can examine one value and sign a different value.</li>
+        <li><strong>Message.</strong> The member software calculates the signature share over the message in the signing package. It compares that message with its own sighash. Do this comparison in the function that signs, before the software calculates the signature share. Software that compares in a different step can examine one value and sign a different value.</li>
         <li><strong>Approval.</strong> With the sighash, a member knows that it has the same transaction as the coordinator. Each member also compares the transaction with a record that the member keeps, for example the proposal that it approved. A member that uses only data from the coordinator can sign a move that is different from the approved move.</li>
-        <li><strong>Nonces.</strong> Each spend has its own signing session. Each member makes new nonces in round one of each session. After a member calculates a share, it deletes the nonces (RFC 9591). Keep the nonces in memory only. A stored nonce can be restored and used two times. After a reload, the member starts again at round one. Each member uses only the messages of the current session.</li>
+        <li><strong>Nonces.</strong> Each spend has its own signing session. Each member makes new nonces in round one of each session. After a member calculates a signature share, it deletes the nonces (RFC 9591). Keep the nonces in memory only. Member software that stores a nonce can restore it and use it two times. After a reload, the members start a new session. Each member uses only the commitments and the signing package of the current session.</li>
       </ul>
 
       <h2 id="spec">Spec</h2>
