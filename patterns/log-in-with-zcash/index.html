@@ -333,9 +333,10 @@ rsk     the secret key of the user at this app</code></pre>
 
       <h3 id="what-each-signature-shows">What each signature shows</h3>
       <p>
-        A correct viewing key signature shows that the user holds <code>ivk</code> of the address. The code shows the
-        same fact. Thus, each holder of the viewing key can log in as the address. A user who gives the viewing key to
-        a different person also gives the login.
+        The app uses a correct viewing key signature as proof that the wallet has the address's <code>ivk</code>.
+        With the memo code, the app checks that the user knows the code only.
+        Each holder of the incoming viewing key can log in as the address.
+        A user who gives the viewing key to a different person also gives the login.
       </p>
       <p>
         A correct app key signature shows that the user holds the secret key <code>rsk</code>. Only a holder of
