@@ -28,7 +28,7 @@ A wishlist page is for a design that needs new software: a wallet function, a ZI
 
 1. **Necessary changes:** the pattern to improve, the changes to wallets, ZIPs and consensus, and the status.
 2. **Problem:** the limit of the pattern of today.
-3. **Mechanism:** how the design works.
+3. **Mechanism:** how wallets, nodes or apps use the design.
 4. **Comparison:** the design and the pattern of today, in one table.
 5. **Parts of a spec:** the items that a ZIP for the design must have.
 
