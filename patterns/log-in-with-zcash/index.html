@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Log in with Zcash: a one-time code in a memo | Applied Zcash</title>
+    <meta name="description" content="Log in to an app with a Zcash address: the user pays a server wallet, and the server wallet sends a one-time code in a memo. The demo makes the login link and the code." />
+    <link rel="canonical" href="https://appliedzcash.com/patterns/log-in-with-zcash/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Applied Zcash" />
+    <meta property="og:title" content="Log in with Zcash: a one-time code in a memo" />
+    <meta property="og:description" content="Log in to an app with a Zcash address: the user pays a server wallet, and the server wallet sends a one-time code in a memo. The demo makes the login link and the code." />
+    <meta property="og:url" content="https://appliedzcash.com/patterns/log-in-with-zcash/" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="og:image" content="https://appliedzcash.com/images/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Applied Zcash: build apps on Zcash" />
+    <meta name="theme-color" content="#f6f4ee" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f1011" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="../../images/mark.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="../../images/apple-touch-icon.png" />
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Log in with Zcash", "description": "Log in to an app with a Zcash address: the user pays a server wallet, and the server wallet sends a one-time code in a memo. The demo makes the login link and the code.", "url": "https://appliedzcash.com/patterns/log-in-with-zcash/", "inLanguage": "en", "about": "Zcash", "isPartOf": {"@type": "WebSite", "name": "Applied Zcash", "url": "https://appliedzcash.com/"}}</script>
+    <link rel="preload" href="../../fonts/source-serif-4.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="../../styles/main.css" />
+    <script type="module" src="../../scripts/site.js"></script>
+    <script type="module" src="../../scripts/log-in-with-zcash.js"></script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Go to the content</a>
+    <header>
+      <a class="site-name" href="../../"><svg class="mark" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.75" /><circle cx="15.25" cy="15.25" r="2.75" /></svg>Applied Zcash</a>
+      <nav><a href="../../#basics">Basics</a> <a href="../../#patterns">Patterns</a> <a href="https://github.com/appliedzcash/appliedzcash.com">GitHub</a></nav>
+    </header>
+    <main id="main">
+      <p class="kicker">Pattern</p>
+      <h1>Log in with Zcash</h1>
+      <p class="lede">
+        A user logs in to an app with a Zcash address. The user pays a small amount from a wallet. A server wallet then
+        sends a one-time code in a memo to the address.
+      </p>
+      <p>
+        The user types the code in the app. Only a person who can read the memos of the address has the code. Thus, the
+        address is the account of the user.
+      </p>
+      <p>
+        This pattern is from <a href="https://zcash.me">ZcashMe</a>. The use of a one-time code in a memo for login is
+        the invention of Zechariah. The
+        <a href="https://github.com/zcashme/zcash-verification-service">Zcash Verification Service</a> is the reference
+        implementation.
+      </p>
+
+      <h2 id="problem">Problem</h2>
+      <p>
+        An app must know that a user controls an address. The sender of a shielded payment is secret, also to the
+        receiver. Wallets sign messages with transparent keys at most. ZIP 304 is for Sapling keys only.
+      </p>
+      <p>
+        Each shielded wallet sends payments with memos. Each shielded wallet also shows the memos of the payments that
+        it receives. These two functions are the base of this pattern.
+      </p>
+
+      <h2 id="mechanism">Mechanism</h2>
+      <h3 id="roles">Roles</h3>
+      <dl class="terms">
+        <dt>User</dt>
+        <dd>A person with a Zcash wallet and a unified address.</dd>
+        <dt>App</dt>
+        <dd>The website that the user logs in to. It makes sessions and examines codes.</dd>
+        <dt>Worker</dt>
+        <dd>A server wallet. It receives login payments and sends codes.</dd>
+        <dt>Service address</dt>
+        <dd>The unified address of the worker. The app puts it in each login link.</dd>
+        <dt>Session ID</dt>
+        <dd>A number of 16 decimal digits. The app makes a new session ID for each login.</dd>
+        <dt>Return address</dt>
+        <dd>The address that the user gives to the app. The worker sends the code there.</dd>
+        <dt>Code key</dt>
+        <dd>A secret key of 32 bytes. The worker and the app each have a copy.</dd>
+        <dt>Code</dt>
+        <dd>A one-time code of 6 digits.</dd>
+      </dl>
+
+      <h3 id="sequence">Sequence</h3>
+      <figure class="diagram">
+        <svg viewBox="0 0 360 346" role="img" aria-labelledby="fig-login-title fig-login-desc">
+          <title id="fig-login-title">The login sequence</title>
+          <desc id="fig-login-desc">1: The user gives the app an address. 2: The app shows a login link. 3: The user pays the worker, and the payment has the login memo. 4: The worker sends a memo with a 6-digit code to the address. 5: The user types the code in the app. 6: The app calculates the code and compares the two codes.</desc>
+          <defs><marker id="fig-login-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 8 4 0 8z" /></marker></defs>
+          <path class="life" d="M60 40V338" />
+          <path class="life" d="M180 40V338" />
+          <path class="life" d="M300 40V338" />
+          <g class="e" marker-end="url(#fig-login-arrow)">
+            <path d="M64 84H178" />
+            <path d="M176 128H62" />
+            <path d="M64 172H298" />
+            <path d="M296 216H62" />
+            <path d="M64 260H178" />
+          </g>
+          <rect class="v" x="10" y="10" width="100" height="30" rx="7" />
+          <text x="60" y="25">user</text>
+          <rect class="v" x="130" y="10" width="100" height="30" rx="7" />
+          <text x="180" y="25">app</text>
+          <rect class="v" x="250" y="10" width="100" height="30" rx="7" />
+          <text x="300" y="25">worker</text>
+          <text class="m" x="14" y="84">1</text>
+          <text class="s" x="120" y="75">address</text>
+          <text class="m" x="14" y="128">2</text>
+          <text class="s" x="120" y="119">login link</text>
+          <text class="m" x="14" y="172">3</text>
+          <text class="s" x="180" y="163">payment with the login memo</text>
+          <text class="m" x="14" y="216">4</text>
+          <text class="s" x="180" y="207">memo: 6-digit code</text>
+          <text class="m" x="14" y="260">5</text>
+          <text class="s" x="120" y="251">types the code</text>
+          <text class="m" x="14" y="304">6</text>
+          <rect class="k" x="120" y="289" width="120" height="30" rx="7" />
+          <text x="180" y="304">compares codes</text>
+        </svg>
+        <figcaption>Each arrow is one message. The steps are in sequence from top to bottom.</figcaption>
+      </figure>
+      <ol>
+        <li>The user types their unified address in the app. This address is the return address.</li>
+        <li>The app makes a session ID. It writes the login memo from the session ID and the return address.</li>
+        <li>The app shows a ZIP 321 payment link as a QR code. The link has the service address, the login amount and the login memo.</li>
+        <li>The user pays the link from a wallet. The funds can come from any wallet.</li>
+        <li>The worker finds the payment in the mempool. It decrypts the payment with its viewing key and reads the memo.</li>
+        <li>The worker calculates the code from the code key, the session ID and the return address.</li>
+        <li>The worker sends a shielded payment to the return address. The memo of this payment contains the code.</li>
+        <li>The user reads the code in the wallet and types it in the app.</li>
+        <li>The app calculates the code and compares the two codes. If they are equal, the user is logged in.</li>
+      </ol>
+      <p>
+        The worker and the app calculate the code independently, from the same three values. Thus, the worker needs a
+        connection to the Zcash network only.
+      </p>
+
+      <h3 id="login-memo">Login memo</h3>
+      <p>The app writes the login memo as one line of text:</p>
+      <pre><code>memo = "DO NOT MODIFY:{zvs/" session "," address "}"
+
+session  the session ID, 16 decimal digits
+address  the return address, as the user typed it</code></pre>
+      <p>
+        The wallet shows the memo before it sends the payment. The first words are an instruction for the user. The
+        worker accepts this format only. It refuses a memo with a different prefix, a second comma, or text after the
+        last brace.
+      </p>
+
+      <h3 id="code">Code</h3>
+      <pre class="formula"><code>code = HMAC-SHA256(key, session ‖ address)[0..4] mod 10⁶</code></pre>
+      <p>
+        The first 4 bytes of the HMAC are a big-endian number. The code is this number modulo 1,000,000, written as 6
+        decimal digits. The address in the calculation is the exact text of the address in the memo.
+      </p>
+      <p>The worker puts the code in the memo of the reply:</p>
+      <pre><code>(ZFA OTP)847291</code></pre>
+
+      <h3 id="what-the-code-shows">What the code shows</h3>
+      <p>
+        Only a holder of the incoming viewing key of the return address can read the reply. Thus, a correct code shows
+        that the user can read the memos of that address. The login payment can come from any wallet, because its sender
+        is secret.
+      </p>
+      <p>
+        <a href="../wallet-native-orders/#sign-in">Wallet-native orders</a> has a different sign-in. There, the operator
+        already knows the address and sends the code first.
+      </p>
+
+      <h3 id="worker">Worker</h3>
+      <p>
+        The worker examines the return address before it sends the reply. The address must be valid for the network of
+        the worker. The worker keeps a record of each reply on disk. Thus, after a failure, the worker sends each reply
+        one time only.
+      </p>
+
+      <h3 id="openid-connect">OpenID Connect</h3>
+      <p>
+        ZcashMe runs this flow as an OpenID Connect provider at <code>auth.zcash.me</code>. An app sends the user there
+        with a usual OIDC library. After the login, the app receives the unified address of the user as the
+        <code>sub</code> claim.
+      </p>
+
+      <h2 id="cost">Cost</h2>
+      <ul>
+        <li>
+          <strong>Each login</strong> The login amount and the network fee. The login amount at ZcashMe is 0.002 ZEC. A
+          usual shielded payment with change has two actions. The ZIP 2009 fee for two actions is 2,000 zatoshis.
+        </li>
+        <li>
+          <strong>The service</strong> The network fee of each reply. The login amount pays for it.
+        </li>
+        <li>
+          <strong>Wallets</strong> Each login is two transactions on the chain. See
+          <a href="../polite-actions/">Polite actions</a>.
+        </li>
+        <li>
+          <strong>Time</strong> The worker sends the reply when the login payment is in the mempool. The wallet of the
+          user shows the reply after its next sync.
+        </li>
+        <li>
+          <strong>Wallet support</strong> ZIP 321 with memos. The wallet must send the memo bytes unchanged, and it
+          must show the memos of received payments.
+        </li>
+      </ul>
+
+      <h2 id="limits">Limits</h2>
+      <div class="notice warning">
+        <p class="notice-title">Warning</p>
+        <p>
+          The code key is a shared secret. A person with the code key can calculate the code for each session and each
+          address. Keep the code key on the servers of the app and the worker only.
+        </p>
+      </div>
+      <ul>
+        <li>
+          <strong>Viewing keys.</strong> A holder of the incoming viewing key of the return address can read the code.
+          Thus, this holder can log in as the address.
+        </li>
+        <li>
+          <strong>Guesses.</strong> A code has 6 digits. The app must stop a session after a small number of incorrect
+          codes.
+        </li>
+        <li>
+          <strong>Lifetime.</strong> The calculation has no time input. Thus, the code of a session stays the same. The
+          app must give each session an expiry, and it must accept the code one time only.
+        </li>
+        <li>
+          <strong>Phishing.</strong> A clone page can show the login link of a real session and then ask for the code.
+          The user must examine the host of the page before they type a code.
+        </li>
+        <li>
+          <strong>Mempool.</strong> A payment in the mempool can expire before it is in a block. Then the service paid
+          the fee of the reply and received no login amount.
+        </li>
+        <li>
+          <strong>Privacy.</strong> Outsiders see two usual shielded transactions. The service knows the return address
+          and the time of each login. Apps that get the same address can link the accounts of the user.
+        </li>
+      </ul>
+
+      <h2 id="spec">Spec</h2>
+      <p>
+        The reference for this pattern is the source of the
+        <a href="https://github.com/zcashme/zcash-verification-service">Zcash Verification Service</a>, under the MIT
+        license. The memo format is in <code>src/memo.rs</code>. The code calculation and its test vector are in
+        <code>src/otp.rs</code>.
+      </p>
+
+      <h2 id="demo">Demo: a toy login</h2>
+      <p>These are the values of the toy login:</p>
+      <figure class="code">
+        <figcaption>Demo parameters</figcaption>
+        <pre><code>amount   0.002 ZEC
+memo     "DO NOT MODIFY:{zvs/" session "," address "}"
+code     HMAC-SHA256(key, session ‖ address)[0..4] mod 10⁶
+reply    "(ZFA OTP)" code</code></pre>
+      </figure>
+      <p>
+        The demo writes the login memo, makes the ZIP 321 URI and draws the QR code. It also calculates the code, as
+        the worker and the app do. The session ID and the code key are random values from your browser.
+      </p>
+      <p>To examine the calculation, type the test vector of the reference implementation:</p>
+      <figure class="code">
+        <figcaption>Test vector</figcaption>
+        <pre><code>key      000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f
+session  1234567890123456
+address  u1example-return-address
+code     880279</code></pre>
+      </figure>
+      <div class="notice caution">
+        <p class="notice-title">Caution</p>
+        <p>
+          The service address is a Testnet address. Its key is in the public source of this site. A wallet on Testnet
+          can pay the link, but the worker is only a demo.
+        </p>
+      </div>
+
+      <div class="demo" id="login-demo">
+        <div class="demo-head">
+          <span class="demo-label">Demo</span>
+          <p class="status" id="demo-status" role="status" data-state="loading">Wait</p>
+        </div>
+        <label for="session-input">Session ID</label>
+        <input id="session-input" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" disabled />
+        <label for="address-input">Return address</label>
+        <input id="address-input" type="text" autocomplete="off" spellcheck="false" disabled />
+        <label for="key-input">Code key</label>
+        <input id="key-input" type="text" autocomplete="off" spellcheck="false" disabled />
+        <div class="actions">
+          <button type="button" id="session-button" disabled>Make a new session ID</button>
+          <button type="button" id="key-button" class="secondary" disabled>Make a new code key</button>
+        </div>
+
+        <h3 id="login-link">Login link</h3>
+        <dl class="values" id="link-values"></dl>
+        <div class="qr" id="link-qr"></div>
+
+        <h3 id="reply">Reply</h3>
+        <dl class="values" id="reply-values"></dl>
+
+        <h3 id="code-check">Code check</h3>
+        <label for="code-input">Type the code from the reply memo</label>
+        <input id="code-input" type="text" inputmode="numeric" maxlength="6" autocomplete="off" spellcheck="false" disabled />
+        <p class="result" id="code-result" role="status"></p>
+      </div>
+      <nav class="pager" aria-label="Pages">
+        <a class="prev" href="../../patterns/threshold-keys/"><span>Previous</span>Threshold keys</a>
+      </nav>
+      <p class="edit"><a href="https://github.com/appliedzcash/appliedzcash.com/blob/main/patterns/log-in-with-zcash/index.html">Change this page on GitHub</a></p>
+    </main>
+    <footer>
+      <p>
+        Applied Zcash is a community site. Anyone can propose a pattern. The
+        <a href="https://github.com/appliedzcash/appliedzcash.com">source</a> is on GitHub.
+        If you build on Zcash, go to the <a href="https://signal.group/#CjQKIGlpdEugkIjUIm3WGa_6V2Xhi6zEvJGB9UADaU3zNKGCEhCSrRufVMaAncHsqeeBZj_U">Signal group</a>.
+      </p>
+      <p class="licenses">
+        Text: <a href="https://github.com/appliedzcash/appliedzcash.com/blob/main/LICENSE-CC0">CC0 1.0</a>. Code: <a href="https://github.com/appliedzcash/appliedzcash.com/blob/main/LICENSE">0BSD</a>. The demos include
+        crates under their own licenses: <a href="../../wasm/notices.html">notices</a>.
+      </p>
+    </footer>
+  </body>
+</html>
