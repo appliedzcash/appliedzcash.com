@@ -6,6 +6,22 @@ export function setStatus(el, error) {
   el.textContent = error ? `Error: ${error}` : "Ready";
 }
 
+// A memo holds 512 bytes. The meter counts UTF-8 bytes, and turns red above 90 percent.
+export function memoMeter(memo) {
+  const bytes = new TextEncoder().encode(memo).length;
+  const meter = document.createElement("meter");
+  meter.max = 512;
+  meter.high = 460;
+  meter.value = bytes;
+  const label = document.createElement("span");
+  label.className = "meter-label";
+  label.textContent = `${bytes} of 512 bytes`;
+  const box = document.createElement("span");
+  box.className = "memo-meter";
+  box.append(meter, label);
+  return box;
+}
+
 const HEX = /^[0-9a-f]{16,}$/;
 const shown = new WeakMap(); // list -> Map(name -> last value), to mark changed groups
 
