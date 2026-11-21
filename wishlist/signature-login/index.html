@@ -163,8 +163,8 @@ rsk     the secret key of the user at this app</code></pre>
           <strong>Message format.</strong> The fields of the login message and their sequence, as in ERC-4361.
         </li>
         <li>
-          <strong>Receiver.</strong> For the viewing key signature. A unified address can have more than one shielded
-          receiver, and each receiver has its own <code>ivk</code>. The spec must name the receiver that signs.
+          <strong>Receiver.</strong> For the viewing key signature. A unified address can have more than one shielded receiver.
+          Each receiver has its own <code>ivk</code>. Developers must give the receiver type in the spec.
         </li>
         <li>
           <strong>Calculation of α.</strong> For the app key signature. One calculation for all wallets. Then a user
