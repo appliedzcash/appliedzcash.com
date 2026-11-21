@@ -253,6 +253,106 @@ address  the return address, as the user typed it</code></pre>
         </li>
       </ul>
 
+      <h2 id="signature-login">Alternative: a signature login</h2>
+      <div class="notice">
+        <p class="notice-title">Proposal</p>
+        <p>
+          This section is a proposal from
+          <a href="https://x.com/colludingnode/status/2124218435143897495">c-node</a>. A spec for it is not written
+          yet, and wallets do not have this function.
+        </p>
+      </div>
+      <p>
+        In this proposal, the wallet signs a login message with a shielded key, and the app examines the signature.
+        The login is off the chain. Thus, the worker, the code key and the fees are unnecessary.
+      </p>
+
+      <h3 id="signature-keys">Keys</h3>
+      <p>
+        A shielded wallet has a spend authorizing key <code>ask</code> and its public key <code>ak</code>. In RedDSA,
+        a wallet can randomize this key pair with a secret number α. Each shielded spend already has a signature from
+        a randomized key.
+      </p>
+      <pre><code>α   = PRF(wallet secret, domain)
+rk  = ak + [α]G
+rsk = ask + α
+
+domain  the domain of the app, for example app.example
+G       the base point of the spend signatures
+rk      the public key of the user at this app
+rsk     the secret key of the user at this app</code></pre>
+      <p>
+        The wallet calculates α with a keyed hash, from a secret of the wallet and the domain of the app. Thus, the
+        wallet has a different key pair for each app. A wallet that the user restores from the seed calculates the
+        same keys again.
+      </p>
+
+      <h3 id="signature-sequence">Sequence</h3>
+      <ol>
+        <li>The app makes a login message, as in <a href="https://eips.ethereum.org/EIPS/eip-4361">ERC-4361</a>. The message has the domain of the app, a nonce and an expiry time.</li>
+        <li>The wallet shows the domain to the user. A wallet in the browser also compares the domain with the host of the page.</li>
+        <li>The wallet calculates α for the domain. It signs the message with <code>rsk</code>.</li>
+        <li>The wallet sends <code>rk</code> and the signature to the app.</li>
+        <li>The app examines the signature with <code>rk</code>. It also examines the domain, the nonce and the expiry time.</li>
+        <li>If all of them are correct, the user is logged in. The key <code>rk</code> is the account of the user.</li>
+      </ol>
+      <p>
+        A wallet on a different device cannot see the page. There, the user must compare the domain in the wallet with
+        the host of the page.
+      </p>
+
+      <h3 id="comparison">Comparison</h3>
+      <div class="table-wrap">
+        <table class="cost-table compare-table">
+          <thead>
+            <tr><th scope="col">Item</th><th scope="col">Code in a memo</th><th scope="col">Signature login</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Transactions for each login</th><td>2</td><td>0</td></tr>
+            <tr><th scope="row">Cost for each login</th><td>The login amount and a fee</td><td>Zero</td></tr>
+            <tr><th scope="row">Servers</th><td>The app and a worker</td><td>The app</td></tr>
+            <tr><th scope="row">Account</th><td>A unified address</td><td>One key for each app</td></tr>
+            <tr><th scope="row">Necessary key</th><td>An incoming viewing key</td><td>The spend authorizing key</td></tr>
+            <tr><th scope="row">Wallet support</th><td>All shielded wallets</td><td>A new wallet function</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 id="what-the-signature-shows">What the signature shows</h3>
+      <p>
+        A correct signature shows that the user holds the secret key <code>rsk</code>. Only a holder of
+        <code>ask</code> can calculate <code>rsk</code>. Thus, a viewing key is insufficient for a login.
+      </p>
+      <p>
+        The app gets <code>rk</code> only. Because α is secret, two apps cannot calculate that their keys are from the
+        same <code>ak</code>. Thus, apps cannot link the accounts of one user.
+      </p>
+      <p>
+        The address of the user stays secret. An app that must know the address also needs a zero-knowledge proof
+        that <code>rk</code> and the address are from the same key. <a href="https://zips.z.cash/zip-0304">ZIP 304</a>
+        has this proof for Sapling keys only.
+      </p>
+
+      <h3 id="signature-spec">Parts of a spec</h3>
+      <ul>
+        <li>
+          <strong>Message format.</strong> The fields of the login message and their sequence, as in ERC-4361.
+        </li>
+        <li>
+          <strong>Calculation of α.</strong> One calculation for all wallets. Then a user who moves to a different
+          wallet keeps the same accounts.
+        </li>
+        <li>
+          <strong>Hash personalization.</strong> Wallets sign transactions with keys of the same form. The wallet must
+          hash the login message with a separate personalization before it signs. Thus, a login signature is invalid
+          for a transaction.
+        </li>
+        <li>
+          <strong>Transport.</strong> A path from the app to the wallet and back. For example, a QR code for the
+          message and an HTTPS request for the signature.
+        </li>
+      </ul>
+
       <h2 id="spec">Spec</h2>
       <p>
         The reference for this pattern is the source of the
