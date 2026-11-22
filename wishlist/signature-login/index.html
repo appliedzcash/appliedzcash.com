@@ -152,10 +152,13 @@ id_pk   the public key of the user at this app</code></pre>
         Thus, the app must put its domain, a nonce and an expiry time in the challenge, as in step 1 of the sequence.
       </p>
       <p>
-        The formula is for generation 0 and the initial key for each site.
-        For rotated keys, the user must also give the wallet the generation and per-site rotation counters after recovery.
-        These counters are in local storage, separate from the seed phrase. The salt and the tags are specific to zafu.
-        A different wallet must use the same calculation and counters to calculate the same keys. An account from
+        The calculation above is for generation 0 and for the first key of each site. The user can change to a new
+        generation N. Then the name in <code>id</code> is <code>default-vN</code>. The user can also change to a new
+        key N for one site. Then the tag is <code>"site:" + origin + ":" + N</code>. zafu keeps a counter for the
+        generation and a counter for each site. These counters are in the storage of the browser extension, separate
+        from the seed phrase. Thus, after a restore from the seed phrase, the user must also give the counter values to
+        the wallet. The salt and the tags are specific to zafu. A different wallet must use the same calculation and
+        the same counter values to calculate the same keys. An account from
         a FROST distributed key generation has no seed phrase. Thus, that account has no identity keys. Each
         participant can log in with the identity keys from the seed phrase of that participant.
       </p>
@@ -202,8 +205,8 @@ id_pk   the public key of the user at this app</code></pre>
       </p>
       <p>
         The app uses a correct identity key signature as proof that the user has the secret key <code>id_sk</code>.
-        A holder of the seed phrase, <code>root</code> or <code>id</code> can calculate <code>id_sk</code>.
-        Thus, a viewing-key holder also needs the identity secret key <code>id_sk</code> for this login.
+        A holder of the seed phrase, of <code>root</code> or of <code>id</code> can calculate <code>id_sk</code>.
+        Thus, a holder of a viewing key must also have <code>id_sk</code> for this login.
       </p>
       <p>
         The app key and the spend key have shared values: <code>rsk = ask + α</code>. If <code>rsk</code> and α are
