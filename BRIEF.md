@@ -128,13 +128,14 @@ CONTRIBUTING.md     how to propose a pattern
 - [ ] Julian checks the log in with Zcash page (#37, merged). Get Zechariah's surname or handle for the credit (the page and the home page have the first name only).
 - [ ] Mark decides: move his four lay paragraphs on bound notes to strict STE, or keep his wording. #31 keeps it.
 - [ ] The `verified-address` branch needs its social card (#41 is merged): merge `main`, run `python3 tools/og_cards.py`, and set `og:image` on that page.
-- [ ] Mark reviews `/basics/smart-contracts/` (#49). It targets the search "smart contracts on Zcash": the short answer, a table of contract tasks with the Ethereum form and the Zcash pattern, who checks the rules, and the Draft ZIPs for tokens, swaps, time locks and large memos. It is the first basics page and has no demo. The home hero links to it.
-- [ ] After the `seo-indexes` PR is live: Mark adds the site to Bing Webmaster Tools (import from Search Console; Bing feeds ChatGPT search and DuckDuckGo), and requests indexing of each page in Search Console.
+- [ ] Mark requests indexing in Search Console for each page, `/basics/smart-contracts/` first. Mark adds the site to Bing Webmaster Tools (import from Search Console; Bing results also show in ChatGPT search and DuckDuckGo).
 
 ## Soon
 
 - [ ] Mark reviews the wallet-native orders ZIP. Then add `/specs/wallet-native-orders/` (closes L3).
 - [ ] A cryptographer reviews the nested FROST construction. Until then the L5 page keeps its Experimental label.
+- [ ] SEO backlinks (Mark approves each): a PR to the ZecHub developer resources page (zechub.wiki/start-here/developer-resources), a PR to the Developer Tools page of zcash.readthedocs.io, a request to zecdev to list the site, and a post in the Zcash Community Forum.
+- [ ] GitHub repo: set the description, the homepage URL and topics (zcash, zero-knowledge, privacy).
 
 
 ## Later
@@ -145,6 +146,8 @@ CONTRIBUTING.md     how to propose a pattern
 - [ ] Case studies: Zodiac Markets after Mark clears it; ZcashNames after Julian agrees.
 - [ ] Link each spec page to its `zcash/zips` PR once one exists.
 - [ ] Invite co-maintainers to the org (for example craftsoldier).
+- [ ] SEO pages: hub pages at `/basics/`, `/patterns/` and `/wishlist/` (each URL gives 404 today), then breadcrumbs in the JSON-LD. Maybe "smart contracts" in the home title.
+- [ ] Mark decides: a cookieless counter (for example GoatCounter) for referral data from X and the forum. Search Console has search clicks only. It is a privacy trade-off on a Zcash site.
 
 ## Done
 
@@ -197,4 +200,6 @@ CONTRIBUTING.md     how to propose a pattern
 - [x] Nov 21: Wishlist, the third section of the site (name from the Signal poll; Mark's call). It is for designs that need new software: a wallet function, a ZIP or a consensus change. Page 1 is `/wishlist/signature-login/`, moved from the #42 section; the log in with Zcash page keeps a short pointer at the same anchor (`#signature-login`) and a Next link. A wishlist page has: necessary changes (improves, wallets, ZIP, consensus, status), problem, mechanism, comparison, parts of a spec. No demo. Also changed: a Wishlist link in the header of all 13 pages, the home section, the sitemap, `wishlist` in the `cp` line of `pages.yml`, and wishlist pages in `tools/og_cards.py` and `tools/check_chrome.py`. On a phone (32rem and narrower), the header hides the GitHub link, because four links are wider than the screen; the footer has the GitHub link. The local preview keeps old pages in the browser cache: add a query string to the URL.
 - [x] Nov 21: Mark merged #44: the Signal group is easier to find (an X builder missed the hero button). Each header has a Signal link with the logo (logo only below 384px; Wishlist is hidden on phones), the hero button is on its own line ("Join the builders on Signal"), and the 11 basics, pattern and wishlist pages have an Ask box before the pager. Logo: `images/signal.svg` from Simple Icons (CC0).
 - [x] Nov 21: Daniel accepted the owner-only `sk` model for nested 2-of-2 keys (#40, item 1.3), with conditions. His ZIP 2005 citations match the live Final text. The local `~/Projects/Zcash/zips` copy (April) has older wording in § 4.2.3, so check ZIP claims against `zcash/zips` main.
-- [x] Nov 22: SEO indexes (branch `seo-indexes`). `tools/site_index.py` writes `sitemap.xml` (with `lastmod` from the last commit of each page) and `llms.txt` (an index for AI assistants: the og:title and description of each page) at deploy time. The sections and the page order come from the home page, so a new page needs no sitemap edit. `sitemap.xml` is gone from the repo; the checkout has the full history. The JSON-LD of each page has a publisher (logo: `images/apple-touch-icon.png`, sameAs the GitHub org), the CC0 license, and Zcash as `about` (sameAs Wikipedia); each article also has its social card as `image`.
+- [x] Nov 22: SEO indexes (#48, merged). `tools/site_index.py` writes `sitemap.xml` (with `lastmod` from the last commit of each page) and `llms.txt` (an index for AI assistants: the og:title and description of each page) at deploy time. The sections and the page order come from the home page, so a new page needs no sitemap edit. `sitemap.xml` is gone from the repo; the checkout has the full history. The JSON-LD of each page has a publisher (logo: `images/apple-touch-icon.png`, sameAs the GitHub org), the CC0 license, and Zcash as `about` (sameAs Wikipedia); each article also has its social card as `image`.
+- [x] Nov 22: Smart contracts on Zcash page (#49, merged, live). `/basics/smart-contracts/` is for the search "smart contracts on Zcash": the short answer, a table of contract tasks (the Ethereum form and the Zcash pattern), who checks the rules, and the Draft ZIPs (226, 227, 228, 68, 231; checked on `zcash/zips` main). It is the first basics page, with no demo. The home hero, the home basics list and the Concepts pager link to it. Copilot found four protocol errors, all fixed: a deposit address finds the customer (the payer can be someone else); the fee is in ZIP 317 and polite actions keep the scan work small; one next record needs the next note in the action in which the old note is spent, plus the block order check; ZIP 68 is relative lock-time only.
+- [x] Nov 22: the Rich Results Test on the live bound notes page found one valid Article, with one optional field absent: `author`. Mark's call: the Applied Zcash organization is the author of each article (#50).
