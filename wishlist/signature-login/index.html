@@ -164,7 +164,7 @@ id_pk   the public key of the user at this app</code></pre>
       <ol>
         <li>The app makes a login message, as in <a href="https://eips.ethereum.org/EIPS/eip-4361">ERC-4361</a>. The message has the domain of the app, a nonce and an expiry time. The app makes a new nonce for each login.</li>
         <li>The wallet shows the domain to the user. A wallet in the browser also compares the domain with the host of the page.</li>
-        <li>The wallet signs the message. The secret key is <code>ivk</code>, the key <code>rsk</code> for the domain, or the key <code>id_sk</code> for the domain.</li>
+        <li>The wallet signs the message. The secret key is <code>ivk</code>, <code>rsk</code> for the domain, or <code>id_sk</code> for the origin.</li>
         <li>The wallet sends the signature to the app. It also sends the address, the key <code>rk</code>, or the key <code>id_pk</code>.</li>
         <li>The app examines the signature. It also examines the domain, the nonce and the expiry time. The app accepts each nonce one time only.</li>
         <li>If all of them are correct, the user is logged in. The account of the user is the address, the key <code>rk</code>, or the key <code>id_pk</code>.</li>
