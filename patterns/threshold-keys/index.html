@@ -122,12 +122,22 @@
       <h3 id="1-one-group-key-for-each-role">1. One group key for each role</h3>
       <ol>
         <li>The <code>n</code> members of a role make a FROST key over RedPallas (ZIP 312). Use a distributed key generation (DKG). Then each person has only a share of the secret.</li>
-        <li>The group key is the <code>ak</code> of the role account. Each role has its own <code>ak</code>, nullifier key and commit-ivk randomness.</li>
+        <li>The group key is the <code>ak</code> of the role account.</li>
+        <li>
+          The members agree on a secret <code>sk</code> in private. From <code>sk</code>, each member calculates the
+          nullifier key <code>nk</code>, the quantum spending key <code>qsk</code> and the quantum intermediate key
+          <code>qk</code>. From <code>ak</code>, <code>nk</code> and <code>qk</code>, each member calculates the
+          commit-ivk randomness <code>rivk</code>. These rules are in
+          <a href="https://zips.z.cash/zip-2005#usagewithfrost">ZIP 2005</a> (Usage with FROST). Each member must keep
+          <code>qsk</code> secret, with the same care as its share.
+        </li>
         <li>To spend, a coordinator makes a PCZT. Each member examines the transaction on its own and calculates the sighash. Each member refuses a signing package with a message that is different from this sighash.</li>
         <li>Any <code>t</code> members sign in two rounds. The randomizer α is in the PCZT, so the signature is valid under <code>rk = ak + [α]G</code>.</li>
       </ol>
       <p>
-        The coordinator has zero shares. The role continues while <code>t</code> members are available. After a share
+        The coordinator has zero shares. It has <code>ak</code>, <code>nk</code> and <code>qk</code>
+        (<a href="https://zips.z.cash/zip-2005#keystorageoptionsandanalysis">ZIP 2005</a>, key storage). Thus, the
+        coordinator can see the notes of the role. The role continues while <code>t</code> members are available. After a share
         refresh, each member has a new share. The group key stays the same. The members can also remove a member in a refresh.
       </p>
 
@@ -136,7 +146,12 @@
       <pre class="formula"><code>t          = ToScalar(BLAKE2b-512(domain, object id))
 object key = A_G + [t]G</code></pre>
       <ul>
-        <li>Anyone can calculate the object key from the group key and the object ID.</li>
+        <li>Anyone can calculate the object key from the group key and the object ID. The object key is the <code>ak</code> of the object.</li>
+        <li>
+          The address of the object is calculated from <code>ak</code>, <code>nk</code> and <code>rivk</code>.
+          <code>rivk</code> is calculated from <code>ak</code>, <code>nk</code> and <code>qk</code>. Thus, the app
+          that registers objects must have <code>nk</code> and <code>qk</code>. The app can see each object.
+        </li>
         <li>The members stay offline when the app registers a new object.</li>
         <li>Each object has its own address. Outsiders see unrelated shielded addresses.</li>
         <li>To sign for an object, the group adds <code>t</code> to its secret. The coordinator adds the public term one time.</li>
@@ -153,7 +168,8 @@ object key = A_G + [t]G</code></pre>
       <p>
         The coefficients 2 and −1 are the result of Lagrange interpolation at zero over identifiers 1 and 2. In the
         Orchard protocol, the sign bit of <code>ak</code> must be 0. When the sign bit is 1, both sides negate their
-        shares.
+        shares. Each object has its own <code>t</code> and its own <code>ak</code>. Thus, the sign bit can be different
+        for each object. The owner and the group members calculate the sign bit for each object.
       </p>
       <p>The group signs as one participant of the outer round:</p>
       <ol>
@@ -173,6 +189,44 @@ object key = A_G + [t]G</code></pre>
         The owner must prove possession of its share. A dishonest owner can choose <code>A_O</code> from the group key,
         and then know the full secret of <code>ak</code>. The proof of possession is the defense against this attack.
       </p>
+      <p>
+        Each guard member compares each move with the rules of the app. At registration, the app writes each fixed rule
+        into the first <a href="../bound-notes/">bound note</a> of the object. A royalty rate is an example of a fixed
+        rule. Each guard member compares each move with that note on the chain. Later, an auditor can do the same check. For
+        the approval of one move, each member uses its own record (Approval, in <a href="#limits">Limits</a>).
+      </p>
+
+      <h3 id="4-the-owner-keeps-sk">4. The owner keeps sk</h3>
+      <p>
+        In ZIP 2005, all participants of a FROST key agree on <code>sk</code>. In a 2-of-2 key, each guard member then
+        has <code>qsk</code>. In this design, only the owner has <code>sk</code> and <code>qsk</code>:
+      </p>
+      <ol>
+        <li>The owner makes <code>sk</code>. Then the owner calculates <code>nk</code>, <code>qsk</code> and <code>qk</code> from <code>sk</code>.</li>
+        <li>The owner gives <code>nk</code> and <code>qk</code> to the app. The guard members receive <code>nk</code> and <code>qk</code> from the app.</li>
+        <li>Each guard member compares <code>nk</code> and <code>qk</code> with the values from the owner. Then the guard members can see the object and examine each move.</li>
+        <li>The owner keeps <code>sk</code>, and a backup of <code>sk</code> with its share. In ZIP 2005, a holder must keep <code>sk</code> or be able to calculate it again.</li>
+        <li>The owner makes the proof of <code>qsk</code> on its own device. Thus, <code>qsk</code> stays with the owner.</li>
+      </ol>
+      <p>
+        For a spend with the Recovery Protocol, a wallet must show a proof of <code>qsk</code> and a signature under
+        <code>ak</code>. Thus, the owner must also have the signature of the group. The 2-of-2 rule stays in effect while
+        discrete logarithms on Pallas stay hard to find. After an attacker can find them, the owner can possibly move the
+        object with <code>qsk</code> only (Quantum, in <a href="#limits">Limits</a>). With the ZIP 2005 text, each guard
+        member also has <code>qsk</code>. Thus, after that attack, more persons can move the object alone.
+      </p>
+      <p>
+        This design has two costs. If the owner loses <code>sk</code>, the object is lost after the switch to the
+        Recovery Protocol. Before the switch, the owner and the group can move the object to a new address. Also,
+        the guard members cannot make sure that <code>qk</code> is from a <code>qsk</code> that the owner has.
+      </p>
+      <div class="notice caution">
+        <p class="notice-title">Caution</p>
+        <p>
+          This design is different from the text of ZIP 2005. Review by a cryptographer is necessary. ZIP 2005 has only
+          an outline of the Recovery Protocol.
+        </p>
+      </div>
 
       <h2 id="cost">Cost</h2>
       <ul>
@@ -187,10 +241,12 @@ object key = A_G + [t]G</code></pre>
         <li><strong>Audit.</strong> FROST on the Ironwood pool is unaudited. ZIP 312 is a draft. The nested construction is from the recipe of the <code>frostito</code> crate, and review is necessary.</li>
         <li><strong>Trust.</strong> A group is one unit of trust. <code>t</code> bad members are a bad role.</li>
         <li><strong>Refusal.</strong> If all members refuse, the object stays frozen. The remedy is outside the chain, for example in law.</li>
-        <li><strong>Coordinator.</strong> Each member must examine the request on its own. Each member must also sign the set of commitments that it saw, so that the coordinator shows the same set to each member.</li>
+        <li><strong>Coordinator.</strong> Each member must examine the request on its own. Each member must also sign the set of commitments that it saw, so that the coordinator shows the same set to each member. The coordinator must send the randomizer, the message and the commitments over a confidential and authenticated channel (ZIP 312).</li>
         <li><strong>Message.</strong> The member software calculates the signature share over the message in the signing package. It compares that message with its own sighash. Do this comparison in the function that signs, before the software calculates the signature share. Software that compares in a different step can examine one value and sign a different value.</li>
         <li><strong>Approval.</strong> With the sighash, a member knows that it has the same transaction as the coordinator. Each member also compares the transaction with a record that the member keeps, for example the proposal that it approved. A member that uses only data from the coordinator can sign a move that is different from the approved move.</li>
         <li><strong>Nonces.</strong> Each spend has its own signing session. Each member makes new nonces in round one of each session. After a member calculates a signature share, it deletes the nonces (RFC 9591). Keep the nonces in memory only. Member software that stores a nonce can restore it and use it two times. After a reload, the members start a new session. Each member uses only the commitments and the signing package of the current session.</li>
+        <li><strong>Backup.</strong> Each member must keep a backup of its share. A member that has <code>sk</code> must also keep a backup of <code>sk</code>. A draft format for this backup is in <a href="https://github.com/zcash/zips/pull/1432">zcash/zips#1432</a>. Also see <a href="https://frost.zfnd.org/zcash/technical-details.html#backing-up-key-shares">Backing Up Key Shares</a> in the FROST book.</li>
+        <li><strong>Quantum.</strong> With the ZIP 2005 rules, each member of a role has <code>qsk</code>. An attacker that can find discrete logarithms can possibly steal the funds with <code>qsk</code> only (ZIP 2005). Thus, when a post-quantum pool with threshold signatures is available, move the funds of each role to that pool.</li>
       </ul>
 
       <h2 id="spec">Spec</h2>
