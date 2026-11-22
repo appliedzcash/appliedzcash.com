@@ -158,7 +158,7 @@ object key = A_G + [t]G</code></pre>
         </li>
         <li>The members stay offline when the app registers a new object.</li>
         <li>Each object has its own address. Outsiders see unrelated shielded addresses.</li>
-        <li>To sign for an object, the group adds <code>t</code> to its secret. The coordinator adds the public term one time. When the sign bit is 1, the members negate their shares and the coordinator negates the public term.</li>
+        <li>To sign for an object, the group adds <code>t</code> to its secret. The coordinator adds the public term one time. When the sign bit is 1, the members negate their shares and the coordinator negates the public term. The coordinator also negates each verifying share before it examines the answers.</li>
       </ul>
 
       <h3 id="3-a-group-inside-a-2-of-2-key">3. A group inside a 2-of-2 key</h3>
