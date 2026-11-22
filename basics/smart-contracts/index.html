@@ -65,7 +65,7 @@
             <tr><th scope="row">Share control of funds</th><td>A multisig contract</td><td><a href="../../patterns/threshold-keys/">Threshold keys</a></td></tr>
             <tr><th scope="row">Log in with a wallet</th><td>Sign-In with Ethereum (ERC-4361)</td><td><a href="../../patterns/log-in-with-zcash/">Log in with Zcash</a></td></tr>
             <tr><th scope="row">Ask for a payment</th><td>A payment URI (ERC-681)</td><td><a href="../payment-links/">Payment links</a></td></tr>
-            <tr><th scope="row">Credit each payment to a customer</th><td>A new account for each user</td><td><a href="../address-per-customer/">Address per customer</a></td></tr>
+            <tr><th scope="row">Find the customer for a deposit</th><td>A new account for each user</td><td><a href="../address-per-customer/">Address per customer</a></td></tr>
             <tr><th scope="row">See payments on a server</th><td>Contract events</td><td><a href="../watch-only-keys/">Watch-only keys</a></td></tr>
             <tr><th scope="row">Pay for the work of the network</th><td>Gas</td><td>A fee for each action (<a href="https://zips.z.cash/zip-0317">ZIP 317</a>). Keep the scan work of wallets small with <a href="../../patterns/polite-actions/">polite actions</a>.</td></tr>
           </tbody>
@@ -84,14 +84,15 @@
       <dl class="terms">
         <dt>Nodes</dt>
         <dd>
-          Nodes accept each nullifier one time only, and check the signature of each spend. The next bound note must be
-          the output of the action in which the old note is spent. Thus, each record can have one next record at most.
+          Nodes accept each nullifier one time only. Nodes check the signature of each spend.
         </dd>
         <dt>Anyone with the data</dt>
         <dd>
-          A verifier calculates the note commitment again from the note data, the record and the nullifier of its
-          action. Its x-coordinate must be equal to the <code>cmx</code> on the chain. The verifier also checks the
-          lineage and the block order of the records. See <a href="../../patterns/bound-notes/#verification">Verification</a>.
+          A verifier calculates the note commitment from the record, recipient address, value, plaintext lead byte and action nullifier.
+          The verifier checks that its x-coordinate is equal to the <code>cmx</code> on the chain.
+          The verifier checks that each successor is in the action in which its predecessor is spent.
+          The verifier also checks the <a href="../../patterns/bound-notes/#verification">block order</a> of the records.
+          Thus, each verified record has one next record at most.
         </dd>
         <dt>The app</dt>
         <dd>The app checks all other rules, for example the price of an order. Users must trust the app for these rules.</dd>
@@ -110,15 +111,11 @@
           <tbody>
             <tr><th scope="row">Make a new token</th><td>Zcash Shielded Assets: <a href="https://zips.z.cash/zip-0227">ZIP 227</a> (issuance) and <a href="https://zips.z.cash/zip-0226">ZIP 226</a> (transfer and burn)</td></tr>
             <tr><th scope="row">Swap two assets</th><td><a href="https://zips.z.cash/zip-0228">ZIP 228</a> (asset swaps)</td></tr>
-            <tr><th scope="row">Lock transparent funds for a period after they arrive</th><td><a href="https://zips.z.cash/zip-0068">ZIP 68</a> (relative lock-time)</td></tr>
+            <tr><th scope="row">Use relative lock-time for transparent inputs</th><td><a href="https://zips.z.cash/zip-0068">ZIP 68</a> (relative lock-time)</td></tr>
             <tr><th scope="row">Send a memo of more than 512 bytes</th><td><a href="https://zips.z.cash/zip-0231">ZIP 231</a> (memo bundles)</td></tr>
           </tbody>
         </table>
       </div>
-      <p>
-        A transaction can already have an absolute lock time, <code>nLockTime</code>. Miners add it to a block only after
-        that height or time.
-      </p>
       <p>
         Some designs need a new wallet function only. These designs are on the <a href="../../#wishlist">Wishlist</a>,
         for example <a href="../../wishlist/signature-login/">Signature login</a>.
