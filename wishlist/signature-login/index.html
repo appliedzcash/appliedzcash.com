@@ -130,7 +130,8 @@ rsk     the secret key of the user at this app</code></pre>
       <h3 id="identity-key-signature">Identity key signature</h3>
       <p>
         The wallet calculates a set of identity keys from the seed phrase. These keys are for logins and messages
-        only. Each app gets a different Ed25519 key pair. The zafu wallet has this design, with the name
+        only. In site mode, each app gets a different Ed25519 key pair. Site mode is the default. The zafu wallet has
+        this design, with the name
         <a href="https://github.com/rotkonetworks/zafu/blob/main/docs/src/identity/zid.md">zid</a>.
       </p>
       <pre><code>m     = SHA-256(seed phrase)
@@ -148,8 +149,29 @@ id_pk   the public key of the user at this app</code></pre>
         intermediate values. A holder of <code>root</code> cannot calculate the Zcash keys.
       </p>
       <p>
-        zafu calculates the key from the origin of the page. The signed bytes are the challenge from the app only.
-        Thus, the app must put its domain, a nonce and an expiry time in the challenge, as in step 1 of the sequence.
+        The user can set cross-site mode for a site. All sites in cross-site mode get one key pair. Its tag is
+        <code>"cross-site"</code> in place of <code>"site:" + origin</code>.
+      </p>
+      <p>
+        zafu calculates the key from the origin of the page. In version 1 of the zafu protocol, zafu signs the
+        challenge from the app as raw bytes. zafu shows the origin to the user, but the signed bytes do not contain
+        the origin. Thus, zafu does no comparison of a domain with the page (step 2 of the sequence).
+      </p>
+      <p>
+        If the app puts a nonce and an expiry time in the challenge, the app can refuse an old signature (a replay).
+        A relay is a different attack. In a relay, an attacker gets a real challenge from the app. The attacker sends
+        it to the wallet from a page at a different origin. The wallet signs the challenge with the key of that origin.
+      </p>
+      <ul>
+        <li>In site mode, each origin has a different key. Thus, the attacker cannot log in to the account of the user.</li>
+        <li>In cross-site mode, all origins in this mode have the same key. If the user sets this mode for the real app and for the page of the attacker, the attacker can log in as the user.</li>
+      </ul>
+      <p>
+        With steps 1 to 3 of the sequence, the wallet stops a relay: the domain is in the signed message, and the
+        wallet compares it with the page. The
+        <a href="https://github.com/rotkonetworks/zafu/blob/main/docs/src/identity/sign-in.md">zafu sign-in document</a>
+        has this function in the next version: zafu writes the login message itself, with the domain from the origin
+        of the page.
       </p>
       <p>
         The calculation above is for generation 0 and for the first key of each site. The user can change to a new
@@ -187,7 +209,7 @@ id_pk   the public key of the user at this app</code></pre>
             <tr><th scope="row"><a href="../../patterns/log-in-with-zcash/">Code in a memo</a></th><td>2</td><td>The address</td><td>Incoming viewing key</td><td>Wallets with ZIP 321 and memos</td></tr>
             <tr><th scope="row">Viewing key signature</th><td>0</td><td>The address</td><td>Incoming viewing key</td><td>A new wallet function</td></tr>
             <tr><th scope="row">App key signature</th><td>0</td><td>One key for each app</td><td>Spend authorizing key</td><td>A new wallet function</td></tr>
-            <tr><th scope="row">Identity key signature</th><td>0</td><td>One key for each app</td><td>Identity secret key <code>id_sk</code></td><td>zafu. A new function for other wallets</td></tr>
+            <tr><th scope="row">Identity key signature</th><td>0</td><td>One key for each app. In cross-site mode, one key for all apps in this mode</td><td>Identity secret key <code>id_sk</code></td><td>zafu. A new function for other wallets</td></tr>
           </tbody>
         </table>
       </div>
@@ -209,8 +231,9 @@ id_pk   the public key of the user at this app</code></pre>
         Thus, a holder of a viewing key must also have <code>id_sk</code> for this login.
       </p>
       <p>
-        The app key and the spend key have shared values: <code>rsk = ask + α</code>. If <code>rsk</code> and α are
-        disclosed, an attacker can calculate <code>ask</code>. The identity keys and the spend keys have only the seed
+        The app key and the spend key have shared values: <code>rsk = ask + α</code>. The app gets <code>rk</code> and
+        the signature only. The wallet keeps <code>rsk</code> and α with <code>ask</code>. If an attacker gets
+        <code>rsk</code> and α from the wallet, the attacker can calculate <code>ask = rsk − α</code>. The identity keys and the spend keys have only the seed
         phrase in common. If <code>id_sk</code> is disclosed, <code>ask</code> stays secret.
       </p>
       <p>
@@ -229,8 +252,9 @@ id_pk   the public key of the user at this app</code></pre>
         this proof for Sapling keys only.
       </p>
       <p>
-        With the identity key signature, each app gets a different <code>id_pk</code> from a keyed hash. Thus, apps
-        cannot link the identity keys of one user. The identity keys have no link to an address. For a login as an
+        With the identity key signature in site mode, each app gets a different <code>id_pk</code> from a keyed hash.
+        Thus, apps cannot link the identity keys of one user. In cross-site mode, all apps in this mode get one
+        <code>id_pk</code>. Thus, these apps can link the logins of the user. The identity keys have no link to an address. For a login as an
         address, the app uses the viewing key signature or the memo code.
       </p>
 
