@@ -154,8 +154,8 @@ id_pk   the public key of the user at this app</code></pre>
       </p>
       <p>
         zafu calculates the key from the origin of the page. In version 1 of the zafu protocol, zafu signs the
-        challenge from the app as raw bytes. zafu shows the origin to the user, but the signed bytes do not contain
-        the origin. Thus, zafu does no comparison of a domain with the page (step 2 of the sequence).
+        challenge from the app as raw bytes. The app can put its origin in these bytes.
+        zafu shows the origin to the user. To use step 2 of the sequence, zafu must also compare the domain with the page.
       </p>
       <p>
         If the app puts a nonce and an expiry time in the challenge, the app can refuse an old signature (a replay).
