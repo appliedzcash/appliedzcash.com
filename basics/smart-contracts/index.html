@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Smart contracts on Zcash: what apps can do today | Applied Zcash</title>
+    <meta name="description" content="Zcash has no smart contracts. Apps can still keep records, receive orders, share control of funds and log users in. Find the Zcash pattern for each task." />
+    <link rel="canonical" href="https://appliedzcash.com/basics/smart-contracts/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Applied Zcash" />
+    <meta property="og:title" content="Smart contracts on Zcash: what apps can do today" />
+    <meta property="og:description" content="Zcash has no smart contracts. Apps can still keep records, receive orders, share control of funds and log users in. Find the Zcash pattern for each task." />
+    <meta property="og:url" content="https://appliedzcash.com/basics/smart-contracts/" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="og:image" content="https://appliedzcash.com/images/og/smart-contracts.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Smart contracts on Zcash: what apps can do today. Applied Zcash." />
+    <meta name="twitter:image:alt" content="Smart contracts on Zcash: what apps can do today. Applied Zcash." />
+    <meta name="theme-color" content="#f6f4ee" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f1011" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="../../images/mark.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="../../images/apple-touch-icon.png" />
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Smart contracts on Zcash", "description": "Zcash has no smart contracts. Apps can still keep records, receive orders, share control of funds and log users in. Find the Zcash pattern for each task.", "url": "https://appliedzcash.com/basics/smart-contracts/", "inLanguage": "en", "about": {"@type": "Thing", "name": "Zcash", "sameAs": "https://en.wikipedia.org/wiki/Zcash"}, "isPartOf": {"@type": "WebSite", "name": "Applied Zcash", "url": "https://appliedzcash.com/"}, "image": "https://appliedzcash.com/images/og/smart-contracts.png", "author": {"@type": "Organization", "name": "Applied Zcash", "url": "https://appliedzcash.com/"}, "publisher": {"@type": "Organization", "name": "Applied Zcash", "url": "https://appliedzcash.com/", "logo": "https://appliedzcash.com/images/apple-touch-icon.png", "sameAs": ["https://github.com/appliedzcash"]}, "license": "https://creativecommons.org/publicdomain/zero/1.0/"}</script>
+    <link rel="preload" href="../../fonts/source-serif-4.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="../../styles/main.css" />
+    <script type="module" src="../../scripts/site.js"></script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Go to the content</a>
+    <header>
+      <a class="site-name" href="../../"><svg class="mark" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.75" /><circle cx="15.25" cy="15.25" r="2.75" /></svg>Applied Zcash</a>
+      <nav><a href="../../#basics">Basics</a> <a href="../../#patterns">Patterns</a> <a href="../../#wishlist">Wishlist</a> <a class="signal" href="https://signal.group/#CjQKIGlpdEugkIjUIm3WGa_6V2Xhi6zEvJGB9UADaU3zNKGCEhCSrRufVMaAncHsqeeBZj_U">Signal</a> <a href="https://github.com/appliedzcash/appliedzcash.com">GitHub</a></nav>
+    </header>
+    <main id="main">
+      <p class="kicker">Basic</p>
+      <h1>Smart contracts on Zcash</h1>
+      <p class="lede">
+        Zcash has no smart contracts. An app on Zcash uses the parts of a shielded payment: notes, memos and keys. With
+        these parts, an app can do many tasks of a smart contract.
+      </p>
+
+      <h2 id="does-zcash-have-smart-contracts">Does Zcash have smart contracts?</h2>
+      <p>No. Zcash has no virtual machine, and nodes run no app code. Nodes check one fixed set of rules for each transaction.</p>
+      <p>
+        The values and the addresses in the shielded pools are secret. Nodes see note commitments, nullifiers, encrypted
+        notes and proofs. With each proof, the wallet shows that the transaction obeys the rules of the circuit. Thus,
+        nodes check only the rules of the protocol. An app must check its own rules.
+      </p>
+      <p>
+        The transparent pool has a small script language, as in Bitcoin. All its values and addresses are public. Use
+        the shielded pools for new apps.
+      </p>
+
+      <h2 id="tasks">Smart contract tasks on Zcash</h2>
+      <p>Each row has a task of a smart contract on Ethereum, and the Zcash pattern for the same task.</p>
+      <div class="table-wrap">
+        <table class="cost-table compare-table">
+          <thead>
+            <tr><th scope="col">Task</th><th scope="col">On Ethereum</th><th scope="col">On Zcash</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Keep a record with one history</th><td>Contract storage</td><td><a href="../../patterns/bound-notes/">Bound notes</a></td></tr>
+            <tr><th scope="row">Receive orders from users</th><td>A call to a contract function</td><td><a href="../../patterns/wallet-native-orders/">Wallet-native orders</a></td></tr>
+            <tr><th scope="row">Share control of funds</th><td>A multisig contract</td><td><a href="../../patterns/threshold-keys/">Threshold keys</a></td></tr>
+            <tr><th scope="row">Log in with a wallet</th><td>Sign-In with Ethereum (ERC-4361)</td><td><a href="../../patterns/log-in-with-zcash/">Log in with Zcash</a></td></tr>
+            <tr><th scope="row">Ask for a payment</th><td>A payment URI (ERC-681)</td><td><a href="../payment-links/">Payment links</a></td></tr>
+            <tr><th scope="row">Find the customer for a deposit</th><td>A new account for each user</td><td><a href="../address-per-customer/">Address per customer</a></td></tr>
+            <tr><th scope="row">See payments on a server</th><td>Contract events</td><td><a href="../watch-only-keys/">Watch-only keys</a></td></tr>
+            <tr><th scope="row">Pay for the work of the network</th><td>Gas</td><td>A fee for each action (<a href="https://zips.z.cash/zip-0317">ZIP 317</a>). Keep the scan work of wallets small with <a href="../../patterns/polite-actions/">polite actions</a>.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        Bound notes and threshold keys also use <a href="../../patterns/action-pairing/">canonical action pairing</a>.
+        With it, each build of the same transaction has the same note commitments.
+      </p>
+
+      <h2 id="rule-checks">Who checks the rules</h2>
+      <p>
+        On Ethereum, each node runs the code of a contract. Thus, nodes check all the rules of the contract. On Zcash,
+        three parties check the rules of an app:
+      </p>
+      <dl class="terms">
+        <dt>Nodes</dt>
+        <dd>
+          Nodes accept each nullifier one time only. Nodes check the signature of each spend.
+        </dd>
+        <dt>Anyone with the data</dt>
+        <dd>
+          A verifier calculates the note commitment from the record, recipient address, value, plaintext lead byte and action nullifier.
+          The verifier checks that its x-coordinate is equal to the <code>cmx</code> on the chain.
+          The verifier checks that each successor is in the action in which its predecessor is spent.
+          The verifier also checks the <a href="../../patterns/bound-notes/#verification">block order</a> of the records.
+          Thus, each verified record has one next record at most.
+        </dd>
+        <dt>The app</dt>
+        <dd>The app checks all other rules, for example the price of an order. Users must trust the app for these rules.</dd>
+      </dl>
+
+      <h2 id="new-software">Tasks that need new software</h2>
+      <p>
+        Some tasks of a smart contract need a ZIP and a network upgrade. Each ZIP in this table has the status Draft
+        (November 2026).
+      </p>
+      <div class="table-wrap">
+        <table class="cost-table compare-table">
+          <thead>
+            <tr><th scope="col">Task</th><th scope="col">Change</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Make a new token</th><td>Zcash Shielded Assets: <a href="https://zips.z.cash/zip-0227">ZIP 227</a> (issuance) and <a href="https://zips.z.cash/zip-0226">ZIP 226</a> (transfer and burn)</td></tr>
+            <tr><th scope="row">Swap two assets</th><td><a href="https://zips.z.cash/zip-0228">ZIP 228</a> (asset swaps)</td></tr>
+            <tr><th scope="row">Use relative lock-time for transparent inputs</th><td><a href="https://zips.z.cash/zip-0068">ZIP 68</a> (relative lock-time)</td></tr>
+            <tr><th scope="row">Send a memo of more than 512 bytes</th><td><a href="https://zips.z.cash/zip-0231">ZIP 231</a> (memo bundles)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        Some designs need a new wallet function only. These designs are on the <a href="../../#wishlist">Wishlist</a>,
+        for example <a href="../../wishlist/signature-login/">Signature login</a>.
+      </p>
+
+      <h2 id="start">Where to start</h2>
+      <p>
+        Read <a href="../concepts/">Concepts</a> first. It has the parts of a shielded payment in a few lines each. Then
+        read the pattern for your task.
+      </p>
+
+      <aside class="ask">
+        <p><strong>Do you have a question about apps on Zcash?</strong> Other builders on Zcash are in the Signal group.</p>
+        <a class="button signal" href="https://signal.group/#CjQKIGlpdEugkIjUIm3WGa_6V2Xhi6zEvJGB9UADaU3zNKGCEhCSrRufVMaAncHsqeeBZj_U">Ask in the Signal group</a>
+      </aside>
+      <nav class="pager" aria-label="Pages">
+        <a class="next" href="../../basics/concepts/"><span>Next</span>Concepts</a>
+      </nav>
+      <p class="edit"><a href="https://github.com/appliedzcash/appliedzcash.com/blob/main/basics/smart-contracts/index.html">Change this page on GitHub</a></p>
+    </main>
+    <footer>
+      <p>
+        Applied Zcash is a community site. Anyone can propose a pattern. The
+        <a href="https://github.com/appliedzcash/appliedzcash.com">source</a> is on GitHub.
+        If you build on Zcash, go to the <a href="https://signal.group/#CjQKIGlpdEugkIjUIm3WGa_6V2Xhi6zEvJGB9UADaU3zNKGCEhCSrRufVMaAncHsqeeBZj_U">Signal group</a>.
+      </p>
+      <p class="licenses">
+        Text: <a href="https://github.com/appliedzcash/appliedzcash.com/blob/main/LICENSE-CC0">CC0 1.0</a>. Code: <a href="https://github.com/appliedzcash/appliedzcash.com/blob/main/LICENSE">0BSD</a>. The demos include
+        crates under their own licenses: <a href="../../wasm/notices.html">notices</a>.
+      </p>
+    </footer>
+  </body>
+</html>

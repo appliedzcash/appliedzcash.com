@@ -21,7 +21,7 @@
     <meta name="theme-color" content="#0f1011" media="(prefers-color-scheme: dark)" />
     <link rel="icon" href="../../images/mark.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="../../images/apple-touch-icon.png" />
-    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Signature login", "description": "Log in to an app with a signature from a shielded Zcash key, off the chain. Two designs: a viewing key signature and an app key signature. Wallets need a new function.", "url": "https://appliedzcash.com/wishlist/signature-login/", "inLanguage": "en", "about": "Zcash", "isPartOf": {"@type": "WebSite", "name": "Applied Zcash", "url": "https://appliedzcash.com/"}}</script>
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Signature login", "description": "Log in to an app with a signature from a shielded Zcash key, off the chain. Two designs: a viewing key signature and an app key signature. Wallets need a new function.", "url": "https://appliedzcash.com/wishlist/signature-login/", "inLanguage": "en", "about": {"@type": "Thing", "name": "Zcash", "sameAs": "https://en.wikipedia.org/wiki/Zcash"}, "isPartOf": {"@type": "WebSite", "name": "Applied Zcash", "url": "https://appliedzcash.com/"}, "image": "https://appliedzcash.com/images/og/signature-login.png", "author": {"@type": "Organization", "name": "Applied Zcash", "url": "https://appliedzcash.com/"}, "publisher": {"@type": "Organization", "name": "Applied Zcash", "url": "https://appliedzcash.com/", "logo": "https://appliedzcash.com/images/apple-touch-icon.png", "sameAs": ["https://github.com/appliedzcash"]}, "license": "https://creativecommons.org/publicdomain/zero/1.0/"}</script>
     <link rel="preload" href="../../fonts/source-serif-4.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="../../styles/main.css" />
     <script type="module" src="../../scripts/site.js"></script>
@@ -87,6 +87,17 @@ pk_d  the public key in the receiver</code></pre>
         point. The app has <code>g_d</code> and <code>pk_d</code> from the address, and it examines the signature
         with them. Thus, the address is the account of the user, as in Log in with Zcash.
       </p>
+      <p>
+        The wallet calculates <code>g_d</code> from its own diversifier only. An app that chooses the base point
+        <code>B</code> can find <code>[ivk]B</code> from the signature. If <code>B</code> is the <code>epk</code> of an Orchard note to the user, <code>[ivk]B</code> is its shared secret.
+        For a Sapling note, the shared secret is <code>[8ivk]B</code>.
+        Thus, the app can read that note if the wallet uses its <code>epk</code> as the base point.
+      </p>
+      <p>
+        The signature contains a point <code>R</code> and a number. The challenge is a hash of a domain tag, the
+        diversifier <code>d</code>, <code>pk_d</code>, <code>R</code> and the login message. Thus, the signature is
+        valid for one receiver and one login message only.
+      </p>
 
       <h3 id="app-key-signature">App key signature</h3>
       <p>
@@ -104,8 +115,14 @@ rk      the public key of the user at this app
 rsk     the secret key of the user at this app</code></pre>
       <p>
         The wallet calculates α with a keyed hash, from a secret of the wallet and the domain of the app. Thus, the
-        wallet has a different key pair for each app. A wallet that the user restores from the seed calculates the
-        same keys again.
+        wallet has a different key pair for each app. The wallet calculates the secret from the seed, with ZIP 32
+        registered key derivation. If the secret is from the full viewing key, each holder of that key can calculate α.
+        Thus, each holder of the full viewing key can link the app keys of the user.
+      </p>
+      <p>
+        A wallet that the user restores from the seed calculates the same keys again. An account that participants
+        make with a FROST distributed key generation has no seed. For that account, developers must give the source
+        of the secret in the spec.
       </p>
 
       <h3 id="sequence">Sequence</h3>
@@ -129,7 +146,7 @@ rsk     the secret key of the user at this app</code></pre>
             <tr><th scope="col">Design</th><th scope="col">Transactions</th><th scope="col">Account</th><th scope="col">Necessary key</th><th scope="col">Wallet support</th></tr>
           </thead>
           <tbody>
-            <tr><th scope="row"><a href="../../patterns/log-in-with-zcash/">Code in a memo</a></th><td>2</td><td>The address</td><td>Incoming viewing key</td><td>All shielded wallets</td></tr>
+            <tr><th scope="row"><a href="../../patterns/log-in-with-zcash/">Code in a memo</a></th><td>2</td><td>The address</td><td>Incoming viewing key</td><td>Wallets with ZIP 321 and memos</td></tr>
             <tr><th scope="row">Viewing key signature</th><td>0</td><td>The address</td><td>Incoming viewing key</td><td>A new wallet function</td></tr>
             <tr><th scope="row">App key signature</th><td>0</td><td>One key for each app</td><td>Spend authorizing key</td><td>A new wallet function</td></tr>
           </tbody>
@@ -148,8 +165,14 @@ rsk     the secret key of the user at this app</code></pre>
         <code>ask</code> can calculate <code>rsk</code>. Thus, a viewing key is insufficient for a login.
       </p>
       <p>
+        A FROST group can hold an account, with a threshold of <code>t</code> participants. For that account,
+        <code>t</code> participants make each app key signature together, in a rerandomized FROST round with α.
+        Each participant who has the incoming viewing key can make a viewing key signature alone. Thus, for that
+        account, the threshold is in effect for the app key signature only.
+      </p>
+      <p>
         With the app key signature, the app gets <code>rk</code> only. Because α is secret, two apps cannot calculate
-        that their keys are from the same <code>ak</code>. Thus, apps cannot link the accounts of one user.
+        that their keys are from the same <code>ak</code>. Thus, apps cannot link the app keys of one user.
       </p>
       <p>
         There, the address of the user stays secret. To show that <code>rk</code> and an address are from the same
@@ -164,15 +187,19 @@ rsk     the secret key of the user at this app</code></pre>
         </li>
         <li>
           <strong>Receiver.</strong> For the viewing key signature. A unified address can have more than one shielded receiver.
-          Each receiver has its own <code>ivk</code>. Developers must give the receiver type in the spec.
+          A Sapling receiver and an Orchard receiver have different <code>ivk</code> values. For each receiver type, all
+          receivers that the wallet gives to senders for one account have one <code>ivk</code>. The change receivers of the
+          account have a different <code>ivk</code>. Developers must give the receiver type in the spec.
         </li>
         <li>
           <strong>Calculation of α.</strong> For the app key signature. One calculation for all wallets. Thus, a user
           who moves to a different wallet keeps the same accounts.
         </li>
         <li>
-          <strong>Hash personalization.</strong> Wallets already use these keys in transactions. The wallet must use
-          a separate personalization to calculate the hash of the login message before it signs. Thus, a login signature is invalid for a
+          <strong>Hash personalization.</strong> For the app key signature. Wallets already use these keys in
+          transactions. RedPallas has one fixed hash personalization for all signatures. Thus, the wallet signs a hash
+          of the login message, as in ZIP 304. This hash has a personalization for logins only. The wallet calculates
+          this hash itself. The wallet never signs 32 bytes from the app. Thus, a login signature is invalid for a
           transaction.
         </li>
         <li>
