@@ -146,7 +146,7 @@
       <pre class="formula"><code>t          = ToScalar(BLAKE2b-512(domain, object id))
 object key = A_G + [t]G</code></pre>
       <ul>
-        <li>Anyone can calculate the object key from the group key and the object ID. The object key is the <code>ak</code> of the object.</li>
+        <li>Anyone can calculate the object key from the group key and the object ID. For a standalone role, the app uses <code>ak = ±(A_G + [t]G)</code>, with sign bit 0. The app uses this <code>ak</code> to calculate <code>rivk</code>. When signing, the members and coordinator use the same sign for the tweaked secret and the public term. For the nested key in section 3, the object key is the group's public share.</li>
         <li>
           The address of the object is calculated from <code>ak</code>, <code>nk</code> and <code>rivk</code>.
           <code>rivk</code> is calculated from <code>ak</code>, <code>nk</code> and <code>qk</code>. Thus, the app
