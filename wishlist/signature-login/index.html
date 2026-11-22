@@ -202,8 +202,8 @@ id_pk   the public key of the user at this app</code></pre>
       </p>
       <p>
         The app uses a correct identity key signature as proof that the user has the secret key <code>id_sk</code>.
-        Only a holder of the seed phrase can calculate <code>id_sk</code>. Thus, a viewing key is also insufficient
-        for this login.
+        A holder of the seed phrase, <code>root</code> or <code>id</code> can calculate <code>id_sk</code>.
+        Thus, a viewing-key holder also needs the identity secret key <code>id_sk</code> for this login.
       </p>
       <p>
         The app key and the spend key have shared values: <code>rsk = ask + α</code>. If <code>rsk</code> and α are
