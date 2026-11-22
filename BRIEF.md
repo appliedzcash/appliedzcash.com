@@ -128,7 +128,7 @@ CONTRIBUTING.md     how to propose a pattern
 - [ ] Julian checks the log in with Zcash page (#37, merged). Get Zechariah's surname or handle for the credit (the page and the home page have the first name only).
 - [ ] Mark decides: move his four lay paragraphs on bound notes to strict STE, or keep his wording. #31 keeps it.
 - [ ] The `verified-address` branch needs its social card (#41 is merged): merge `main`, run `python3 tools/og_cards.py`, and set `og:image` on that page.
-- [ ] Mark reviews `/basics/smart-contracts/` (branch `smart-contracts`, stacked on `seo-indexes`). It targets the search "smart contracts on Zcash": the short answer, a table of contract tasks with the Ethereum form and the Zcash pattern, who checks the rules, and the Draft ZIPs for tokens, swaps, time locks and large memos. It is the first basics page and has no demo. The home hero links to it.
+- [ ] Mark reviews `/basics/smart-contracts/` (#49). It targets the search "smart contracts on Zcash": the short answer, a table of contract tasks with the Ethereum form and the Zcash pattern, who checks the rules, and the Draft ZIPs for tokens, swaps, time locks and large memos. It is the first basics page and has no demo. The home hero links to it.
 - [ ] After the `seo-indexes` PR is live: Mark adds the site to Bing Webmaster Tools (import from Search Console; Bing feeds ChatGPT search and DuckDuckGo), and requests indexing of each page in Search Console.
 
 ## Soon
