@@ -89,9 +89,9 @@ pk_d  the public key in the receiver</code></pre>
       </p>
       <p>
         The wallet calculates <code>g_d</code> from its own diversifier only. An app that chooses the base point
-        <code>B</code> can find <code>[ivk]B</code> from the signature. If <code>B</code> is the <code>epk</code> of a
-        note to the user, <code>[ivk]B</code> is the shared secret of that note. Thus, if the wallet signs with a base
-        point from the app, the app can read that note.
+        <code>B</code> can find <code>[ivk]B</code> from the signature. If <code>B</code> is the <code>epk</code> of an Orchard note to the user, <code>[ivk]B</code> is its shared secret.
+        For a Sapling note, the shared secret is <code>[8ivk]B</code>.
+        Thus, the app can read that note if the wallet uses its <code>epk</code> as the base point.
       </p>
       <p>
         The signature contains a point <code>R</code> and a number. The challenge is a hash of a domain tag, the
