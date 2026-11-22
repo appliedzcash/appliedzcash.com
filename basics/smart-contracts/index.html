@@ -84,13 +84,15 @@
       <dl class="terms">
         <dt>Nodes</dt>
         <dd>
-          Nodes accept each nullifier one time only, and check the signature of each spend. Thus, a bound note can have
-          one next record only.
+          Nodes accept each nullifier one time only. Nodes check the signature of each spend.
         </dd>
         <dt>Anyone with the data</dt>
         <dd>
-          A verifier calculates the note commitment of a bound note again from its fields. The result must be equal to
-          the <code>cmx</code> on the chain.
+          A verifier calculates the note commitment from the record, recipient address, value, plaintext lead byte and action nullifier.
+          The verifier checks that its x-coordinate is equal to the <code>cmx</code> on the chain.
+          The verifier checks that each successor is in the action that spends its predecessor.
+          The verifier also checks the <a href="../../patterns/bound-notes/#verification">block order</a> of the records.
+          Thus, each verified record has one next record at most.
         </dd>
         <dt>The app</dt>
         <dd>The app checks all other rules, for example the price of an order. Users must trust the app for these rules.</dd>
