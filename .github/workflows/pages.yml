@@ -20,6 +20,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0 # tools/site_index.py reads the date of the last change to each page
 
       - name: Check the shared chrome
         run: python3 tools/check_chrome.py
@@ -50,7 +52,8 @@ jobs:
       - name: Assemble the site
         run: |
           mkdir _site
-          cp -r index.html 404.html robots.txt sitemap.xml basics patterns wishlist styles scripts images fonts _site/
+          cp -r index.html 404.html robots.txt basics patterns wishlist styles scripts images fonts _site/
+          python3 tools/site_index.py _site
           wasm-bindgen --target web --no-typescript --out-dir _site/wasm \
             demo/target/wasm32-unknown-unknown/release/demo.wasm
           (cd demo && cargo about generate --locked --fail -o ../_site/wasm/notices.html about.hbs)
