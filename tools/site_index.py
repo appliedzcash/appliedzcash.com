@@ -30,7 +30,8 @@ home = (ROOT / "index.html").read_text()
 
 
 def position(path):
-    found = home.find(f'href="{path}"')
+    section = home.find(f'<h2 id="{path.split("/")[0]}">')
+    found = home.find(f'href="{path}"', section)
     return found if found >= 0 else len(home)
 
 
