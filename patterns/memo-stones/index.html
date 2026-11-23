@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Memo stones: a public record of shielded memos | Applied Zcash</title>
+    <meta name="description" content="A server puts the root of the hashes of shielded memos in a public record on the transparent pool. Each author keeps a receipt. The demo makes a memo, a record and a receipt. Experimental." />
+    <link rel="canonical" href="https://appliedzcash.com/patterns/memo-stones/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Applied Zcash" />
+    <meta property="og:title" content="Memo stones: a public record of shielded memos" />
+    <meta property="og:description" content="A server puts the root of the hashes of shielded memos in a public record on the transparent pool. Each author keeps a receipt. The demo makes a memo, a record and a receipt. Experimental." />
+    <meta property="og:url" content="https://appliedzcash.com/patterns/memo-stones/" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="og:image" content="https://appliedzcash.com/images/og/memo-stones.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Memo stones: a public record of shielded memos. Applied Zcash." />
+    <meta name="twitter:image:alt" content="Memo stones: a public record of shielded memos. Applied Zcash." />
+    <meta name="theme-color" content="#f6f4ee" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f1011" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="../../images/mark.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="../../images/apple-touch-icon.png" />
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Memo stones", "description": "A server puts the root of the hashes of shielded memos in a public record on the transparent pool. Each author keeps a receipt. The demo makes a memo, a record and a receipt. Experimental.", "url": "https://appliedzcash.com/patterns/memo-stones/", "inLanguage": "en", "about": {"@type": "Thing", "name": "Zcash", "sameAs": "https://en.wikipedia.org/wiki/Zcash"}, "isPartOf": {"@type": "WebSite", "name": "Applied Zcash", "url": "https://appliedzcash.com/"}, "image": "https://appliedzcash.com/images/og/memo-stones.png", "author": {"@type": "Organization", "name": "Applied Zcash", "url": "https://appliedzcash.com/"}, "publisher": {"@type": "Organization", "name": "Applied Zcash", "url": "https://appliedzcash.com/", "logo": "https://appliedzcash.com/images/apple-touch-icon.png", "sameAs": ["https://github.com/appliedzcash"]}, "license": "https://creativecommons.org/publicdomain/zero/1.0/"}</script>
+    <link rel="preload" href="../../fonts/source-serif-4.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="../../styles/main.css" />
+    <script type="module" src="../../scripts/site.js"></script>
+    <script type="module" src="../../scripts/memo-stones.js"></script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Go to the content</a>
+    <header>
+      <a class="site-name" href="../../"><svg class="mark" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.75" /><circle cx="15.25" cy="15.25" r="2.75" /></svg>Applied Zcash</a>
+      <nav><a href="../../#basics">Basics</a> <a href="../../#patterns">Patterns</a> <a href="../../#wishlist">Wishlist</a> <a class="signal" href="https://signal.group/#CjQKIGlpdEugkIjUIm3WGa_6V2Xhi6zEvJGB9UADaU3zNKGCEhCSrRufVMaAncHsqeeBZj_U">Signal</a> <a href="https://github.com/appliedzcash/appliedzcash.com">GitHub</a></nav>
+    </header>
+    <main id="main">
+      <p class="kicker">Pattern · Experimental</p>
+      <h1>Memo stones</h1>
+      <p class="lede">
+        An author sends a memo in a shielded payment. A server calculates one hash from all the memos of a period and
+        puts it in a public record. The author keeps a receipt.
+      </p>
+      <p>
+        With the receipt, anyone can find the memo in the record. The sender stays secret. The text stays secret
+        until the author shows the receipt.
+      </p>
+      <div class="notice warning">
+        <p class="notice-title">Warning</p>
+        <p>
+          This pattern is a proposal. It has no deployed service and no review. Use it on Testnet only.
+        </p>
+      </div>
+
+      <h2 id="problem">Problem</h2>
+      <p>
+        An app must show in public that it received a message at a time. The sender and the text must stay secret.
+        Examples are a research result of an agent, a sealed bid, and a report from an employee.
+      </p>
+      <p>
+        Only the recipient of a shielded payment can read its memo. Thus, outsiders cannot see that the app received
+        the memo. A public post shows the text to all persons.
+      </p>
+      <p>
+        One use is a retrospective grant for proof of agentic work. A lab records a claim of each result of its agents
+        at the time of the work. Later, the lab shows the receipts to a funder as evidence. The transparent chain
+        gives the time of each claim.
+      </p>
+
+      <h3 id="use">When to use this pattern</h3>
+      <p>Use it in these conditions:</p>
+      <ul>
+        <li>other parties must see, at a later time, that the service received a text at a time;</li>
+        <li>the text must stay secret until its author shows it;</li>
+        <li>many authors send texts, and one record for each period is sufficient.</li>
+      </ul>
+      <p>A different design is better in these conditions:</p>
+      <ul>
+        <li>Only the author and the service use the fact. Then the memo is sufficient, with no record.</li>
+        <li>The text can be public. Then publish the text.</li>
+        <li>
+          One author needs a timestamp and no service. Then the author can write a hash in a
+          <a href="../bound-notes/">bound note</a>.
+        </li>
+      </ul>
+
+      <h2 id="mechanism">Mechanism</h2>
+      <dl class="terms">
+        <dt>Author</dt>
+        <dd>A person or an agent with a shielded wallet. The author writes the text.</dd>
+        <dt>App</dt>
+        <dd>A web page. It writes the memo and the payment link. It keeps the receipt in the browser.</dd>
+        <dt>Reader</dt>
+        <dd>A server with the incoming viewing key of the service. It finds payments and reads memos.</dd>
+        <dt>Writer</dt>
+        <dd>A server with one transparent key. It sends the record transactions.</dd>
+        <dt>Leaf</dt>
+        <dd>The hash of one memo. The memo contains a random salt.</dd>
+        <dt>Stone</dt>
+        <dd>The Merkle root of the leaves of one period. In a record on the chain, it cannot change.</dd>
+        <dt>Record</dt>
+        <dd>One stone in a transparent <code>OP_RETURN</code>, with a record number and a leaf count.</dd>
+        <dt>Receipt</dt>
+        <dd>The memo, the record transaction, and the path from the leaf to the stone.</dd>
+      </dl>
+
+      <figure class="diagram">
+        <svg viewBox="0 0 480 302" role="img" aria-labelledby="fig-stones-title fig-stones-desc">
+          <title id="fig-stones-title">The sequence from a salt to a stone</title>
+          <desc id="fig-stones-desc">1: The app of the author sends a shielded payment with the memo to the reader. 2: The reader gives the leaf to the writer. 3: The writer sends a record with the Merkle root, the stone, to the chain. 4: The writer publishes the leaf list. 5: The app makes the receipt.</desc>
+          <defs><marker id="fig-stones-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 8 4 0 8z" /></marker></defs>
+          <path class="life" d="M70 40V294" />
+          <path class="life" d="M190 40V294" />
+          <path class="life" d="M310 40V294" />
+          <path class="life" d="M425 40V294" />
+          <g class="e" marker-end="url(#fig-stones-arrow)">
+            <path d="M74 84H188" />
+            <path d="M194 128H308" />
+            <path d="M314 172H423" />
+            <path d="M306 216H72" />
+          </g>
+          <rect class="v" x="24" y="10" width="92" height="30" rx="7" />
+          <text x="70" y="25">app</text>
+          <rect class="v" x="144" y="10" width="92" height="30" rx="7" />
+          <text x="190" y="25">reader</text>
+          <rect class="v" x="264" y="10" width="92" height="30" rx="7" />
+          <text x="310" y="25">writer</text>
+          <rect class="v" x="379" y="10" width="92" height="30" rx="7" />
+          <text x="425" y="25">chain</text>
+          <text class="m" x="10" y="84">1</text>
+          <text class="s" x="130" y="75">payment, memo</text>
+          <text class="m" x="10" y="128">2</text>
+          <text class="s" x="250" y="119">leaf</text>
+          <text class="m" x="10" y="172">3</text>
+          <text class="s" x="368" y="163">record: stone</text>
+          <text class="m" x="10" y="216">4</text>
+          <text class="s" x="190" y="207">leaf list</text>
+          <text class="m" x="10" y="260">5</text>
+          <rect class="k" x="24" y="245" width="130" height="30" rx="7" />
+          <text x="89" y="260">makes the receipt</text>
+        </svg>
+        <figcaption>The reader and the writer are the service. The steps are in sequence from top to bottom.</figcaption>
+      </figure>
+      <ol>
+        <li>
+          The app writes the memo from a topic, a random salt and the text. It shows a ZIP 321 payment link, and the
+          author pays it from a shielded wallet.
+        </li>
+        <li>
+          The reader finds the payment and examines the memo and the amount. It gives the leaf to the writer. The
+          writer does not receive the memo.
+        </li>
+        <li>
+          At the end of each period, the writer calculates the root of the new leaves: the stone. It sends one
+          record transaction with the stone.
+        </li>
+        <li>The service publishes the leaf list of the record. The list contains hashes only.</li>
+        <li>
+          The app finds its leaf in the list and completes the receipt. The author gives the receipt to a verifier at
+          a later time.
+        </li>
+      </ol>
+      <p>
+        The service sends no reply payment. The app uses public data only for steps 4 and 5. Thus, the author needs no
+        account at the service.
+      </p>
+
+      <h3 id="record-chain">Record chain</h3>
+      <p>
+        Each record transaction spends one output of the record before it. Nodes accept each spend of an output one
+        time only. Thus, the records are one chain. The writer cannot make a second history, and it cannot remove a
+        record.
+      </p>
+      <p>
+        <a href="../bound-notes/">Bound notes</a> give the same property in a shielded pool. This pattern uses the
+        transparent pool, so a usual transparent wallet library is sufficient for the writer.
+      </p>
+      <p>
+        <a href="../verified-address/">Verified address</a> writes one salted hash in one bound note, for one user. This
+        pattern writes one root for the memos of many authors.
+      </p>
+
+      <h3 id="what-the-receipt-shows">What the receipt shows</h3>
+      <ul>
+        <li>The stone of the record contains this exact text, with this topic.</li>
+        <li>The service wrote the record, and the record has one place in the record chain.</li>
+        <li>The text existed at the time of the block.</li>
+      </ul>
+      <p>
+        The receipt does not show the name of the author. Each holder of the memo can show the receipt.
+      </p>
+      <p>
+        The salt has 256 bits. Thus, outsiders cannot find the text of a leaf by guesses.
+      </p>
+
+      <h3 id="keys">Keys</h3>
+      <p>
+        The reader has the incoming viewing key only. The writer has one transparent key with funds for the fees only.
+        The spending key of the service stays offline. See <a href="../../basics/watch-only-keys/">Watch-only keys</a>.
+      </p>
+      <p>
+        A person who breaks into the reader gets the memos, and gets no funds. A person who breaks into the writer gets
+        the fee funds, and gets no memos.
+      </p>
+
+      <h2 id="cost">Cost</h2>
+      <ul>
+        <li>
+          <strong>Each memo</strong> One usual shielded payment with two actions. With the
+          <a href="https://zips.z.cash/zip-2009">ZIP 2009</a> fee rule, the fee for two actions is 2,000 zatoshis.
+        </li>
+        <li>
+          <strong>Each record</strong> One transparent transaction for all the memos of a period. Its two outputs are
+          88 bytes. In <a href="https://zips.z.cash/zip-0317">ZIP 317</a>, that is three logical actions. With the ZIP
+          2009 fee rule, the fee is 3,000 zatoshis.
+        </li>
+        <li>
+          <strong>Wallets</strong> A record transaction has no shielded actions. Thus, a record adds no trial
+          decryption to other wallets. See <a href="../polite-actions/">Polite actions</a>.
+        </li>
+        <li>
+          <strong>Receipt</strong> The memo and one hash of 32 bytes for each level of the tree. A record of 1,000
+          leaves has 10 levels.
+        </li>
+        <li>
+          <strong>Relay</strong> The <code>OP_RETURN</code> script of a record is 45 bytes. Nodes relay an
+          <code>OP_RETURN</code> script of 83 bytes or fewer.
+        </li>
+        <li>
+          <strong>Wallet support</strong> ZIP 321 with memos. The wallet must send the memo bytes unchanged.
+        </li>
+      </ul>
+
+      <h2 id="limits">Limits</h2>
+      <div class="notice warning">
+        <p class="notice-title">Warning</p>
+        <p>
+          The reader sees each memo and each salt. The text is secret from outsiders only. For a text that must stay
+          secret from the service, put a hash of the text in the memo.
+        </p>
+      </div>
+      <ul>
+        <li>
+          <strong>Refusal.</strong> The service can ignore a payment. The author then sees that the leaf is absent
+          from the leaf lists. To show the payment to other persons, the author needs a payment disclosure
+          (<a href="https://zips.z.cash/zip-0311">ZIP 311</a>, draft).
+        </li>
+        <li>
+          <strong>Refunds.</strong> The sender of a payment is secret. Thus, the service cannot send back a payment with
+          an invalid memo. The app must examine the memo and the amount before it shows the link.
+        </li>
+        <li>
+          <strong>Timing.</strong> A record a short time after a payment shows a possible link between the two. A
+          longer period with more leaves makes the link weaker.
+        </li>
+        <li>
+          <strong>Leaf list.</strong> The leaf list is off the chain. If the service holds back a list, the authors
+          cannot complete their receipts. The authors can see the delay.
+        </li>
+        <li>
+          <strong>Empty leaves.</strong> The writer can put any hash in a record. Thus, the leaf count is the maximum
+          number of real memos.
+        </li>
+        <li>
+          <strong>Copies.</strong> The reader refuses a leaf that is already in a record. Thus, a copy of a shown memo
+          gives no second leaf.
+        </li>
+        <li>
+          <strong>Reorganization.</strong> The reader must wait for confirmations before it accepts a payment.
+        </li>
+        <li>
+          <strong>Disclosure.</strong> A shown receipt stays public. It shows the topic and the text of one leaf.
+        </li>
+        <li>
+          <strong>Truth.</strong> A receipt shows that the service recorded a text at a time. It does not show that
+          the text is true.
+        </li>
+        <li>
+          <strong>Public data.</strong> The records show the number of leaves of each period and the time of each
+          record. Thus, outsiders see how much the service is used.
+        </li>
+        <li>
+          <strong>Transparent funds.</strong> The fee funds of the writer are public, and so is their source. Use
+          funds with no link to other addresses of the service.
+        </li>
+        <li>
+          <strong>Chain data.</strong> Each record stays on the chain. A longer period makes fewer records.
+        </li>
+      </ul>
+
+      <h2 id="spec">Spec</h2>
+      <p>
+        The protocol of today is sufficient: the <a href="https://zips.z.cash/zip-0302">ZIP 302</a> memo format,
+        <a href="https://zips.z.cash/zip-0321">ZIP 321</a> payment links and a transparent <code>OP_RETURN</code>. The
+        formats in this section are the full spec. The test vectors are in <code>demo/src/memo_stones.rs</code>.
+      </p>
+
+      <h3 id="memo">Memo</h3>
+      <pre><code>memo = "DO NOT MODIFY:{ms1/" topic "," salt "}" LF text
+
+topic  1 to 32 characters: a to z, 0 to 9 and the hyphen
+salt   64 hexadecimal characters in lowercase
+LF     one line feed (0x0A)
+text   the text of the author, 1 byte or more</code></pre>
+      <p>
+        The wallet shows the memo before it sends the payment. The first words are an instruction for the author. The
+        header is 118 bytes at most. Thus, the text has 394 bytes at least.
+      </p>
+      <p>
+        The reader accepts this format only. It refuses a different prefix, a second comma in the braces, and an empty
+        text.
+      </p>
+
+      <h3 id="leaf-and-root">Leaf and root</h3>
+      <pre class="formula"><code>leaf = BLAKE2b-256("MemoStones__Leaf", memo)
+node = BLAKE2b-256("MemoStones__Node", min(a, b) ‖ max(a, b))</code></pre>
+      <p>
+        The input of the leaf hash is the memo bytes without the zero padding. The 16 characters in quotation marks
+        are the BLAKE2b personalization. The two values are different, so a leaf is never valid as a node.
+      </p>
+      <ol>
+        <li>The writer puts the leaves in sequence, from the smallest value to the largest.</li>
+        <li>The writer calculates one node from each pair of leaves, from the left. An odd last leaf goes up unchanged.</li>
+        <li>The writer does step 2 again with the nodes, until one node stays. This node is the root: the stone.</li>
+      </ol>
+      <p>
+        The two inputs of each node are in sequence by value. Thus, a path is a list of hashes only. With one leaf,
+        the root is the leaf.
+      </p>
+
+      <h3 id="record">Record</h3>
+      <p>The record is the data of one <code>OP_RETURN</code> output:</p>
+      <ol class="bytes">
+        <li style="--n: 9"><code>tag MST1</code> <span>4 bytes</span></li>
+        <li style="--n: 9"><code>version</code> <span>1 byte</span></li>
+        <li style="--n: 9"><code>number</code> <span>4 bytes</span></li>
+        <li style="--n: 9"><code>leaves</code> <span>2 bytes</span></li>
+        <li style="--n: 32"><code>root</code> <span>32 bytes</span></li>
+      </ol>
+      <p class="bytes-total">Total: 43 bytes</p>
+      <p>
+        The version is 1. The record number and the leaf count are big-endian. The first record has the number 0.
+        Each later record has the number of the record before it, plus 1. The time of a record is the time of its
+        block.
+      </p>
+      <p>A record transaction has transparent inputs and outputs only:</p>
+      <pre><code>input 0   output 1 of the record transaction before it
+output 0  the OP_RETURN with the record, value 0
+output 1  the change, to the record address of the service</code></pre>
+      <p>
+        The writer can add more inputs to pay the fees. The service publishes the transaction ID of record 0. Record 0
+        has a leaf count of 0 and a root of 32 zero bytes.
+      </p>
+
+      <h3 id="leaf-list">Leaf list</h3>
+      <p>
+        The service publishes one file for each record. The file has the record number, the transaction ID, the root
+        and all the leaves. Anyone can calculate the root from the leaves and compare it with the record on the chain.
+      </p>
+
+      <h3 id="receipt">Receipt</h3>
+      <pre><code>memo  the exact text of the memo
+txid  the ID of the record transaction
+path  the hashes from the leaf to the root</code></pre>
+      <p>A verifier examines a receipt in these steps:</p>
+      <ol>
+        <li>The verifier examines the format of the memo.</li>
+        <li>The verifier calculates the leaf from the memo.</li>
+        <li>The verifier calculates the root from the leaf and the path.</li>
+        <li>The verifier gets the record transaction and compares the root with the root in output 0.</li>
+        <li>The verifier follows input 0 from record to record, back to record 0.</li>
+        <li>The verifier reads the time of the block of the record transaction.</li>
+      </ol>
+
+      <h2 id="demo">Demo: research claims</h2>
+      <p>
+        A lab uses agents for research. An agent sends a claim of each result in a memo. The record shows the time of
+        each claim, and the results stay secret. The lab discloses one result later, with its receipt.
+      </p>
+      <p>These are the values of the toy record:</p>
+      <figure class="code">
+        <figcaption>Demo parameters</figcaption>
+        <pre><code>amount  0.001 ZEC
+topic   research
+record  number 7, with your leaf and 3 fixed leaves</code></pre>
+      </figure>
+      <p>
+        The demo writes the memo and calculates the leaf. It makes the payment link, the record and the receipt. Then
+        it examines the receipt as a verifier does. The salt is a random value from your browser.
+      </p>
+      <p>To see an incorrect receipt, change one character of the memo in the receipt box.</p>
+      <div class="notice caution">
+        <p class="notice-title">Caution</p>
+        <p>
+          The service address is a Testnet address. Its key is in the public source of this site. The demo has no
+          reader and no writer, so a payment to the link makes no record.
+        </p>
+      </div>
+
+      <div class="demo" id="stones-demo">
+        <div class="demo-head">
+          <span class="demo-label">Demo</span>
+          <p class="status" id="demo-status" role="status" data-state="loading">Wait</p>
+        </div>
+        <label for="topic-input">Topic</label>
+        <input id="topic-input" type="text" autocomplete="off" spellcheck="false" value="research" disabled />
+        <label for="text-input">Text</label>
+        <textarea id="text-input" rows="3" spellcheck="false" disabled>Agent A found a proof of lemma 12. Evidence: 9c41e07b.</textarea>
+        <label for="salt-input">Salt</label>
+        <input id="salt-input" type="text" autocomplete="off" spellcheck="false" disabled />
+        <div class="actions">
+          <button type="button" id="salt-button" disabled>Make a new salt</button>
+        </div>
+
+        <h3 id="demo-memo">Memo and payment link</h3>
+        <dl class="values" id="memo-values"></dl>
+        <div class="qr" id="link-qr"></div>
+
+        <h3 id="demo-record">Record</h3>
+        <dl class="values" id="record-values"></dl>
+
+        <h3 id="demo-receipt">Receipt</h3>
+        <label for="receipt-input">The receipt of your memo</label>
+        <textarea id="receipt-input" rows="9" spellcheck="false" disabled></textarea>
+        <div class="actions">
+          <button type="button" id="receipt-button" class="secondary" disabled>Make the receipt again</button>
+        </div>
+
+        <h3 id="demo-check">Receipt check</h3>
+        <dl class="values" id="check-values"></dl>
+        <p class="result" id="check-result" role="status"></p>
+      </div>
+      <aside class="ask">
+        <p><strong>Do you have a question about memo stones?</strong> Other builders on Zcash are in the Signal group.</p>
+        <a class="button signal" href="https://signal.group/#CjQKIGlpdEugkIjUIm3WGa_6V2Xhi6zEvJGB9UADaU3zNKGCEhCSrRufVMaAncHsqeeBZj_U">Ask in the Signal group</a>
+      </aside>
+      <nav class="pager" aria-label="Pages">
+        <a class="prev" href="../../patterns/verified-address/"><span>Previous</span>Verified address</a>
+        <a class="next" href="../../wishlist/signature-login/"><span>Next</span>Signature login</a>
+      </nav>
+      <p class="edit"><a href="https://github.com/appliedzcash/appliedzcash.com/blob/main/patterns/memo-stones/index.html">Change this page on GitHub</a></p>
+    </main>
+    <footer>
+      <p>
+        Applied Zcash is a community site. Anyone can propose a pattern. The
+        <a href="https://github.com/appliedzcash/appliedzcash.com">source</a> is on GitHub.
+        If you build on Zcash, go to the <a href="https://signal.group/#CjQKIGlpdEugkIjUIm3WGa_6V2Xhi6zEvJGB9UADaU3zNKGCEhCSrRufVMaAncHsqeeBZj_U">Signal group</a>.
+      </p>
+      <p class="licenses">
+        Text: <a href="https://github.com/appliedzcash/appliedzcash.com/blob/main/LICENSE-CC0">CC0 1.0</a>. Code: <a href="https://github.com/appliedzcash/appliedzcash.com/blob/main/LICENSE">0BSD</a>. The demos include
+        crates under their own licenses: <a href="../../wasm/notices.html">notices</a>.
+      </p>
+    </footer>
+  </body>
+</html>

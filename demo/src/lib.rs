@@ -10,6 +10,7 @@ mod payment_link;
 mod threshold;
 mod verified_address;
 mod viewing_keys;
+mod memo_stones;
 
 pub use bound_notes::{genesis_rho, stamp, Stamp};
 pub use customer_addresses::{customer_addresses, find_customer, CustomerAddresses};
@@ -20,6 +21,9 @@ pub use payment_link::{payment_link, PaymentLink};
 pub use threshold::{threshold, Threshold};
 pub use verified_address::{verified_record, VerifiedRecord};
 pub use viewing_keys::{viewing_keys, ViewingKeys};
+pub use memo_stones::{
+    stone_check, stone_memo, stone_path, stone_record, StoneCheck, StoneMemo, StoneRecord,
+};
 
 use orchard::keys::{FullViewingKey, SpendingKey};
 use qrcode::{render::svg, EcLevel, QrCode};
