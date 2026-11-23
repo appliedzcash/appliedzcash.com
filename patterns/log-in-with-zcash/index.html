@@ -54,7 +54,7 @@
       <h2 id="problem">Problem</h2>
       <p>
         An app must know that a user controls an address. The sender of a shielded payment is secret, also to the
-        receiver. Wallets sign messages with transparent keys at most. ZIP 304 is for Sapling keys only.
+        receiver. Wallets sign messages with transparent keys at most. <a href="https://zips.z.cash/zip-0304">ZIP 304</a> is for Sapling keys only.
       </p>
       <p>
         Each shielded wallet sends payments with memos. Each shielded wallet also shows the memos of the payments that
@@ -123,7 +123,7 @@
       <ol>
         <li>The user types their unified address in the app. This address is the return address.</li>
         <li>The app makes a session ID. It writes the login memo from the session ID and the return address.</li>
-        <li>The app shows a ZIP 321 payment link as a QR code. The link has the service address, the login amount and the login memo.</li>
+        <li>The app shows a <a href="https://zips.z.cash/zip-0321">ZIP 321</a> payment link as a QR code. The link has the service address, the login amount and the login memo.</li>
         <li>The user pays the link from a wallet. The funds can come from any wallet.</li>
         <li>The worker finds the payment in the mempool. It decrypts the payment with its viewing key and reads the memo.</li>
         <li>The worker calculates the code from the code key, the session ID and the return address.</li>
@@ -196,7 +196,7 @@ address  the return address, as the user typed it</code></pre>
       <ul>
         <li>
           <strong>Each login</strong> The login amount and the network fee. The minimum login amount at ZcashMe is
-          0.002 ZEC. A usual shielded payment with change has two actions. The ZIP 2009 fee for two actions is 2,000
+          0.002 ZEC. A usual shielded payment with change has two actions. The <a href="https://zips.z.cash/zip-2009">ZIP 2009</a> fee for two actions is 2,000
           zatoshis. The user receives the reply amount.
         </li>
         <li>
@@ -230,6 +230,14 @@ address  the return address, as the user typed it</code></pre>
         <li>
           <strong>Viewing keys.</strong> A holder of the incoming viewing key of the return address can read the code.
           Thus, this holder can log in as the address.
+        </li>
+        <li>
+          <strong>Receivers.</strong> A unified address can contain receivers from different wallets. The worker sends
+          the reply to one receiver of the address. Thus, a correct code is a claim about that receiver only.
+        </li>
+        <li>
+          <strong>Many addresses.</strong> One wallet can make many addresses, and an app cannot link them. Thus, one
+          user can have many accounts. See <a href="../../basics/address-per-customer/">Address per customer</a>.
         </li>
         <li>
           <strong>Guesses.</strong> A code has 6 digits. The app must stop a session after a small number of incorrect
@@ -331,7 +339,7 @@ code     880279</code></pre>
       </aside>
       <nav class="pager" aria-label="Pages">
         <a class="prev" href="../../patterns/threshold-keys/"><span>Previous</span>Threshold keys</a>
-        <a class="next" href="../../wishlist/signature-login/"><span>Next</span>Signature login</a>
+        <a class="next" href="../../patterns/verified-address/"><span>Next</span>Verified address</a>
       </nav>
       <p class="edit"><a href="https://github.com/appliedzcash/appliedzcash.com/blob/main/patterns/log-in-with-zcash/index.html">Change this page on GitHub</a></p>
     </main>

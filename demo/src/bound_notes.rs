@@ -25,7 +25,7 @@ const RHO_PERSONAL: &[u8; 16] = b"TimeStamp_rho_v1";
 /// The kind of a stamp record.
 const KIND_STAMP: u8 = 1;
 
-fn blake2b(personal: &[u8; 16], parts: &[&[u8]]) -> [u8; 32] {
+pub(crate) fn blake2b(personal: &[u8; 16], parts: &[&[u8]]) -> [u8; 32] {
     let mut state = Params::new().hash_length(32).personal(personal).to_state();
     for part in parts {
         state.update(part);
@@ -34,9 +34,9 @@ fn blake2b(personal: &[u8; 16], parts: &[&[u8]]) -> [u8; 32] {
 }
 
 /// rseed = BLAKE2b-256(D, I2LEOSP_8(kind) || I2LEOSP_64(len) || fields || prev).
-fn bind_rseed(kind: u8, fields: &[u8], prev: &[u8; 32]) -> [u8; 32] {
+fn bind_rseed(domain: &[u8; 16], kind: u8, fields: &[u8], prev: &[u8; 32]) -> [u8; 32] {
     let len = (fields.len() as u64).to_le_bytes();
-    blake2b(DOMAIN, &[&[kind], &len, fields, prev])
+    blake2b(domain, &[&[kind], &len, fields, prev])
 }
 
 /// The demo key of the registry. A real registry publishes its full viewing key.
@@ -45,11 +45,46 @@ fn registry_key() -> FullViewingKey {
     FullViewingKey::from(&sk)
 }
 
-fn decode32(hex_str: &str) -> Result<[u8; 32], JsError> {
+pub(crate) fn decode32(hex_str: &str) -> Result<[u8; 32], String> {
     let mut bytes = [0; 32];
     hex::decode_to_slice(hex_str.trim(), &mut bytes)
-        .map_err(|_| JsError::new("Use 64 hexadecimal characters."))?;
+        .map_err(|_| "Use 64 hexadecimal characters.".to_string())?;
     Ok(bytes)
+}
+
+/// The values of one bound note.
+pub(crate) struct BoundNote {
+    pub rseed: [u8; 32],
+    pub cmx: [u8; 32],
+    /// The nullifier of the note. The successor spends this note in the same action, so
+    /// this value is also the ρ of the successor.
+    pub nf: [u8; 32],
+}
+
+/// A zero-value bound note to the demo registry address, in binding domain `domain`.
+/// Returns `None` if no valid note has the `rseed` of this record.
+pub(crate) fn bound_note(
+    domain: &[u8; 16],
+    kind: u8,
+    fields: &[u8],
+    prev: &[u8; 32],
+    rho: &str,
+    version: NoteVersion,
+) -> Result<Option<BoundNote>, String> {
+    let rho = Rho::from_bytes(&decode32(rho)?)
+        .into_option()
+        .ok_or_else(|| "ρ is outside the Pallas base field.".to_string())?;
+    let rseed = bind_rseed(domain, kind, fields, prev);
+    let fvk = registry_key();
+    let note = RandomSeed::from_bytes(rseed, &rho).into_option().and_then(|seed| {
+        let recipient = fvk.address_at(0u32, Scope::External);
+        Note::from_parts(recipient, NoteValue::ZERO, rho, seed, version).into_option()
+    });
+    Ok(note.map(|note| BoundNote {
+        rseed,
+        cmx: ExtractedNoteCommitment::from(note.commitment()).to_bytes(),
+        nf: note.nullifier(&fvk).to_bytes(),
+    }))
 }
 
 /// The values of one stamp, as hex.
@@ -58,8 +93,6 @@ pub struct Stamp {
     pub doc_hash: String,
     pub rseed: String,
     pub cmx: String,
-    /// The nullifier of the stamp. The next stamp spends this note in the same action,
-    /// so this value is also the ρ of the next stamp.
     pub nf: String,
 }
 
@@ -76,28 +109,20 @@ pub fn genesis_rho() -> String {
 /// note plaintext lead byte 0x03 (Ironwood pool) or 0x02 (Orchard pool).
 #[wasm_bindgen]
 pub fn stamp(document: &str, prev: &str, rho: &str, ironwood: bool) -> Result<Stamp, JsError> {
-    let prev = decode32(prev)?;
-    let rho = Rho::from_bytes(&decode32(rho)?)
-        .into_option()
-        .ok_or_else(|| JsError::new("ρ is outside the Pallas base field."))?;
-    let doc_hash = blake2b(DOC_PERSONAL, &[document.as_bytes()]);
-    let rseed = bind_rseed(KIND_STAMP, &doc_hash, &prev);
-    let version = if ironwood { NoteVersion::V3 } else { NoteVersion::V2 };
+    build(document, prev, rho, ironwood).map_err(|error| JsError::new(&error))
+}
 
-    let fvk = registry_key();
-    let note = RandomSeed::from_bytes(rseed, &rho)
-        .into_option()
-        .and_then(|seed| {
-            let recipient = fvk.address_at(0u32, Scope::External);
-            Note::from_parts(recipient, NoteValue::ZERO, rho, seed, version).into_option()
-        })
-        .ok_or_else(|| JsError::new("No valid note has this rseed. Change the document."))?;
+fn build(document: &str, prev: &str, rho: &str, ironwood: bool) -> Result<Stamp, String> {
+    let doc_hash = blake2b(DOC_PERSONAL, &[document.as_bytes()]);
+    let version = if ironwood { NoteVersion::V3 } else { NoteVersion::V2 };
+    let note = bound_note(DOMAIN, KIND_STAMP, &doc_hash, &decode32(prev)?, rho, version)?
+        .ok_or_else(|| "No valid note has this rseed. Change the document.".to_string())?;
 
     Ok(Stamp {
         doc_hash: hex::encode(doc_hash),
-        rseed: hex::encode(rseed),
-        cmx: hex::encode(ExtractedNoteCommitment::from(note.commitment()).to_bytes()),
-        nf: hex::encode(note.nullifier(&fvk).to_bytes()),
+        rseed: hex::encode(note.rseed),
+        cmx: hex::encode(note.cmx),
+        nf: hex::encode(note.nf),
     })
 }
 
@@ -112,15 +137,15 @@ mod tests {
         // Python: hashlib.blake2b(bytes([1]) + (3).to_bytes(8, "little") + b"abc" + bytes(32),
         //                         digest_size=32, person=b"TimeStamp_v1____").hexdigest()
         assert_eq!(
-            hex::encode(bind_rseed(1, b"abc", &[0; 32])),
+            hex::encode(bind_rseed(DOMAIN, 1, b"abc", &[0; 32])),
             "d2f399f655fe3681d102710498fda085bd3b00b7a1cccd69e191cc3c0fc79f03"
         );
     }
 
     #[test]
     fn stamp_is_deterministic() {
-        let a = stamp("hello", GENESIS_PREV, &genesis_rho(), true).unwrap();
-        let b = stamp("hello", GENESIS_PREV, &genesis_rho(), true).unwrap();
+        let a = build("hello", GENESIS_PREV, &genesis_rho(), true).unwrap();
+        let b = build("hello", GENESIS_PREV, &genesis_rho(), true).unwrap();
         assert_eq!(a.cmx, b.cmx);
         assert_eq!(a.nf, b.nf);
     }
@@ -128,20 +153,21 @@ mod tests {
     #[test]
     fn cmx_binds_document_prev_and_version() {
         let rho = genesis_rho();
-        let base = stamp("hello", GENESIS_PREV, &rho, true).unwrap().cmx;
-        assert_ne!(base, stamp("hellp", GENESIS_PREV, &rho, true).unwrap().cmx);
-        assert_ne!(base, stamp("hello", &"01".repeat(32), &rho, true).unwrap().cmx);
-        assert_ne!(base, stamp("hello", GENESIS_PREV, &rho, false).unwrap().cmx);
+        let base = build("hello", GENESIS_PREV, &rho, true).unwrap().cmx;
+        assert_ne!(base, build("hellp", GENESIS_PREV, &rho, true).unwrap().cmx);
+        assert_ne!(base, build("hello", &"01".repeat(32), &rho, true).unwrap().cmx);
+        assert_ne!(base, build("hello", GENESIS_PREV, &rho, false).unwrap().cmx);
     }
 
     #[test]
     fn chain_links_prev_and_rho() {
-        let first = stamp("one", GENESIS_PREV, &genesis_rho(), true).unwrap();
-        let second = stamp("two", &first.cmx, &first.nf, true).unwrap();
+        let first = build("one", GENESIS_PREV, &genesis_rho(), true).unwrap();
+        let second = build("two", &first.cmx, &first.nf, true).unwrap();
         assert_ne!(first.cmx, second.cmx);
         assert_eq!(
             second.rseed,
             hex::encode(bind_rseed(
+                DOMAIN,
                 KIND_STAMP,
                 &decode32(&second.doc_hash).unwrap(),
                 &decode32(&first.cmx).unwrap()

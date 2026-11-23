@@ -410,6 +410,10 @@ main > ol[start="5"] {
   counter-reset: step 4;
 }
 
+main > ol[start="3"] {
+  counter-reset: step 2;
+}
+
 main > ol:not(.bytes) > li {
   position: relative;
   padding: 0 0 var(--space-3) 2.5rem;
@@ -1022,7 +1026,9 @@ code.hex .changed,
 }
 
 /* The stamp chain: one card for each stamp, joined by "prev = cmx". */
+/* The label of each card is "Stamp". A page can set a different name in --item. */
 .chain {
+  --item: "Stamp";
   counter-reset: stamp;
   margin: 0 0 var(--space-3);
   padding: 0;
@@ -1039,7 +1045,7 @@ code.hex .changed,
 }
 
 .chain li::before {
-  content: "Stamp " counter(stamp);
+  content: var(--item) " " counter(stamp);
   display: block;
   margin-bottom: var(--space-1);
   color: var(--accent);
