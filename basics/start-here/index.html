@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Start here: a reading order for Zcash app builders | Applied Zcash</title>
+    <meta name="description" content="A reading order for a new Zcash app builder: five steps from smart contracts and concepts to your first pattern, with a pattern for each task." />
+    <link rel="canonical" href="https://appliedzcash.com/basics/start-here/" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Applied Zcash" />
+    <meta property="og:title" content="Start here: a reading order for Zcash app builders" />
+    <meta property="og:description" content="A reading order for a new Zcash app builder: five steps from smart contracts and concepts to your first pattern, with a pattern for each task." />
+    <meta property="og:url" content="https://appliedzcash.com/basics/start-here/" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="og:image" content="https://appliedzcash.com/images/og/start-here.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Start here: a reading order for Zcash app builders. Applied Zcash." />
+    <meta name="twitter:image:alt" content="Start here: a reading order for Zcash app builders. Applied Zcash." />
+    <meta name="theme-color" content="#f6f4ee" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f1011" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" href="../../images/mark.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="../../images/apple-touch-icon.png" />
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Start here", "description": "A reading order for a new Zcash app builder: five steps from smart contracts and concepts to your first pattern, with a pattern for each task.", "url": "https://appliedzcash.com/basics/start-here/", "inLanguage": "en", "about": {"@type": "Thing", "name": "Zcash", "sameAs": "https://en.wikipedia.org/wiki/Zcash"}, "isPartOf": {"@type": "WebSite", "name": "Applied Zcash", "url": "https://appliedzcash.com/"}, "image": "https://appliedzcash.com/images/og/start-here.png", "author": {"@type": "Organization", "name": "Applied Zcash", "url": "https://appliedzcash.com/"}, "publisher": {"@type": "Organization", "name": "Applied Zcash", "url": "https://appliedzcash.com/", "logo": "https://appliedzcash.com/images/apple-touch-icon.png", "sameAs": ["https://github.com/appliedzcash"]}, "license": "https://creativecommons.org/publicdomain/zero/1.0/"}</script>
+    <link rel="preload" href="../../fonts/source-serif-4.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="../../styles/main.css" />
+    <script type="module" src="../../scripts/site.js"></script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Go to the content</a>
+    <header>
+      <a class="site-name" href="../../"><svg class="mark" width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="1.75" /><circle cx="15.25" cy="15.25" r="2.75" /></svg>Applied Zcash</a>
+      <nav><a href="../../#basics">Basics</a> <a href="../../#patterns">Patterns</a> <a href="../../#wishlist">Wishlist</a> <a class="signal" href="https://signal.group/#CjQKIGlpdEugkIjUIm3WGa_6V2Xhi6zEvJGB9UADaU3zNKGCEhCSrRufVMaAncHsqeeBZj_U">Signal</a> <a href="https://github.com/appliedzcash/appliedzcash.com">GitHub</a></nav>
+    </header>
+    <main id="main">
+      <p class="kicker">Basic</p>
+      <h1>Start here</h1>
+      <p class="lede">
+        This page is a reading order for a new builder. Each step has links to the pages to read. Most pages have a live
+        demo in the browser.
+      </p>
+
+      <h2 id="before">Before you start</h2>
+      <p>
+        You need basic programming skills. The <a href="../concepts/">Concepts</a> page explains the terms of Zcash. A
+        wallet for Testnet is useful for the demos.
+      </p>
+
+      <h2 id="status">Network status, November 2026</h2>
+      <ul>
+        <li>Ironwood is a shielded pool. It has been live on Mainnet since July 2026. Use it for new apps.</li>
+        <li>The NU7 upgrade has been live on Mainnet since November 2026. The block time is 25 seconds.</li>
+        <li>zcashd is end-of-life (July 2026). Use Zebra or Zakura for a node, and Zallet for a wallet.</li>
+        <li>A tutorial with 75-second blocks or zcashd commands is out of date.</li>
+      </ul>
+      <p>This list is true in November 2026. The latest status is on <a href="https://zips.z.cash/">zips.z.cash</a>.</p>
+
+      <h2 id="path">The path</h2>
+      <ol>
+        <li>
+          Read <a href="../smart-contracts/">Smart contracts on Zcash</a>. It has a table with the Zcash pattern for each
+          task of a smart contract.
+        </li>
+        <li>
+          Read <a href="../concepts/">Concepts</a>. Build a unified address in the demo.
+        </li>
+        <li>
+          Read <a href="../payment-links/">Payment links</a>. Get test coins (TAZ) from a Testnet faucet. The
+          <a href="https://zechub.wiki/using-zcash/faucets">ZecHub faucet list</a> has the faucets. Then make a payment
+          link and pay it from a wallet on Testnet.
+        </li>
+        <li>
+          Read <a href="../address-per-customer/">Address per customer</a> and
+          <a href="../watch-only-keys/">Watch-only keys</a>. A shop uses them to find the payment of each customer.
+        </li>
+        <li>Choose one pattern for your task. The next section has the list.</li>
+      </ol>
+
+      <h2 id="patterns-by-task">A pattern for each task</h2>
+      <dl class="terms">
+        <dt>Keep a record with one history</dt>
+        <dd><a href="../../patterns/bound-notes/">Bound notes</a></dd>
+        <dt>Receive orders from users</dt>
+        <dd><a href="../../patterns/wallet-native-orders/">Wallet-native orders</a></dd>
+        <dt>Log in with a wallet</dt>
+        <dd><a href="../../patterns/log-in-with-zcash/">Log in with Zcash</a></dd>
+        <dt>Share a role between people</dt>
+        <dd><a href="../../patterns/threshold-keys/">Threshold keys</a> (Experimental)</dd>
+        <dt>Keep the scan work of wallets small</dt>
+        <dd><a href="../../patterns/polite-actions/">Polite actions</a></dd>
+        <dt>Make the same note commitments in each build</dt>
+        <dd><a href="../../patterns/action-pairing/">Canonical action pairing</a></dd>
+      </dl>
+      <p>
+        A task that needs new software is on the <a href="../../#wishlist">Wishlist</a>, for example
+        <a href="../../wishlist/signature-login/">Signature login</a>.
+      </p>
+
+      <h2 id="help">Get help</h2>
+      <p>
+        Other builders on Zcash are in the Signal group. The
+        <a href="https://forum.zcashcommunity.com/">Zcash Community Forum</a> and <a href="https://zechub.wiki/">ZecHub</a>
+        also have help for builders. To add a pattern or to correct a pattern, read the
+        <a href="https://github.com/appliedzcash/appliedzcash.com/blob/main/CONTRIBUTING.md">contribution guide</a>.
+      </p>
+
+      <aside class="ask">
+        <p><strong>Do you have a question about your first app on Zcash?</strong> Other builders on Zcash are in the Signal group.</p>
+        <a class="button signal" href="https://signal.group/#CjQKIGlpdEugkIjUIm3WGa_6V2Xhi6zEvJGB9UADaU3zNKGCEhCSrRufVMaAncHsqeeBZj_U">Ask in the Signal group</a>
+      </aside>
+      <nav class="pager" aria-label="Pages">
+        <a class="next" href="../../basics/smart-contracts/"><span>Next</span>Smart contracts on Zcash</a>
+      </nav>
+      <p class="edit"><a href="https://github.com/appliedzcash/appliedzcash.com/blob/main/basics/start-here/index.html">Change this page on GitHub</a></p>
+    </main>
+    <footer>
+      <p>
+        Applied Zcash is a community site. Anyone can propose a pattern. The
+        <a href="https://github.com/appliedzcash/appliedzcash.com">source</a> is on GitHub.
+        If you build on Zcash, go to the <a href="https://signal.group/#CjQKIGlpdEugkIjUIm3WGa_6V2Xhi6zEvJGB9UADaU3zNKGCEhCSrRufVMaAncHsqeeBZj_U">Signal group</a>.
+      </p>
+      <p class="licenses">
+        Text: <a href="https://github.com/appliedzcash/appliedzcash.com/blob/main/LICENSE-CC0">CC0 1.0</a>. Code: <a href="https://github.com/appliedzcash/appliedzcash.com/blob/main/LICENSE">0BSD</a>. The demos include
+        crates under their own licenses: <a href="../../wasm/notices.html">notices</a>.
+      </p>
+    </footer>
+  </body>
+</html>
