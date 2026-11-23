@@ -43,6 +43,8 @@ Limits the page states: about 505 data bytes per memo, one more action per extra
 
 ```
 /                                 Home: what near-programmability is, the basics list, the pattern list
+/basics/start-here/               Start here: a reading order for new builders, and the network status
+/basics/smart-contracts/          Smart contracts on Zcash: the table of contract tasks and the Zcash pattern for each
 /basics/concepts/                 Concepts: notes, pools, actions, memos, keys, addresses
 /basics/payment-links/            Payment links: ZIP 321 URI and QR code
 /basics/address-per-customer/     Address per customer: diversified addresses
@@ -128,6 +130,7 @@ CONTRIBUTING.md     how to propose a pattern
 - [ ] Mark sends two pages to c-node for a review: signature login (after #47; it has the protocol claims of #42 and #47) and verified address (#38, merged without the review).
 - [ ] Julian checks the log in with Zcash page (#37, merged). Get Zechariah's surname or handle for the credit (the page and the home page have the first name only).
 - [ ] Mark decides: move his four lay paragraphs on bound notes to strict STE, or keep his wording. #31 keeps it.
+- [ ] Mark decides: credit Drenla (drekal0, #51) in the Contributors section of the home page.
 - [ ] Mark requests indexing in Search Console for each page, `/basics/smart-contracts/` first. Mark adds the site to Bing Webmaster Tools (import from Search Console; Bing results also show in ChatGPT search and DuckDuckGo).
 
 ## Soon
@@ -137,6 +140,7 @@ CONTRIBUTING.md     how to propose a pattern
 - [ ] Add Daniel's list of FROST implementations to the threshold keys page (#40, item 4, posted Nov 22): 9 entries in three groups, with his criterion (license, release or crate, a push in the last 60 days, no hackathon builds). Then close #40.
 - [ ] SEO backlinks (Mark approves each): a PR to the ZecHub developer resources page (zechub.wiki/start-here/developer-resources), a PR to the Developer Tools page of zcash.readthedocs.io, a request to zecdev to list the site, and a post in the Zcash Community Forum.
 - [ ] GitHub repo: set the description, the homepage URL and topics (zcash, zero-knowledge, privacy).
+- [ ] Drenla's issue (promised in #51): statements that may be out of date, for example the action count of a bundle on Concepts and the faucet notice on Payment links. Check each statement against its source.
 
 
 ## Later
@@ -148,6 +152,7 @@ CONTRIBUTING.md     how to propose a pattern
 - [ ] Link each spec page to its `zcash/zips` PR once one exists.
 - [ ] Invite co-maintainers to the org (for example craftsoldier).
 - [ ] SEO pages: hub pages at `/basics/`, `/patterns/` and `/wishlist/` (each URL gives 404 today), then breadcrumbs in the JSON-LD. Maybe "smart contracts" in the home title.
+- [ ] Update the status list on Start here ("Network status, November 2026") after each network upgrade or node change.
 - [ ] Mark decides: a cookieless counter (for example GoatCounter) for referral data from X and the forum. Search Console has search clicks only. It is a privacy trade-off on a Zcash site.
 
 ## Done
@@ -209,3 +214,4 @@ CONTRIBUTING.md     how to propose a pattern
 - [x] Nov 22: Smart contracts on Zcash page (#49, merged, live). `/basics/smart-contracts/` is for the search "smart contracts on Zcash": the short answer, a table of contract tasks (the Ethereum form and the Zcash pattern), who checks the rules, and the Draft ZIPs (226, 227, 228, 68, 231; checked on `zcash/zips` main). It is the first basics page, with no demo. The home hero, the home basics list and the Concepts pager link to it. Copilot found four protocol errors, all fixed: a deposit address finds the customer (the payer can be someone else); the fee is in ZIP 317 and polite actions keep the scan work small; one next record needs the next note in the action in which the old note is spent, plus the block order check; ZIP 68 is relative lock-time only.
 - [x] Nov 22: the Rich Results Test on the live bound notes page found one valid Article, with one optional field absent: `author`. Mark's call: the Applied Zcash organization is the author of each article (#50).
 - [x] Nov 22: Mark merged #38, the verified address pattern page (squash, `84fd010`), without c-node's review (Mark's call: no wait). The page keeps its Experimental label. The record format is the PR's proposal: the claim is a hash of a 32-byte salt and the address; the receipt has the address, the salt, the transaction ID, the action index and `prev`; the service publishes the claim and the place of each record. Before the merge, `main` went into the branch: `sitemap.xml` is gone, and the page has the JSON-LD fields of #48 and #50.
+- [x] Nov 23: Mark merged #51 (squash, `9ab1c3a`), the first PR of Drenla (drekal0). `/basics/start-here/` is a reading order for new builders. It has a dated status list (Ironwood, NU7 with 25-second blocks, zcashd end-of-life, Zebra or Zakura, Zallet; checked against the wiki) and five steps from Smart contracts to a pattern. It is the first basics page. The hero button "Start with the basics" and the "Where to start" section of Smart contracts link to it. The table on Smart contracts is the one task list (Mark's call): Start here has no copy, and the table has a Verified address row. `tools/site_index.py` now sorts each page by its link in its own section. Before, Start here was third in `llms.txt`, because the hero has earlier links to two basics pages. Mark pushed the last commit to the fork (maintainer edit). Commits with henderson.mark@gmail.com show as Unverified on GitHub; the merged commits use mark@mrh.io.
