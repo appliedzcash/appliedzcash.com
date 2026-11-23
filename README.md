@@ -7,7 +7,7 @@ Patterns for Zcash developers: build apps from shielded notes, memos and keys.
 
 This repository contains the source of [appliedzcash.com](https://appliedzcash.com). The site has three sections:
 
-- **Basics:** concepts, payment links, address per customer, and watch-only keys.
+- **Basics:** start here, smart contracts, concepts, payment links, address per customer, and watch-only keys.
 - **Patterns:** bound notes, polite actions, wallet-native orders, canonical action pairing, threshold keys, and log in with Zcash.
 - **Wishlist:** designs that need new software, for example a wallet function or a ZIP. The first page is signature login.
 

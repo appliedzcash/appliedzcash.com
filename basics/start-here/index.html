@@ -4,12 +4,12 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Start here: a reading order for Zcash app builders | Applied Zcash</title>
-    <meta name="description" content="A reading order for a new Zcash app builder: five steps from smart contracts and concepts to your first pattern, with a pattern for each task." />
+    <meta name="description" content="A reading order for new Zcash app builders: five steps, and a pattern for each task." />
     <link rel="canonical" href="https://appliedzcash.com/basics/start-here/" />
     <meta property="og:type" content="article" />
     <meta property="og:site_name" content="Applied Zcash" />
     <meta property="og:title" content="Start here: a reading order for Zcash app builders" />
-    <meta property="og:description" content="A reading order for a new Zcash app builder: five steps from smart contracts and concepts to your first pattern, with a pattern for each task." />
+    <meta property="og:description" content="A reading order for new Zcash app builders: five steps, and a pattern for each task." />
     <meta property="og:url" content="https://appliedzcash.com/basics/start-here/" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta property="og:image" content="https://appliedzcash.com/images/og/start-here.png" />
@@ -21,7 +21,7 @@
     <meta name="theme-color" content="#0f1011" media="(prefers-color-scheme: dark)" />
     <link rel="icon" href="../../images/mark.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="../../images/apple-touch-icon.png" />
-    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Start here", "description": "A reading order for a new Zcash app builder: five steps from smart contracts and concepts to your first pattern, with a pattern for each task.", "url": "https://appliedzcash.com/basics/start-here/", "inLanguage": "en", "about": {"@type": "Thing", "name": "Zcash", "sameAs": "https://en.wikipedia.org/wiki/Zcash"}, "isPartOf": {"@type": "WebSite", "name": "Applied Zcash", "url": "https://appliedzcash.com/"}, "image": "https://appliedzcash.com/images/og/start-here.png", "author": {"@type": "Organization", "name": "Applied Zcash", "url": "https://appliedzcash.com/"}, "publisher": {"@type": "Organization", "name": "Applied Zcash", "url": "https://appliedzcash.com/", "logo": "https://appliedzcash.com/images/apple-touch-icon.png", "sameAs": ["https://github.com/appliedzcash"]}, "license": "https://creativecommons.org/publicdomain/zero/1.0/"}</script>
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "TechArticle", "headline": "Start here", "description": "A reading order for new Zcash app builders: five steps, and a pattern for each task.", "url": "https://appliedzcash.com/basics/start-here/", "inLanguage": "en", "about": {"@type": "Thing", "name": "Zcash", "sameAs": "https://en.wikipedia.org/wiki/Zcash"}, "isPartOf": {"@type": "WebSite", "name": "Applied Zcash", "url": "https://appliedzcash.com/"}, "image": "https://appliedzcash.com/images/og/start-here.png", "author": {"@type": "Organization", "name": "Applied Zcash", "url": "https://appliedzcash.com/"}, "publisher": {"@type": "Organization", "name": "Applied Zcash", "url": "https://appliedzcash.com/", "logo": "https://appliedzcash.com/images/apple-touch-icon.png", "sameAs": ["https://github.com/appliedzcash"]}, "license": "https://creativecommons.org/publicdomain/zero/1.0/"}</script>
     <link rel="preload" href="../../fonts/source-serif-4.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="../../styles/main.css" />
     <script type="module" src="../../scripts/site.js"></script>
@@ -42,18 +42,18 @@
 
       <h2 id="before">Before you start</h2>
       <p>
-        You need basic programming skills. The <a href="../concepts/">Concepts</a> page explains the terms of Zcash. A
-        wallet for Testnet is useful for the demos.
+        You need basic programming skills. The terms of Zcash are on the <a href="../concepts/">Concepts</a> page. A
+        mobile or light wallet for Testnet is useful for the demos.
       </p>
 
       <h2 id="status">Network status, November 2026</h2>
       <ul>
-        <li>Ironwood is a shielded pool. It has been live on Mainnet since July 2026. Use it for new apps.</li>
-        <li>The NU7 upgrade has been live on Mainnet since November 2026. The block time is 25 seconds.</li>
-        <li>zcashd is end-of-life (July 2026). Use Zebra or Zakura for a node, and Zallet for a wallet.</li>
+        <li>Ironwood is a shielded pool. It is live on Mainnet (since July 2026). Use it for new apps.</li>
+        <li>The NU7 upgrade is live on Mainnet (since November 2026). The target block time is 25 seconds.</li>
+        <li>zcashd is end-of-life (July 2026). Use Zebra or Zakura in place of the zcashd node. Use Zallet in place of the zcashd wallet.</li>
         <li>A tutorial with 75-second blocks or zcashd commands is out of date.</li>
       </ul>
-      <p>This list is true in November 2026. The latest status is on <a href="https://zips.z.cash/">zips.z.cash</a>.</p>
+      <p>This list is true in November 2026. The status of each ZIP is on <a href="https://zips.z.cash/">zips.z.cash</a>.</p>
 
       <h2 id="path">The path</h2>
       <ol>
@@ -65,9 +65,9 @@
           Read <a href="../concepts/">Concepts</a>. Build a unified address in the demo.
         </li>
         <li>
-          Read <a href="../payment-links/">Payment links</a>. Get test coins (TAZ) from a Testnet faucet. The
-          <a href="https://zechub.wiki/using-zcash/faucets">ZecHub faucet list</a> has the faucets. Then make a payment
-          link and pay it from a wallet on Testnet.
+          Read <a href="../payment-links/">Payment links</a>. Get test coins (TAZ) with the faucet command on that page.
+          If it does not work, use a faucet on the <a href="https://zechub.wiki/using-zcash/faucets">ZecHub faucet list</a>.
+          Then make a payment link and pay it from a wallet on Testnet.
         </li>
         <li>
           Read <a href="../address-per-customer/">Address per customer</a> and
@@ -84,7 +84,7 @@
         <dd><a href="../../patterns/wallet-native-orders/">Wallet-native orders</a></dd>
         <dt>Log in with a wallet</dt>
         <dd><a href="../../patterns/log-in-with-zcash/">Log in with Zcash</a></dd>
-        <dt>Share a role between people</dt>
+        <dt>Share control of funds</dt>
         <dd><a href="../../patterns/threshold-keys/">Threshold keys</a> (Experimental)</dd>
         <dt>Keep the scan work of wallets small</dt>
         <dd><a href="../../patterns/polite-actions/">Polite actions</a></dd>
@@ -98,7 +98,7 @@
 
       <h2 id="help">Get help</h2>
       <p>
-        Other builders on Zcash are in the Signal group. The
+        The
         <a href="https://forum.zcashcommunity.com/">Zcash Community Forum</a> and <a href="https://zechub.wiki/">ZecHub</a>
         also have help for builders. To add a pattern or to correct a pattern, read the
         <a href="https://github.com/appliedzcash/appliedzcash.com/blob/main/CONTRIBUTING.md">contribution guide</a>.
