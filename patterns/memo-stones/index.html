@@ -309,9 +309,10 @@
       </div>
       <ul>
         <li>
-          <strong>Refusal.</strong> The service can ignore a payment and still send a valid record. The author sees
-          the refusal: after the maximum delay, the leaf is absent from the leaf lists. To show the payment to other
-          persons, the author needs a payment disclosure (<a href="https://zips.z.cash/zip-0311">ZIP 311</a>, draft).
+          <strong>Refusal.</strong> The service can ignore a payment and still send a valid record.
+          After the maximum delay, the author can find a refusal if all relevant leaf lists are available and verified.
+          With a missing list, inclusion stays unknown. To show the payment to other persons, the author needs a payment disclosure
+          (<a href="https://zips.z.cash/zip-0311">ZIP 311</a>, draft).
         </li>
         <li>
           <strong>Selection.</strong> With a text hash in the memo, the reader sees the topic and the amount only.
