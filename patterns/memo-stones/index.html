@@ -231,6 +231,10 @@
         that a text existed at a time. It is weak evidence of who wrote the text.
       </p>
       <p>
+        A receipt is evidence about one leaf only. It is no evidence that the record contains all the memos of its
+        period. See <a href="#limits">Limits</a>.
+      </p>
+      <p>
         The salt and the text salt have 256 bits each. Thus, outsiders cannot find the memo of a leaf by guesses. The
         service cannot find the text of a text hash by guesses.
       </p>
@@ -305,9 +309,34 @@
       </div>
       <ul>
         <li>
-          <strong>Refusal.</strong> The service can ignore a payment. The author then sees that the leaf is absent
-          from the leaf lists. To show the payment to other persons, the author needs a payment disclosure
+          <strong>Refusal.</strong> The service can ignore a payment and still send a valid record.
+          After the maximum delay, the author can find a refusal if all relevant leaf lists are available and verified.
+          With a missing list, inclusion stays unknown. To show the payment to other persons, the author needs a payment disclosure
           (<a href="https://zips.z.cash/zip-0311">ZIP 311</a>, draft).
+        </li>
+        <li>
+          <strong>Selection.</strong> The reader sees the full memo and the amount of each payment. With a text hash
+          in the memo, the reader cannot read the text. Thus, the reader can select payments to ignore by the topic,
+          the amount and the time. An author can tell the service the leaf of
+          a memo. Thus, the service can keep that leaf and ignore the others.
+          For sealed bids, each author must use the <a href="#receipt">Receipt</a> steps to verify a receipt.
+          The authors must do this before they show their bids.
+        </li>
+        <li>
+          <strong>Enclave.</strong> As an option, the service can run the reader and the writer in a trusted execution
+          environment (TEE). Then the enclave code adds each leaf. These conditions are necessary:
+          <ul>
+            <li>The enclave sends an attestation. The verifier checks its authenticity.
+              The verifier calculates the code hash from a reproducible build of the published source.
+              The code hash must be the same as the hash in the attestation.</li>
+            <li>The enclave examines full blocks. It gets the chain tip from sources that are independent of the
+              operator. The operator can hold back block data. Then the enclave sends no records, and the authors see
+              the delay.</li>
+            <li>The writer key stays in the enclave. The writer public key must be in the verified attestation.
+              For this option, the verifier checks this key against record 0 and each recovery record 0.</li>
+          </ul>
+          The verifier then trusts the maker of the chip. Attacks on TEEs are known. Thus, an enclave decreases the
+          risk, and a payment disclosure stays necessary.
         </li>
         <li>
           <strong>Refunds.</strong> The sender of a payment is secret. Thus, the service cannot send back a payment with
@@ -440,6 +469,11 @@ output 1  the change, to the record address of the service</code></pre>
       <p>
         A record transaction has exactly two outputs. The writer can add more inputs to pay the fees. The service
         publishes the transaction ID of record 0.
+      </p>
+      <p>
+        The service publishes a maximum delay, as a number of blocks. For each payment with a valid memo and amount,
+        a record must contain the leaf. The block of that record is not more than the maximum delay after the block of
+        the payment. Thus, an author can see a refusal at a known block.
       </p>
       <p>
         Each record after record 0 has one leaf or more. For a period with no new leaves, the writer sends no
