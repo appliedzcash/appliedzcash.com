@@ -325,7 +325,9 @@
           <strong>Enclave.</strong> As an option, the service can run the reader and the writer in a trusted execution
           environment (TEE). Then the enclave code adds each leaf. These conditions are necessary:
           <ul>
-            <li>The enclave publishes an attestation. Anyone can compare its code hash with the published source.</li>
+            <li>The enclave sends an attestation. The verifier checks its authenticity.
+              The verifier calculates the code hash from a reproducible build of the published source.
+              The code hash must be the same as the hash in the attestation.</li>
             <li>The enclave examines the block headers and the chain tip. Thus, the operator cannot hide a payment.</li>
             <li>The writer key stays in the enclave. Only an attested enclave sends a recovery record 0.</li>
           </ul>
