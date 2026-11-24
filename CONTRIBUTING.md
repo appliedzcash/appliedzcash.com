@@ -11,6 +11,16 @@ Anyone can propose a pattern or a change. Use a pull request (PR).
 5. The Pages workflow builds the site for each PR. Make sure that the build is successful.
 6. The maintainer reviews the PR and merges it.
 
+## Issues
+
+Put one finding in each issue. A finding is one error, one limit or one change of text. Each issue has these parts:
+
+1. The location: the file and the lines.
+2. The finding, with a source for each claim.
+3. The suggested text, if the finding needs a change of text.
+
+For many findings, open one issue for each finding. Use the writing rules for issues too.
+
 ## Pattern page template
 
 Put each pattern in `patterns/<name>/index.html`. Each page has these sections, in this order:
