@@ -329,7 +329,8 @@
               The verifier calculates the code hash from a reproducible build of the published source.
               The code hash must be the same as the hash in the attestation.</li>
             <li>The enclave examines the block headers and the chain tip. Thus, the operator cannot hide a payment.</li>
-            <li>The writer key stays in the enclave. Only an attested enclave sends a recovery record 0.</li>
+            <li>The writer key stays in the enclave. The writer public key must be in the verified attestation.
+              For this option, the verifier checks this key against record 0 and each recovery record 0.</li>
           </ul>
           The verifier then trusts the maker of the chip. Attacks on TEEs are known. Thus, an enclave decreases the
           risk, and a payment disclosure stays necessary.
