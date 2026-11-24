@@ -144,6 +144,8 @@ origin  the origin of the app, for example https://app.example
 id_sk   the secret key of the user at this app
 id_pk   the public key of the user at this app</code></pre>
       <p>
+        The input of SHA-256 is the seed phrase as UTF-8 bytes. The phrase is lowercase English words with one space
+        between them. zafu does not use the NFKD normalization of BIP 39.
         The wallet calculates the Zcash keys from the BIP 39 seed, a PBKDF2 hash of the seed phrase. The identity
         keys are from a different hash of the seed phrase. Thus, the identity keys and the Zcash keys have no shared
         intermediate values. A holder of <code>root</code> cannot calculate the Zcash keys.
@@ -154,8 +156,11 @@ id_pk   the public key of the user at this app</code></pre>
       </p>
       <p>
         zafu calculates the key from the origin of the page. In version 1 of the zafu protocol, zafu signs the
-        challenge from the app as raw bytes. The app can put its origin in these bytes.
-        zafu shows the origin to the user. To use step 2 of the sequence, zafu must also compare the domain with the page.
+        challenge from the app as raw bytes. zafu does not add the origin to these bytes. The app can put its domain
+        in these bytes. zafu does not read that domain. Thus, zafu does not compare a domain with the host of the page
+        (step 2 of the sequence). zafu shows the origin to the user at the first login to a site. After that login,
+        zafu signs for that site with no prompt for 30 days, while zafu is unlocked. The user can stop this for each
+        site. For a site in cross-site mode, zafu asks the user each time.
       </p>
       <p>
         If the app puts a nonce and an expiry time in the challenge, the app can refuse an old signature (a replay).
@@ -176,7 +181,9 @@ id_pk   the public key of the user at this app</code></pre>
       <p>
         The calculation above is for generation 0 and for the first key of each site. The user can change to a new
         generation N. Then the name in <code>id</code> is <code>default-vN</code>. The user can also change to a new
-        key N for one site. Then the tag is <code>"site:" + origin + ":" + N</code>. zafu keeps a counter for the
+        key N for one site. Then the tag is <code>"site:" + origin + ":" + N</code>. An origin with a port, for
+        example <code>http://localhost:3000</code>, has the tag <code>"site\0" + origin + "\0" + N</code>, where
+        <code>\0</code> is a zero byte. N is in this tag for the first key too (N = 0). zafu keeps a counter for the
         generation and a counter for each site. These counters are in the storage of the browser extension, separate
         from the seed phrase. Thus, after a restore from the seed phrase, the user must also give the counter values to
         the wallet. The salt and the tags are specific to zafu. A different wallet must use the same calculation and
