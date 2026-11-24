@@ -262,7 +262,8 @@
       </p>
       <p>
         The recovery is a trust point. With a recovery, the service can also cut off correct records. Each recovery
-        is on the chain and has a block time. Thus, a verifier sees a late recovery and the records that it cuts off.
+        is on the chain and has a block time. Thus, a verifier sees a late recovery and the records after the last
+        correct record.
       </p>
 
       <h2 id="cost">Cost</h2>
@@ -501,7 +502,8 @@ text       the text, for a memo with a text hash</code></pre>
           recovery record to an older chain. It stops at the chain of the receipt.
         </li>
         <li>
-          In an older chain, the record of the receipt must be the last correct record or an earlier record.
+          In an older chain, the verifier compares record numbers. The record of the receipt must have the number of
+          the last correct record or a smaller number.
         </li>
         <li>The verifier reads the time of the block of the record transaction.</li>
         <li>
