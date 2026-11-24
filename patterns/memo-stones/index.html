@@ -309,23 +309,28 @@
       </div>
       <ul>
         <li>
-          <strong>Refusal.</strong> The service can ignore a payment and still send a valid record. The author sees
-          the refusal: after the maximum delay, the leaf is absent from the leaf lists. To show the payment to other
-          persons, the author needs a payment disclosure (<a href="https://zips.z.cash/zip-0311">ZIP 311</a>, draft).
+          <strong>Refusal.</strong> The service can ignore a payment and still send a valid record.
+          After the maximum delay, the author can find a refusal if all relevant leaf lists are available and verified.
+          With a missing list, inclusion stays unknown. To show the payment to other persons, the author needs a payment disclosure
+          (<a href="https://zips.z.cash/zip-0311">ZIP 311</a>, draft).
         </li>
         <li>
           <strong>Selection.</strong> With a text hash in the memo, the reader sees the topic and the amount only.
           Thus, the reader can select payments to ignore by topic only. An author can tell the service the leaf of
-          a memo. Then the service can keep that leaf and ignore the others. For sealed bids, each author must find
-          the leaf in the leaf list before the bids are shown.
+          a memo. Thus, the service can keep that leaf and ignore the others.
+          For sealed bids, each author must use the <a href="#receipt">Receipt</a> steps to verify a receipt.
+          The authors must do this before they show their bids.
         </li>
         <li>
           <strong>Enclave.</strong> As an option, the service can run the reader and the writer in a trusted execution
           environment (TEE). Then the enclave code adds each leaf. These conditions are necessary:
           <ul>
-            <li>The enclave publishes an attestation. Anyone can compare its code hash with the published source.</li>
+            <li>The enclave sends an attestation. The verifier checks its authenticity.
+              The verifier calculates the code hash from a reproducible build of the published source.
+              The code hash must be the same as the hash in the attestation.</li>
             <li>The enclave examines the block headers and the chain tip. Thus, the operator cannot hide a payment.</li>
-            <li>The writer key stays in the enclave. Only an attested enclave sends a recovery record 0.</li>
+            <li>The writer key stays in the enclave. The writer public key must be in the verified attestation.
+              For this option, the verifier checks this key against record 0 and each recovery record 0.</li>
           </ul>
           The verifier then trusts the maker of the chip. Attacks on TEEs are known. Thus, an enclave decreases the
           risk, and a payment disclosure stays necessary.
