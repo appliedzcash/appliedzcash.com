@@ -310,38 +310,22 @@
       <ul>
         <li>
           <strong>Refusal.</strong> The service can ignore a payment and still send a valid record. The author sees
-          the refusal after the maximum delay: a leaf list is absent, or the leaf is absent from the leaf lists. To
-          show the payment to other
+          the refusal: after the maximum delay, the leaf is absent from the leaf lists. To show the payment to other
           persons, the author needs a payment disclosure (<a href="https://zips.z.cash/zip-0311">ZIP 311</a>, draft).
         </li>
         <li>
-          <strong>Selection.</strong> The reader sees the full memo and the amount of each payment. With a text hash
-          in the memo, the reader cannot read the text. Thus, the reader can select payments to ignore by the topic,
-          the amount and the time. An author can tell the service the leaf of a memo. Thus, the service can keep
-          that leaf and ignore the others. For sealed bids, each author must make a receipt and examine it with the
-          <a href="#receipt">verifier steps</a>. The authors show the bids after this examination.
+          <strong>Selection.</strong> With a text hash in the memo, the reader sees the topic and the amount only.
+          Thus, the reader can select payments to ignore by topic only. An author can tell the service the leaf of
+          a memo. Then the service can keep that leaf and ignore the others. For sealed bids, each author must find
+          the leaf in the leaf list before the bids are shown.
         </li>
         <li>
           <strong>Enclave.</strong> As an option, the service can run the reader and the writer in a trusted execution
           environment (TEE). Then the enclave code adds each leaf. These conditions are necessary:
           <ul>
-            <li>
-              The enclave makes the writer key, and the key stays in the enclave. The enclave publishes an
-              attestation. The attestation contains the measurement of the enclave code and the writer public key.
-            </li>
-            <li>
-              Anyone can make a reproducible build of the published source. A verifier compares the measurement of
-              that build with the measurement in the attestation.
-            </li>
-            <li>
-              A verifier examines the attestation for record 0 and for each recovery record 0. Thus, the operator
-              cannot use a recovery to change the writer key.
-            </li>
-            <li>
-              The enclave examines full blocks. It gets the chain tip from sources that are independent of the
-              operator. The operator can hold back block data. Then the enclave sends no records, and the authors see
-              the delay.
-            </li>
+            <li>The enclave publishes an attestation. Anyone can compare its code hash with the published source.</li>
+            <li>The enclave examines the block headers and the chain tip. Thus, the operator cannot hide a payment.</li>
+            <li>The writer key stays in the enclave. Only an attested enclave sends a recovery record 0.</li>
           </ul>
           The verifier then trusts the maker of the chip. Attacks on TEEs are known. Thus, an enclave decreases the
           risk, and a payment disclosure stays necessary.
@@ -481,8 +465,7 @@ output 1  the change, to the record address of the service</code></pre>
       <p>
         The service publishes a maximum delay, as a number of blocks. For each payment with a valid memo and amount,
         a record must contain the leaf. The block of that record is not more than the maximum delay after the block of
-        the payment. The service publishes the leaf list of that record before the end of the same delay. Thus, at a
-        known block, the author has a receipt or sees a refusal.
+        the payment. Thus, an author can see a refusal at a known block.
       </p>
       <p>
         Each record after record 0 has one leaf or more. For a period with no new leaves, the writer sends no
