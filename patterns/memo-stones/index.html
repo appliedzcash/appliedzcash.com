@@ -317,8 +317,9 @@
         <li>
           <strong>Selection.</strong> With a text hash in the memo, the reader sees the topic and the amount only.
           Thus, the reader can select payments to ignore by topic only. An author can tell the service the leaf of
-          a memo. Then the service can keep that leaf and ignore the others. For sealed bids, each author must find
-          the leaf in the leaf list before the bids are shown.
+          a memo. Thus, the service can keep that leaf and ignore the others.
+          For sealed bids, each author must use the <a href="#receipt">Receipt</a> steps to verify a receipt.
+          The authors must do this before they show their bids.
         </li>
         <li>
           <strong>Enclave.</strong> As an option, the service can run the reader and the writer in a trusted execution
