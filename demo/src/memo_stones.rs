@@ -232,14 +232,19 @@ pub fn stone_memo(topic: &str, salt: &str, body: &str) -> Result<StoneMemo, JsEr
     Ok(StoneMemo { memo, leaf })
 }
 
-/// Makes record `number` from the leaves of a period. Record 0 has no leaves and a root of
-/// 32 zero bytes. Each later record has one leaf or more.
+/// Makes record `number` from the leaves of a period. Each record after record 0 has one
+/// leaf or more.
 #[wasm_bindgen]
 pub fn stone_record(number: u32, leaves: Vec<String>) -> Result<StoneRecord, JsError> {
-    build_record(number, &leaves).map_err(|error| JsError::new(&error))
+    build_record(number, &leaves, None).map_err(|error| JsError::new(&error))
 }
 
-fn build_record(number: u32, leaves: &[String]) -> Result<StoneRecord, String> {
+/// Record 0 has no leaves, and it has two forms. The first record 0 of a service has a root
+/// of 32 zero bytes: `last` is `None`. A recovery record 0 starts a new chain after a
+/// compromise of the writer key: `last` is the ID of the last correct record transaction of
+/// the old chain. Its root field contains that ID in the byte order of a transaction input,
+/// which is the opposite of the order of the hexadecimal characters.
+fn build_record(number: u32, leaves: &[String], last: Option<&str>) -> Result<StoneRecord, String> {
     let sorted = sorted_leaves(leaves)?;
     if number == 0 && !sorted.is_empty() {
         return Err("Record 0 must have no leaves.".into());
@@ -247,9 +252,23 @@ fn build_record(number: u32, leaves: &[String]) -> Result<StoneRecord, String> {
     if number > 0 && sorted.is_empty() {
         return Err("A record after record 0 must have one leaf or more.".into());
     }
+    if number > 0 && last.is_some() {
+        return Err("Only record 0 can be a recovery record.".into());
+    }
     let count = sorted.len() as u16;
     let tree = levels(sorted);
-    let root = tree.last().expect("one level or more").first().copied().unwrap_or([0; 32]);
+    let root = match (tree.last().expect("one level or more").first(), last) {
+        (Some(root), _) => *root,
+        (None, None) => [0; 32],
+        (None, Some(txid)) => {
+            let mut bytes = decode32(txid)?;
+            if bytes == [0; 32] {
+                return Err("The transaction ID of the last correct record must not be zero.".into());
+            }
+            bytes.reverse();
+            bytes
+        }
+    };
     Ok(StoneRecord {
         leaves: tree[0].iter().map(hex::encode).collect(),
         root: hex::encode(root),
@@ -338,7 +357,7 @@ mod tests {
             (5, "f14ab0ffc24a1102bd0db2df7b49d4b2f1415b4598563bc3c746211dcc5fe02f"),
         ];
         for (count, root) in roots {
-            let record = build_record(7, &leaves(count)).unwrap();
+            let record = build_record(7, &leaves(count), None).unwrap();
             assert_eq!(record.root, root, "{count} leaves");
             assert_eq!(record.record, format!("4d5354310100000007{count:04x}{root}"));
         }
@@ -355,7 +374,7 @@ mod tests {
     fn each_receipt_is_correct() {
         for count in 1..=5 {
             let all = leaves(count);
-            let record = build_record(1, &all).unwrap();
+            let record = build_record(1, &all, None).unwrap();
             for (i, leaf) in all.iter().enumerate() {
                 let path = find_path(&all, leaf).unwrap();
                 let check = check_receipt(&memo(i), &path, &record.record).unwrap();
@@ -369,7 +388,7 @@ mod tests {
     #[test]
     fn a_changed_receipt_fails() {
         let all = leaves(3);
-        let record = build_record(7, &all).unwrap();
+        let record = build_record(7, &all, None).unwrap();
         let path = find_path(&all, &all[0]).unwrap();
 
         let changed_text = memo(0).replace("lemma 12", "lemma 13");
@@ -381,7 +400,7 @@ mod tests {
         let other_path = vec!["00".repeat(32)];
         assert!(!check_receipt(&memo(0), &other_path, &record.record).unwrap().equal);
 
-        let other_record = build_record(8, &leaves(2)).unwrap();
+        let other_record = build_record(8, &leaves(2), None).unwrap();
         assert!(!check_receipt(&memo(0), &path, &other_record.record).unwrap().equal);
     }
 
@@ -432,9 +451,9 @@ mod tests {
         let all = leaves(3);
         let mut period = all.clone();
         period.push(all[1].clone());
-        let record = build_record(7, &period).unwrap();
+        let record = build_record(7, &period, None).unwrap();
         assert_eq!(record.leaves.len(), 3);
-        assert_eq!(record.record, build_record(7, &all).unwrap().record);
+        assert_eq!(record.record, build_record(7, &all, None).unwrap().record);
         for (i, leaf) in all.iter().enumerate() {
             let path = find_path(&period, leaf).unwrap();
             assert!(check_receipt(&memo(i), &path, &record.record).unwrap().equal);
@@ -443,16 +462,34 @@ mod tests {
 
     #[test]
     fn record_0_has_no_leaves() {
-        let record = build_record(0, &[]).unwrap();
+        let record = build_record(0, &[], None).unwrap();
         assert_eq!(record.record, format!("4d53543101{}", "00".repeat(38)));
         assert_eq!(read_record(&record.record).unwrap(), (0, 0, [0; 32]));
-        assert!(build_record(0, &leaves(1)).is_err());
-        assert!(build_record(1, &[]).is_err());
+        assert!(build_record(0, &leaves(1), None).is_err());
+        assert!(build_record(1, &[], None).is_err());
+    }
+
+    #[test]
+    fn recovery_record_0_has_the_last_correct_txid() {
+        // The ID as explorers show it: 00 01 ... 1f. In a transaction input, and in the root
+        // field, the bytes are in the opposite order: 1f ... 01 00.
+        let txid = hex::encode((0u8..32).collect::<Vec<_>>());
+        let record = build_record(0, &[], Some(&txid)).unwrap();
+        let root = hex::encode((0u8..32).rev().collect::<Vec<_>>());
+        assert_eq!(record.root, root);
+        assert_eq!(record.record, format!("4d53543101000000000000{root}"));
+        let (number, count, bytes) = read_record(&record.record).unwrap();
+        assert_eq!((number, count), (0, 0));
+        assert_eq!(hex::encode(bytes.iter().rev().copied().collect::<Vec<_>>()), txid);
+
+        assert!(build_record(0, &[], Some(&"00".repeat(32))).is_err());
+        assert!(build_record(0, &[], Some("abcd")).is_err());
+        assert!(build_record(1, &leaves(1), Some(&txid)).is_err());
     }
 
     #[test]
     fn bad_records_fail() {
-        assert!(build_record(1, &["00".repeat(31)]).is_err());
+        assert!(build_record(1, &["00".repeat(31)], None).is_err());
         assert!(read_record(&"00".repeat(43)).is_err());
         assert!(read_record("4d53543101").is_err());
     }

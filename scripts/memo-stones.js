@@ -69,6 +69,7 @@ try {
     let memo, txid, path, text, text_salt;
     try {
       ({ memo, txid, path, text, text_salt } = JSON.parse(receiptInput.value));
+      if (!Array.isArray(path)) throw new Error("format");
       const strings = [memo, txid, ...path];
       const disclosure = [text, text_salt].filter((value) => value !== undefined);
       if (strings.some((value) => typeof value !== "string") || disclosure.some((value) => typeof value !== "string")) {

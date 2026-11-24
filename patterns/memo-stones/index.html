@@ -187,7 +187,11 @@
       </p>
       <p>
         The service publishes the transaction ID of record 0. Thus, the writer cannot make a second history from
-        record 0, and it cannot remove a record. A verifier examines the chain: see <a href="#receipt">Receipt</a>.
+        record 0. A verifier examines the chain: see <a href="#receipt">Receipt</a>.
+      </p>
+      <p>
+        The service can cut off records only with a recovery. A recovery is a public record with a block time: see
+        <a href="#keys">Keys</a>.
       </p>
 
       <h3 id="other-designs">Other designs</h3>
@@ -252,9 +256,13 @@
         </li>
       </ul>
       <p>
-        To recover, the service publishes the ID of the last correct record transaction. It makes a new writer key
-        and a new record 0, and publishes the new ID. Verifiers then refuse the later records of the old chain. The
-        receipts of the earlier records stay valid.
+        To recover, the service makes a new writer key and sends a recovery record 0. This record contains the ID
+        of the last correct record transaction of the old chain. The service publishes the ID of the recovery record.
+        Verifiers then refuse the later records of the old chain. The receipts of the earlier records stay valid.
+      </p>
+      <p>
+        The recovery is a trust point. With a recovery, the service can also cut off correct records. Each recovery
+        is on the chain and has a block time. Thus, a verifier sees a late recovery and the records that it cuts off.
       </p>
 
       <h2 id="cost">Cost</h2>
@@ -433,8 +441,14 @@ output 1  the change, to the record address of the service</code></pre>
         publishes the transaction ID of record 0.
       </p>
       <p>
-        Record 0 has a leaf count of 0 and a root of 32 zero bytes. Each later record has one leaf or more. For a
-        period with no new leaves, the writer sends no record.
+        Each record after record 0 has one leaf or more. For a period with no new leaves, the writer sends no
+        record. Record 0 has a leaf count of 0. It has two forms:
+      </p>
+      <pre><code>first record 0     root = 32 zero bytes
+recovery record 0  root = the ID of the last correct record transaction of the old chain</code></pre>
+      <p>
+        The ID in the root field has the byte order of a transaction input. This order is the opposite of the order
+        that a block explorer shows. Input 0 of a record 0 has no rule.
       </p>
 
       <h3 id="leaf-list">Leaf list</h3>
@@ -460,7 +474,7 @@ text       the text, for a memo with a text hash</code></pre>
           Output 0 has the value 0. Its script is <code>0x6a</code>, <code>0x2b</code> and a record of 43 bytes with
           the tag <code>MST1</code> and version 1.
         </li>
-        <li>Record 0 has a leaf count of 0 and a root of 32 zero bytes. Each later record has one leaf or more.</li>
+        <li>Record 0 has a leaf count of 0. Each later record has one leaf or more.</li>
       </ul>
       <p>A verifier examines a receipt in these steps:</p>
       <ol>
@@ -476,8 +490,18 @@ text       the text, for a memo with a text hash</code></pre>
           must be its output 1. Its record number must be smaller by 1.
         </li>
         <li>
-          The verifier does step 5 again for each record, back to record 0. The ID of record 0 must be the ID that the
-          service published.
+          The verifier does step 5 again for each record, back to record 0 of that chain.
+        </li>
+        <li>
+          The verifier compares the ID of that record 0 with the ID that the service published. If they are equal, the
+          chain is the current chain.
+        </li>
+        <li>
+          If they are different, the verifier starts at the published record 0. It follows the root field of each
+          recovery record to an older chain. It stops at the chain of the receipt.
+        </li>
+        <li>
+          In an older chain, the record of the receipt must be the last correct record or an earlier record.
         </li>
         <li>The verifier reads the time of the block of the record transaction.</li>
         <li>
@@ -486,8 +510,8 @@ text       the text, for a memo with a text hash</code></pre>
         </li>
       </ol>
       <p>
-        If one step fails, the receipt is invalid. After a recovery, the verifier also refuses a record later than
-        the last correct record of the old chain.
+        If one step fails, the receipt is invalid. In step 8, the verifier also examines each last correct record
+        as in steps 4 to 6.
       </p>
 
       <h2 id="demo">Demo: research claims</h2>
@@ -516,7 +540,7 @@ record  number 7, with your leaf and 3 fixed leaves</code></pre>
         <p class="notice-title">Caution</p>
         <p>
           The service address is a Testnet address. Its key is in the public source of this site. The demo has no
-          reader and no writer. Thus, a payment to the link gets no record.
+          reader and no writer. Thus, a payment to the link has no record.
         </p>
       </div>
 
