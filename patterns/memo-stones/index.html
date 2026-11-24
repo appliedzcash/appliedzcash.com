@@ -41,8 +41,8 @@
         puts it in a public record. The author keeps a receipt.
       </p>
       <p>
-        With the receipt, anyone can find the memo in the record. The sender stays secret. The text stays secret
-        until the author shows the receipt.
+        With the receipt, anyone can find the memo in the record. The sender stays secret. The memo contains a hash
+        of the text. Thus, the text stays secret until the author shows it.
       </p>
       <div class="notice warning">
         <p class="notice-title">Warning</p>
@@ -53,17 +53,21 @@
 
       <h2 id="problem">Problem</h2>
       <p>
-        An app must show in public that it received a message at a time. The sender and the text must stay secret.
+        A service must show in public that it received a text at a time. The sender and the text must stay secret.
         Examples are a research result of an agent, a sealed bid, and a report from an employee.
       </p>
       <p>
-        Only the recipient of a shielded payment can read its memo. Thus, outsiders cannot see that the app received
-        the memo. A public post shows the text to all persons.
+        Only the recipient of a shielded payment can read its memo. Thus, outsiders cannot see that the service
+        received the memo. In a public post, all persons can read the text.
       </p>
       <p>
         One use is a retrospective grant for proof of agentic work. A lab records a claim of each result of its agents
-        at the time of the work. Later, the lab shows the receipts to a funder as evidence. The transparent chain
-        gives the time of each claim.
+        at the time of the work. Later, the lab shows the receipts to a funder as evidence. The time of each claim
+        is in the transparent chain.
+      </p>
+      <p>
+        The funder sees that each text existed at the time of its record. The funder does not see who did the work: a
+        receipt has no name of an author. To show the author, the lab can put a signature of a known key in the text.
       </p>
 
       <h3 id="use">When to use this pattern</h3>
@@ -88,11 +92,18 @@
         <dt>Author</dt>
         <dd>A person or an agent with a shielded wallet. The author writes the text.</dd>
         <dt>App</dt>
-        <dd>A web page. It writes the memo and the payment link. It keeps the receipt in the browser.</dd>
+        <dd>
+          A web page of the author. It calculates the text hash, and writes the memo and the payment link. It keeps
+          the receipt in the browser.
+        </dd>
+        <dt>Service</dt>
+        <dd>The operator of the reader and the writer.</dd>
         <dt>Reader</dt>
         <dd>A server with the incoming viewing key of the service. It finds payments and reads memos.</dd>
         <dt>Writer</dt>
         <dd>A server with one transparent key. It sends the record transactions.</dd>
+        <dt>Text hash</dt>
+        <dd>The hash of the text and a random text salt. It is the body of the memo.</dd>
         <dt>Leaf</dt>
         <dd>The hash of one memo. The memo contains a random salt.</dd>
         <dt>Stone</dt>
@@ -100,13 +111,13 @@
         <dt>Record</dt>
         <dd>One stone in a transparent <code>OP_RETURN</code>, with a record number and a leaf count.</dd>
         <dt>Receipt</dt>
-        <dd>The memo, the record transaction, and the path from the leaf to the stone.</dd>
+        <dd>The memo, the ID of the record transaction, and the path from the leaf to the stone.</dd>
       </dl>
 
       <figure class="diagram">
         <svg viewBox="0 0 480 302" role="img" aria-labelledby="fig-stones-title fig-stones-desc">
           <title id="fig-stones-title">The sequence from a salt to a stone</title>
-          <desc id="fig-stones-desc">1: The app of the author sends a shielded payment with the memo to the reader. 2: The reader gives the leaf to the writer. 3: The writer sends a record with the Merkle root, the stone, to the chain. 4: The writer publishes the leaf list. 5: The app makes the receipt.</desc>
+          <desc id="fig-stones-desc">1: The author sends a shielded payment with the memo to the reader. 2: The reader gives the leaf to the writer. 3: The writer sends a record with the Merkle root, the stone, to the chain. 4: The writer publishes the leaf list. 5: The app of the author makes the receipt.</desc>
           <defs><marker id="fig-stones-arrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 8 4 0 8z" /></marker></defs>
           <path class="life" d="M70 40V294" />
           <path class="life" d="M190 40V294" />
@@ -119,7 +130,7 @@
             <path d="M306 216H72" />
           </g>
           <rect class="v" x="24" y="10" width="92" height="30" rx="7" />
-          <text x="70" y="25">app</text>
+          <text x="70" y="25">author</text>
           <rect class="v" x="144" y="10" width="92" height="30" rx="7" />
           <text x="190" y="25">reader</text>
           <rect class="v" x="264" y="10" width="92" height="30" rx="7" />
@@ -142,12 +153,13 @@
       </figure>
       <ol>
         <li>
-          The app writes the memo from a topic, a random salt and the text. It shows a ZIP 321 payment link, and the
-          author pays it from a shielded wallet.
+          The app calculates the text hash from the text and a random text salt. It writes the memo from a topic, a
+          random salt and the text hash. It shows a ZIP 321 payment link, and the author pays it from a shielded
+          wallet.
         </li>
         <li>
-          The reader finds the payment and examines the memo and the amount. It gives the leaf to the writer. The
-          writer does not receive the memo.
+          The reader finds the payment and examines the memo and the amount. It calculates the leaf and gives it to
+          the writer. The writer does not receive the memo.
         </li>
         <li>
           At the end of each period, the writer calculates the root of the new leaves: the stone. It sends one
@@ -163,43 +175,86 @@
         The service sends no reply payment. The app uses public data only for steps 4 and 5. Thus, the author needs no
         account at the service.
       </p>
+      <p>
+        As an option, the app puts the text in the memo as the body. Then the service can read the text. See
+        <a href="#limits">Limits</a>.
+      </p>
 
       <h3 id="record-chain">Record chain</h3>
       <p>
-        Each record transaction spends one output of the record before it. Nodes accept each spend of an output one
-        time only. Thus, the records are one chain. The writer cannot make a second history, and it cannot remove a
-        record.
+        Input 0 of each record transaction is output 1 of the record transaction before it. Nodes accept each spend
+        of an output one time only. Thus, each record has one next record at most.
       </p>
       <p>
-        <a href="../bound-notes/">Bound notes</a> give the same property in a shielded pool. This pattern uses the
-        transparent pool, so a usual transparent wallet library is sufficient for the writer.
-      </p>
-      <p>
-        <a href="../verified-address/">Verified address</a> writes one salted hash in one bound note, for one user. This
-        pattern writes one root for the memos of many authors.
+        The service publishes the transaction ID of record 0. Thus, the writer cannot make a second history from
+        record 0, and it cannot remove a record. A verifier examines the chain: see <a href="#receipt">Receipt</a>.
       </p>
 
-      <h3 id="what-the-receipt-shows">What the receipt shows</h3>
+      <h3 id="other-designs">Other designs</h3>
+      <p>
+        A Merkle root of hashes in an <code>OP_RETURN</code> is the design of
+        <a href="https://opentimestamps.org/">OpenTimestamps</a>. There, a client sends each hash to a calendar
+        server through a web API. In this pattern, the author sends the hash in a shielded payment. With the
+        shielded payment, the pattern has these properties:
+      </p>
       <ul>
-        <li>The stone of the record contains this exact text, with this topic.</li>
-        <li>The service wrote the record, and the record has one place in the record chain.</li>
-        <li>The text existed at the time of the block.</li>
+        <li>The service needs no web API and no accounts. Its payment address is the full interface.</li>
+        <li>The service does not see a network address or an account of the author.</li>
+        <li>The author pays the service for each memo. Thus, a sender of many false memos has a cost.</li>
       </ul>
       <p>
-        The receipt does not show the name of the author. Each holder of the memo can show the receipt.
+        <a href="../bound-notes/">Bound notes</a> have the property of one history in a shielded pool. A service can
+        put the stone in a bound note. Then a verifier needs the revealed fields of each record.
       </p>
       <p>
-        The salt has 256 bits. Thus, outsiders cannot find the text of a leaf by guesses.
+        The records of this pattern are in the transparent pool. Thus, anyone can read each record and the time of
+        its block with no key and no disclosure. A usual transparent wallet library is sufficient for the writer.
+      </p>
+      <p>
+        In <a href="../verified-address/">Verified address</a>, a server writes one salted hash in one bound note, for
+        one user. In this pattern, the writer puts one root for the memos of many authors in each record.
+      </p>
+
+      <h3 id="receipt-facts">What a verifier knows from a receipt</h3>
+      <ul>
+        <li>The stone of the record contains this exact memo, with this topic.</li>
+        <li>The service wrote the record, and the record has one place in the record chain.</li>
+        <li>The memo existed at the time of the block.</li>
+        <li>With the text and the text salt: the memo contains the hash of this exact text.</li>
+      </ul>
+      <p>
+        A receipt has no name of an author. Each holder of a receipt can show it. Thus, a receipt is good evidence
+        that a text existed at a time. It is weak evidence of who wrote the text.
+      </p>
+      <p>
+        The salt and the text salt have 256 bits each. Thus, outsiders cannot find the memo of a leaf by guesses. The
+        service cannot find the text of a text hash by guesses.
       </p>
 
       <h3 id="keys">Keys</h3>
       <p>
-        The reader has the incoming viewing key only. The writer has one transparent key with funds for the fees only.
-        The spending key of the service stays offline. See <a href="../../basics/watch-only-keys/">Watch-only keys</a>.
+        The reader has the incoming viewing key only. The writer has one transparent key. The funds for the fees and
+        output 1 of the last record are under that key. The spending key of the service stays offline. See
+        <a href="../../basics/watch-only-keys/">Watch-only keys</a>.
       </p>
       <p>
-        A person who breaks into the reader gets the memos, and gets no funds. A person who breaks into the writer gets
-        the fee funds, and gets no memos.
+        A person who breaks into the reader gets the memos, and gets no funds. A person who breaks into the writer
+        gets no memos. That person gets the fee funds and the control of the record chain. There are two risks:
+      </p>
+      <ul>
+        <li>
+          That person can send records with leaves of any value. Verifiers then accept them as records of the
+          service.
+        </li>
+        <li>
+          That person can spend output 1 of the last record in a different transaction. Then the record chain has no
+          next record.
+        </li>
+      </ul>
+      <p>
+        To recover, the service publishes the ID of the last correct record transaction. It makes a new writer key
+        and a new record 0, and publishes the new ID. Verifiers then refuse the later records of the old chain. The
+        receipts of the earlier records stay valid.
       </p>
 
       <h2 id="cost">Cost</h2>
@@ -214,12 +269,12 @@
           2009 fee rule, the fee is 3,000 zatoshis.
         </li>
         <li>
-          <strong>Wallets</strong> A record transaction has no shielded actions. Thus, a record adds no trial
-          decryption to other wallets. See <a href="../polite-actions/">Polite actions</a>.
+          <strong>Wallets</strong> A record transaction has no shielded actions. Thus, other wallets do no trial
+          decryption for a record. See <a href="../polite-actions/">Polite actions</a>.
         </li>
         <li>
-          <strong>Receipt</strong> The memo and one hash of 32 bytes for each level of the tree. A record of 1,000
-          leaves has 10 levels.
+          <strong>Receipt</strong> The memo and the path. A path in a record of n leaves has ⌈log₂ n⌉ hashes or
+          fewer, of 32 bytes each. For 1,000 leaves, a path has 10 hashes or fewer.
         </li>
         <li>
           <strong>Relay</strong> The <code>OP_RETURN</code> script of a record is 45 bytes. Nodes relay an
@@ -234,8 +289,9 @@
       <div class="notice warning">
         <p class="notice-title">Warning</p>
         <p>
-          The reader sees each memo and each salt. The text is secret from outsiders only. For a text that must stay
-          secret from the service, put a hash of the text in the memo.
+          With a text hash in the memo, the reader sees the topic and a hash only. With the text in the memo, the
+          reader sees the text and the salt. Then the service can show each recorded text as its own. Put the text in
+          the memo only if the service can read it safely.
         </p>
       </div>
       <ul>
@@ -249,8 +305,8 @@
           an invalid memo. The app must examine the memo and the amount before it shows the link.
         </li>
         <li>
-          <strong>Timing.</strong> A record a short time after a payment shows a possible link between the two. A
-          longer period with more leaves makes the link weaker.
+          <strong>Timing.</strong> A record a short time after a payment is a possible link between the two. With a
+          longer period and more leaves, the link is weaker.
         </li>
         <li>
           <strong>Leaf list.</strong> The leaf list is off the chain. If the service holds back a list, the authors
@@ -261,29 +317,35 @@
           number of real memos.
         </li>
         <li>
-          <strong>Copies.</strong> The reader refuses a leaf that is already in a record. Thus, a copy of a shown memo
-          gives no second leaf.
+          <strong>Copies.</strong> The reader drops a leaf that is equal to a leaf of the open period or of a record.
+          Thus, the record has no second leaf for a second payment with the same memo.
         </li>
         <li>
           <strong>Reorganization.</strong> The reader must wait for confirmations before it accepts a payment.
         </li>
         <li>
-          <strong>Disclosure.</strong> A shown receipt stays public. It shows the topic and the text of one leaf.
+          <strong>Disclosure.</strong> A shown receipt stays public. It contains the topic of one leaf, and the text
+          if the author shows it.
         </li>
         <li>
-          <strong>Truth.</strong> A receipt shows that the service recorded a text at a time. It does not show that
-          the text is true.
+          <strong>Truth.</strong> A receipt is evidence that the service recorded a text at a time. It is no evidence
+          that the text is true.
         </li>
         <li>
-          <strong>Public data.</strong> The records show the number of leaves of each period and the time of each
-          record. Thus, outsiders see how much the service is used.
+          <strong>Public data.</strong> The number of leaves of each period and the time of each record are public.
+          Thus, outsiders see how much the service is used.
         </li>
         <li>
           <strong>Transparent funds.</strong> The fee funds of the writer are public, and so is their source. Use
           funds with no link to other addresses of the service.
         </li>
         <li>
-          <strong>Chain data.</strong> Each record stays on the chain. A longer period makes fewer records.
+          <strong>Writer key.</strong> A person with the writer key can send false records or stop the record chain.
+          See <a href="#keys">Keys</a>.
+        </li>
+        <li>
+          <strong>Chain data.</strong> Each record stays on the chain. With a longer period, the chain has fewer
+          records.
         </li>
       </ul>
 
@@ -295,19 +357,28 @@
       </p>
 
       <h3 id="memo">Memo</h3>
-      <pre><code>memo = "DO NOT MODIFY:{ms1/" topic "," salt "}" LF text
+      <pre><code>memo = "DO NOT MODIFY:{ms1/" topic "," salt "}" LF body
 
 topic  1 to 32 characters: a to z, 0 to 9 and the hyphen
 salt   64 hexadecimal characters in lowercase
 LF     one line feed (0x0A)
-text   the text of the author, 1 byte or more</code></pre>
+body   the text hash as 64 hexadecimal characters in lowercase, or the text
+text   UTF-8, 1 byte or more, without the character U+0000</code></pre>
       <p>
         The wallet shows the memo before it sends the payment. The first words are an instruction for the author. The
-        header is 118 bytes at most. Thus, the text has 394 bytes at least.
+        header is 118 bytes at most. Thus, 394 bytes or more are free for the body.
       </p>
       <p>
-        The reader accepts this format only. It refuses a different prefix, a second comma in the braces, and an empty
-        text.
+        The reader accepts this format only. It refuses a different prefix, a second comma in the braces, an empty
+        body, and a body with U+0000. The reader removes the zero padding at the end of a memo. Thus, a text with
+        U+0000 at its end has no correct leaf.
+      </p>
+
+      <h3 id="text-hash">Text hash</h3>
+      <pre class="formula"><code>text hash = BLAKE2b-256("MemoStones__Text", text salt ‖ text)</code></pre>
+      <p>
+        The text salt is 32 random bytes. The app makes it and keeps it with the text. With a text hash, the length
+        of the text has no limit.
       </p>
 
       <h3 id="leaf-and-root">Leaf and root</h3>
@@ -317,8 +388,15 @@ node = BLAKE2b-256("MemoStones__Node", min(a, b) ‖ max(a, b))</code></pre>
         The input of the leaf hash is the memo bytes without the zero padding. The 16 characters in quotation marks
         are the BLAKE2b personalization. The two values are different, so a leaf is never valid as a node.
       </p>
+      <p>
+        The writer compares two hashes as raw bytes, in lexicographic sequence. This rule is for the sequence of
+        the leaves and for <code>min</code> and <code>max</code>.
+      </p>
       <ol>
-        <li>The writer puts the leaves in sequence, from the smallest value to the largest.</li>
+        <li>
+          The writer drops each copy of a leaf. It puts the leaves in sequence, from the smallest value to the
+          largest.
+        </li>
         <li>The writer calculates one node from each pair of leaves, from the left. An odd last leaf goes up unchanged.</li>
         <li>The writer does step 2 again with the nodes, until one node stays. This node is the root: the stone.</li>
       </ol>
@@ -338,6 +416,10 @@ node = BLAKE2b-256("MemoStones__Node", min(a, b) ‖ max(a, b))</code></pre>
       </ol>
       <p class="bytes-total">Total: 43 bytes</p>
       <p>
+        The script of the output is 45 bytes: <code>0x6a</code> (<code>OP_RETURN</code>), <code>0x2b</code> (a push of
+        43 bytes) and the record.
+      </p>
+      <p>
         The version is 1. The record number and the leaf count are big-endian. The first record has the number 0.
         Each later record has the number of the record before it, plus 1. The time of a record is the time of its
         block.
@@ -347,8 +429,12 @@ node = BLAKE2b-256("MemoStones__Node", min(a, b) ‖ max(a, b))</code></pre>
 output 0  the OP_RETURN with the record, value 0
 output 1  the change, to the record address of the service</code></pre>
       <p>
-        The writer can add more inputs to pay the fees. The service publishes the transaction ID of record 0. Record 0
-        has a leaf count of 0 and a root of 32 zero bytes.
+        A record transaction has exactly two outputs. The writer can add more inputs to pay the fees. The service
+        publishes the transaction ID of record 0.
+      </p>
+      <p>
+        Record 0 has a leaf count of 0 and a root of 32 zero bytes. Each later record has one leaf or more. For a
+        period with no new leaves, the writer sends no record.
       </p>
 
       <h3 id="leaf-list">Leaf list</h3>
@@ -358,23 +444,56 @@ output 1  the change, to the record address of the service</code></pre>
       </p>
 
       <h3 id="receipt">Receipt</h3>
-      <pre><code>memo  the exact text of the memo
-txid  the ID of the record transaction
-path  the hashes from the leaf to the root</code></pre>
+      <pre><code>memo       the exact memo
+txid       the ID of the record transaction
+path       the hashes from the leaf to the root
+text_salt  the text salt, for a memo with a text hash
+text       the text, for a memo with a text hash</code></pre>
+      <p>
+        The author can show a receipt without the last two fields. Then the text stays secret.
+      </p>
+      <p>A valid record transaction has these properties:</p>
+      <ul>
+        <li>It is in a block with sufficient confirmations.</li>
+        <li>It has exactly two outputs.</li>
+        <li>
+          Output 0 has the value 0. Its script is <code>0x6a</code>, <code>0x2b</code> and a record of 43 bytes with
+          the tag <code>MST1</code> and version 1.
+        </li>
+        <li>Record 0 has a leaf count of 0 and a root of 32 zero bytes. Each later record has one leaf or more.</li>
+      </ul>
       <p>A verifier examines a receipt in these steps:</p>
       <ol>
         <li>The verifier examines the format of the memo.</li>
         <li>The verifier calculates the leaf from the memo.</li>
         <li>The verifier calculates the root from the leaf and the path.</li>
-        <li>The verifier gets the record transaction and compares the root with the root in output 0.</li>
-        <li>The verifier follows input 0 from record to record, back to record 0.</li>
+        <li>
+          The verifier gets the record transaction and makes sure that it is valid. It compares the root with the root
+          in output 0.
+        </li>
+        <li>
+          The verifier gets the transaction with the output of input 0, and makes sure that it is valid. Input 0
+          must be its output 1. Its record number must be smaller by 1.
+        </li>
+        <li>
+          The verifier does step 5 again for each record, back to record 0. The ID of record 0 must be the ID that the
+          service published.
+        </li>
         <li>The verifier reads the time of the block of the record transaction.</li>
+        <li>
+          If the receipt has a text, the verifier calculates the text hash. It compares the text hash with the body of
+          the memo.
+        </li>
       </ol>
+      <p>
+        If one step fails, the receipt is invalid. After a recovery, the verifier also refuses a record later than
+        the last correct record of the old chain.
+      </p>
 
       <h2 id="demo">Demo: research claims</h2>
       <p>
-        A lab uses agents for research. An agent sends a claim of each result in a memo. The record shows the time of
-        each claim, and the results stay secret. The lab discloses one result later, with its receipt.
+        A lab uses agents for research. An agent sends the hash of a claim of each result in a memo. Each claim has
+        the time of its record, and the results stay secret. The lab discloses one result later, with its receipt.
       </p>
       <p>These are the values of the toy record:</p>
       <figure class="code">
@@ -384,15 +503,20 @@ topic   research
 record  number 7, with your leaf and 3 fixed leaves</code></pre>
       </figure>
       <p>
-        The demo writes the memo and calculates the leaf. It makes the payment link, the record and the receipt. Then
-        it examines the receipt as a verifier does. The salt is a random value from your browser.
+        The demo calculates the text hash, writes the memo and calculates the leaf. It makes the payment link, the
+        record and the receipt. Then it examines the receipt as a verifier does. The two salts are random values from
+        your browser.
       </p>
-      <p>To see an incorrect receipt, change one character of the memo in the receipt box.</p>
+      <p>
+        The demo has no chain. The toy transaction ID is the SHA-256 hash of the record. The demo finds the record
+        of the ID in the receipt. It does not examine the record chain.
+      </p>
+      <p>To see an incorrect receipt, change one character of the memo or of the text in the receipt box.</p>
       <div class="notice caution">
         <p class="notice-title">Caution</p>
         <p>
           The service address is a Testnet address. Its key is in the public source of this site. The demo has no
-          reader and no writer, so a payment to the link makes no record.
+          reader and no writer. Thus, a payment to the link gets no record.
         </p>
       </div>
 
@@ -405,10 +529,14 @@ record  number 7, with your leaf and 3 fixed leaves</code></pre>
         <input id="topic-input" type="text" autocomplete="off" spellcheck="false" value="research" disabled />
         <label for="text-input">Text</label>
         <textarea id="text-input" rows="3" spellcheck="false" disabled>Agent A found a proof of lemma 12. Evidence: 9c41e07b.</textarea>
+        <fieldset class="signers">
+          <legend>Body of the memo</legend>
+          <label><input type="checkbox" id="plain-input" disabled /> Put the text in the memo. The service can read it.</label>
+        </fieldset>
         <label for="salt-input">Salt</label>
         <input id="salt-input" type="text" autocomplete="off" spellcheck="false" disabled />
         <div class="actions">
-          <button type="button" id="salt-button" disabled>Make a new salt</button>
+          <button type="button" id="salt-button" disabled>Make new salts</button>
         </div>
 
         <h3 id="demo-memo">Memo and payment link</h3>
@@ -420,7 +548,7 @@ record  number 7, with your leaf and 3 fixed leaves</code></pre>
 
         <h3 id="demo-receipt">Receipt</h3>
         <label for="receipt-input">The receipt of your memo</label>
-        <textarea id="receipt-input" rows="9" spellcheck="false" disabled></textarea>
+        <textarea id="receipt-input" rows="11" spellcheck="false" disabled></textarea>
         <div class="actions">
           <button type="button" id="receipt-button" class="secondary" disabled>Make the receipt again</button>
         </div>

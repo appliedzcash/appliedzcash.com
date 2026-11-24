@@ -22,7 +22,7 @@ pub use threshold::{threshold, Threshold};
 pub use verified_address::{verified_record, VerifiedRecord};
 pub use viewing_keys::{viewing_keys, ViewingKeys};
 pub use memo_stones::{
-    stone_check, stone_memo, stone_path, stone_record, StoneCheck, StoneMemo, StoneRecord,
+    stone_check, stone_memo, stone_path, stone_record, stone_text_hash, StoneCheck, StoneMemo, StoneRecord,
 };
 
 use orchard::keys::{FullViewingKey, SpendingKey};

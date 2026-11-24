@@ -1,8 +1,8 @@
 //! Memo stones: a toy record of research claims.
 //!
-//! A memo has a topic, a salt and a text. Its leaf is BLAKE2b-256 of the memo bytes. A
-//! service puts the Merkle root of the leaves of one record, the stone, in a transparent
-//! `OP_RETURN`.
+//! A memo has a topic, a salt and a body. The body is the hash of a text, or the text. The
+//! leaf of a memo is BLAKE2b-256 of the memo bytes. A service puts the Merkle root of the
+//! leaves of one record, the stone, in a transparent `OP_RETURN`.
 //! A receipt is the memo and the path from its leaf to the root.
 
 use blake2b_simd::Params;
@@ -13,6 +13,9 @@ const LEAF_PERSONAL: &[u8; 16] = b"MemoStones__Leaf";
 
 /// The personalization of a node hash.
 const NODE_PERSONAL: &[u8; 16] = b"MemoStones__Node";
+
+/// The personalization of a text hash.
+const TEXT_PERSONAL: &[u8; 16] = b"MemoStones__Text";
 
 /// The first words of each memo. A wallet shows them to the person before the payment.
 const PREFIX: &str = "DO NOT MODIFY:{ms1/";
@@ -38,7 +41,8 @@ fn leaf_hash(memo: &[u8]) -> [u8; 32] {
     blake2b(LEAF_PERSONAL, &[memo])
 }
 
-/// node = BLAKE2b-256("MemoStones__Node", min(a, b) || max(a, b)).
+/// node = BLAKE2b-256("MemoStones__Node", min(a, b) || max(a, b)). The comparison is of the
+/// raw bytes, in lexicographic sequence.
 fn node_hash(a: &[u8; 32], b: &[u8; 32]) -> [u8; 32] {
     let (low, high) = if a <= b { (a, b) } else { (b, a) };
     blake2b(NODE_PERSONAL, &[low, high])
@@ -63,35 +67,52 @@ fn check_salt(salt: &str) -> Result<(), String> {
     Ok(())
 }
 
-/// Writes the memo of a topic, a salt and a text.
-fn write_memo(topic: &str, salt: &str, text: &str) -> Result<String, String> {
-    check_topic(topic)?;
-    check_salt(salt)?;
+/// A wallet removes the zero bytes at the end of a memo. Thus, a text with U+0000 is invalid.
+fn check_text(text: &str) -> Result<(), String> {
     if text.is_empty() {
         return Err("Type a text.".into());
     }
-    let memo = format!("{PREFIX}{topic},{salt}}}\n{text}");
+    if text.contains('\0') {
+        return Err("The text must not contain the character U+0000.".into());
+    }
+    Ok(())
+}
+
+/// text hash = BLAKE2b-256("MemoStones__Text", text salt || text), as hexadecimal characters.
+fn text_hash(text_salt: &str, text: &str) -> Result<String, String> {
+    check_salt(text_salt)?;
+    check_text(text)?;
+    let salt = decode32(text_salt)?;
+    Ok(hex::encode(blake2b(TEXT_PERSONAL, &[&salt, text.as_bytes()])))
+}
+
+/// Writes the memo of a topic, a salt and a body. The body is a text hash or a text.
+fn write_memo(topic: &str, salt: &str, body: &str) -> Result<String, String> {
+    check_topic(topic)?;
+    check_salt(salt)?;
+    check_text(body)?;
+    let memo = format!("{PREFIX}{topic},{salt}}}\n{body}");
     if memo.len() > MEMO_LIMIT {
         return Err(format!("The memo is {} bytes. The limit is 512 bytes.", memo.len()));
     }
     Ok(memo)
 }
 
-/// Reads the topic, the salt and the text of a memo. Only the format of `write_memo` is valid.
+/// Reads the topic, the salt and the body of a memo. Only the format of `write_memo` is valid.
 fn read_memo(memo: &str) -> Result<(&str, &str, &str), String> {
     const BAD: &str = "The memo does not have the format of a memo stone.";
     if memo.len() > MEMO_LIMIT {
         return Err(format!("The memo is {} bytes. The limit is 512 bytes.", memo.len()));
     }
     let rest = memo.strip_prefix(PREFIX).ok_or(BAD)?;
-    let (head, text) = rest.split_once("}\n").ok_or(BAD)?;
+    let (head, body) = rest.split_once("}\n").ok_or(BAD)?;
     let (topic, salt) = head.split_once(',').ok_or(BAD)?;
     check_topic(topic)?;
     check_salt(salt)?;
-    if text.is_empty() {
+    if body.is_empty() || body.contains('\0') {
         return Err(BAD.into());
     }
-    Ok((topic, salt, text))
+    Ok((topic, salt, body))
 }
 
 fn decode32(hex_str: &str) -> Result<[u8; 32], String> {
@@ -102,18 +123,15 @@ fn decode32(hex_str: &str) -> Result<[u8; 32], String> {
     Ok(bytes)
 }
 
-/// Decodes the leaves of a record and puts them in sequence by value.
+/// Decodes the leaves of a period and puts them in sequence by value: the raw bytes, in
+/// lexicographic sequence. Two payments with the same memo give two equal leaves. A record
+/// has each leaf one time only, so this function drops the copies.
 fn sorted_leaves(leaves: &[String]) -> Result<Vec<[u8; 32]>, String> {
-    if leaves.is_empty() {
-        return Err("A record must have one leaf or more.".into());
-    }
-    if leaves.len() > usize::from(u16::MAX) {
-        return Err("A record has 65,535 leaves at most.".into());
-    }
     let mut out = leaves.iter().map(|leaf| decode32(leaf)).collect::<Result<Vec<_>, _>>()?;
     out.sort_unstable();
-    if out.windows(2).any(|pair| pair[0] == pair[1]) {
-        return Err("Two leaves are equal. A record has each leaf one time only.".into());
+    out.dedup();
+    if out.len() > usize::from(u16::MAX) {
+        return Err("A record has 65,535 leaves at most.".into());
     }
     Ok(out)
 }
@@ -188,7 +206,8 @@ pub struct StoneRecord {
 #[wasm_bindgen(getter_with_clone)]
 pub struct StoneCheck {
     pub topic: String,
-    pub text: String,
+    /// The body of the memo: a text hash or a text.
+    pub body: String,
     pub leaf: String,
     /// The root from the leaf and the path.
     pub root: String,
@@ -199,15 +218,22 @@ pub struct StoneCheck {
     pub equal: bool,
 }
 
-/// Writes the memo of a topic, a salt and a text, and calculates its leaf.
+/// Calculates the text hash of a text salt and a text.
 #[wasm_bindgen]
-pub fn stone_memo(topic: &str, salt: &str, text: &str) -> Result<StoneMemo, JsError> {
-    let memo = write_memo(topic, salt, text).map_err(|error| JsError::new(&error))?;
+pub fn stone_text_hash(text_salt: &str, text: &str) -> Result<String, JsError> {
+    text_hash(text_salt, text).map_err(|error| JsError::new(&error))
+}
+
+/// Writes the memo of a topic, a salt and a body, and calculates its leaf.
+#[wasm_bindgen]
+pub fn stone_memo(topic: &str, salt: &str, body: &str) -> Result<StoneMemo, JsError> {
+    let memo = write_memo(topic, salt, body).map_err(|error| JsError::new(&error))?;
     let leaf = hex::encode(leaf_hash(memo.as_bytes()));
     Ok(StoneMemo { memo, leaf })
 }
 
-/// Makes record `number` from the leaves.
+/// Makes record `number` from the leaves of a period. Record 0 has no leaves and a root of
+/// 32 zero bytes. Each later record has one leaf or more.
 #[wasm_bindgen]
 pub fn stone_record(number: u32, leaves: Vec<String>) -> Result<StoneRecord, JsError> {
     build_record(number, &leaves).map_err(|error| JsError::new(&error))
@@ -215,9 +241,15 @@ pub fn stone_record(number: u32, leaves: Vec<String>) -> Result<StoneRecord, JsE
 
 fn build_record(number: u32, leaves: &[String]) -> Result<StoneRecord, String> {
     let sorted = sorted_leaves(leaves)?;
+    if number == 0 && !sorted.is_empty() {
+        return Err("Record 0 must have no leaves.".into());
+    }
+    if number > 0 && sorted.is_empty() {
+        return Err("A record after record 0 must have one leaf or more.".into());
+    }
     let count = sorted.len() as u16;
     let tree = levels(sorted);
-    let root = tree.last().expect("one level or more")[0];
+    let root = tree.last().expect("one level or more").first().copied().unwrap_or([0; 32]);
     Ok(StoneRecord {
         leaves: tree[0].iter().map(hex::encode).collect(),
         root: hex::encode(root),
@@ -247,14 +279,14 @@ pub fn stone_check(memo: &str, path: Vec<String>, record: &str) -> Result<StoneC
 }
 
 fn check_receipt(memo: &str, path: &[String], record: &str) -> Result<StoneCheck, String> {
-    let (topic, _salt, text) = read_memo(memo)?;
+    let (topic, _salt, body) = read_memo(memo)?;
     let path = path.iter().map(|hash| decode32(hash)).collect::<Result<Vec<_>, _>>()?;
     let (record_number, leaf_count, record_root) = read_record(record)?;
     let leaf = leaf_hash(memo.as_bytes());
     let root = root_from(leaf, &path);
     Ok(StoneCheck {
         topic: topic.to_string(),
-        text: text.to_string(),
+        body: body.to_string(),
         leaf: hex::encode(leaf),
         root: hex::encode(root),
         record_root: hex::encode(record_root),
@@ -323,12 +355,12 @@ mod tests {
     fn each_receipt_is_correct() {
         for count in 1..=5 {
             let all = leaves(count);
-            let record = build_record(0, &all).unwrap();
+            let record = build_record(1, &all).unwrap();
             for (i, leaf) in all.iter().enumerate() {
                 let path = find_path(&all, leaf).unwrap();
                 let check = check_receipt(&memo(i), &path, &record.record).unwrap();
                 assert!(check.equal, "leaf {i} of {count}");
-                assert_eq!(check.text, TEXTS[i]);
+                assert_eq!(check.body, TEXTS[i]);
                 assert_eq!(check.leaf_count as usize, count);
             }
         }
@@ -362,7 +394,8 @@ mod tests {
         assert!(write_memo("box", &salt.to_uppercase().replace('1', "A"), "x").is_err());
         assert!(write_memo("box", &salt[..62], "x").is_err());
         assert!(write_memo("box", &salt, "").is_err());
-        // The header is 118 bytes at most. Thus, the text has 394 bytes at least.
+        assert!(write_memo("box", &salt, "x\0").is_err());
+        // The header is 118 bytes at most. Thus, 394 bytes or more are free for the body.
         assert!(write_memo(&"a".repeat(32), &salt, &"x".repeat(394)).is_ok());
         assert!(write_memo(&"a".repeat(32), &salt, &"x".repeat(395)).is_err());
 
@@ -372,14 +405,54 @@ mod tests {
         assert!(read_memo(&good.replace("}\n", "} ")).is_err());
         assert!(read_memo(&good.replace("box,", "box,,")).is_err());
         assert!(read_memo(&good[..good.len() - 1]).is_err());
+        assert!(read_memo(&format!("{good}\0")).is_err());
+    }
+
+    #[test]
+    fn text_hash_matches_reference_vector() {
+        // text hash = hashlib.blake2b(text_salt + text, digest_size=32, person=b"MemoStones__Text")
+        let hash = text_hash(&"aa".repeat(32), TEXTS[0]).unwrap();
+        assert_eq!(hash, "56e45febb21d6cec78018fd36fbaf2f3be28b07df868600340f8d9f1fededa91");
+        let memo = write_memo("research", &"11".repeat(32), &hash).unwrap();
+        assert_eq!(memo.len(), 158);
+        assert_eq!(
+            hex::encode(leaf_hash(memo.as_bytes())),
+            "69878e1810d29b72eaadaf9554335d5ef7c6f36c3e83738f443557b52addb483"
+        );
+        assert_ne!(text_hash(&"ab".repeat(32), TEXTS[0]).unwrap(), hash);
+        assert!(text_hash(&"aa".repeat(31), TEXTS[0]).is_err());
+        assert!(text_hash(&"aa".repeat(32), "").is_err());
+        assert!(text_hash(&"aa".repeat(32), "x\0").is_err());
+    }
+
+    #[test]
+    fn equal_leaves_of_one_period_are_one_leaf() {
+        // An author pays the same link two times. The record has the leaf one time, and the
+        // receipts of all the authors stay correct.
+        let all = leaves(3);
+        let mut period = all.clone();
+        period.push(all[1].clone());
+        let record = build_record(7, &period).unwrap();
+        assert_eq!(record.leaves.len(), 3);
+        assert_eq!(record.record, build_record(7, &all).unwrap().record);
+        for (i, leaf) in all.iter().enumerate() {
+            let path = find_path(&period, leaf).unwrap();
+            assert!(check_receipt(&memo(i), &path, &record.record).unwrap().equal);
+        }
+    }
+
+    #[test]
+    fn record_0_has_no_leaves() {
+        let record = build_record(0, &[]).unwrap();
+        assert_eq!(record.record, format!("4d53543101{}", "00".repeat(38)));
+        assert_eq!(read_record(&record.record).unwrap(), (0, 0, [0; 32]));
+        assert!(build_record(0, &leaves(1)).is_err());
+        assert!(build_record(1, &[]).is_err());
     }
 
     #[test]
     fn bad_records_fail() {
-        assert!(build_record(0, &[]).is_err());
-        let one = leaves(1);
-        assert!(build_record(0, &[one[0].clone(), one[0].clone()]).is_err());
-        assert!(build_record(0, &["00".repeat(31)]).is_err());
+        assert!(build_record(1, &["00".repeat(31)]).is_err());
         assert!(read_record(&"00".repeat(43)).is_err());
         assert!(read_record("4d53543101").is_err());
     }
