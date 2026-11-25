@@ -347,10 +347,11 @@
           longer period and more leaves, the link is weaker.
         </li>
         <li>
-          <strong>Memo download.</strong> Compact blocks contain no memos. A reader that uses a light client server
-          gets each memo in a full transaction. Thus, that server sees each block with a payment to the service. If the
-          reader gets only the transactions of the payments, the server also sees each payment. Use a reader with its
-          own node.
+          <strong>Memo download.</strong> Compact blocks contain no memos. A reader that uses a light wallet server
+          gets each memo in a full transaction. Thus, that server sees each payment transaction. If the reader gets all
+          the transactions of each block, the server sees only the blocks with payments. If the author wallet and the
+          reader use the same server, that server can link the IP address of the author to a payment to the service.
+          Use a reader with its own node.
         </li>
         <li>
           <strong>Leaf list.</strong> The leaf list is off the chain. If the service holds back a list, the authors
