@@ -89,7 +89,7 @@ The Pages workflow (`.github/workflows/pages.yml`) builds the site for each pull
 
 ## Thanks
 
-- [Daniel Gorgonha](https://github.com/danielgorgonha), contributor.
+- The contributors are on the [home page](https://appliedzcash.com/#contributors). The Pages workflow runs `tools/contributors.py`, so each merge to `main` refreshes the list from GitHub.
 - [Julian (craftsoldier)](https://github.com/craftsoldier), the source of the bound notes pattern.
 
 ## Contributing

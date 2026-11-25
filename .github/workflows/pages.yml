@@ -50,10 +50,13 @@ jobs:
         run: cargo install cargo-about --locked --features cli --version 0.9.3
 
       - name: Assemble the site
+        env:
+          GH_TOKEN: ${{ github.token }} # tools/contributors.py reads the contributors from the GitHub API
         run: |
           mkdir _site
           cp -r index.html 404.html robots.txt basics patterns wishlist styles scripts images fonts _site/
           python3 tools/site_index.py _site
+          python3 tools/contributors.py _site/index.html
           wasm-bindgen --target web --no-typescript --out-dir _site/wasm \
             demo/target/wasm32-unknown-unknown/release/demo.wasm
           (cd demo && cargo about generate --locked --fail -o ../_site/wasm/notices.html about.hbs)
