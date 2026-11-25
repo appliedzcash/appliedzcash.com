@@ -323,10 +323,10 @@
           The authors must do this before they show their bids.
         </li>
         <li>
-          <strong>Enclave.</strong> As an option, the service can run the reader and the writer in a trusted execution
-          environment (TEE). Then the enclave code adds each leaf. These conditions are necessary:
+          <strong>Enclave.</strong> As an option, the service can run the reader and the writer in an enclave, a trusted
+          execution environment (TEE). Then the enclave code puts each leaf in a record. These conditions are necessary:
           <ul>
-            <li>The enclave sends an attestation. The verifier checks its authenticity.
+            <li>The enclave sends an attestation. The verifier examines the signature of the attestation.
               The verifier calculates the code hash from a reproducible build of the published source.
               The code hash must be the same as the hash in the attestation.</li>
             <li>The enclave examines full blocks. It gets the chain tip from sources that are independent of the
@@ -335,8 +335,8 @@
             <li>The writer key stays in the enclave. The writer public key must be in the verified attestation.
               For this option, the verifier checks this key against record 0 and each recovery record 0.</li>
           </ul>
-          The verifier then trusts the maker of the chip. Attacks on TEEs are known. Thus, an enclave decreases the
-          risk, and a payment disclosure stays necessary.
+          The verifier then trusts the maker of the chip. An enclave decreases the risk. Attacks on enclaves are
+          known. Thus, a payment disclosure stays necessary.
         </li>
         <li>
           <strong>Refunds.</strong> The sender of a payment is secret. Thus, the service cannot send back a payment with
