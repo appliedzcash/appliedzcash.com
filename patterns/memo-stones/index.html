@@ -347,9 +347,13 @@
           longer period and more leaves, the link is weaker.
         </li>
         <li>
-          <strong>Memo download.</strong> Compact blocks contain no memos. A reader that uses a light wallet server
-          gets each memo in a full transaction. Thus, that server sees each payment transaction. If the reader gets all
-          the transactions of each block, the server sees only the blocks with payments. If the author wallet and the
+          <strong>Memo download.</strong> Compact blocks contain no memos. A reader gets each memo in a full transaction.
+          If it gets only payment transactions from a light wallet server, that server sees each payment transaction.
+          If it gets all transactions only from blocks with payments, that server sees those blocks.
+          A reader can use <code>GetMempoolStream</code> to receive all full transactions in the server's mempool.
+          Thus, the reader receives those memos without payment-specific requests.
+          For payments absent from the stream, the reader can use <code>GetTransaction</code>.
+          If the author wallet and the
           reader use the same server, that server can link the IP address of the author to a payment to the service.
           Use a reader with its own node.
         </li>
