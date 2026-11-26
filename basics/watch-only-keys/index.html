@@ -124,6 +124,17 @@
           For a trusted note, such as a note from a transaction that the wallet made, the recommendation is 3. With 25-second blocks, 10 confirmations are about 4 minutes.
           Three confirmations are about 75 seconds. Show the spendable balance next to the balance. Thus, a person sees which funds are spendable now.
         </li>
+        <li>
+          <strong>Wallet birthday.</strong> A server with a viewing key should also keep the birthday height of the account.
+          The birthday height is the minimum block height that a wallet scans for the account.
+          A wallet can rebuild the account with a later birthday height, for example the current height.
+          Thus, the wallet misses the notes that the account received before that height. The balance is too low, and can be zero.
+          Each account in the wallet library <code>zcash_client_backend</code> has a birthday height
+          (<a href="https://docs.rs/zcash_client_backend/0.25.0/zcash_client_backend/data_api/struct.AccountBirthday.html">AccountBirthday</a>).
+          An optional birthday height in a viewing key is in <a href="https://zips.z.cash/zip-0316">ZIP 316</a> (revision 2, draft).
+          Without a birthday height in the viewing key, a wallet must ask for one or scan from a conservative default.
+          Keep the birthday height with the key in each backup.
+        </li>
       </ul>
 
       <h2 id="demo">Demo: one seed, three keys</h2>
