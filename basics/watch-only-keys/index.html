@@ -119,6 +119,11 @@
         <li>
           <strong>Balances.</strong> A server with the UIVK sees each note in. A server with the full viewing key also sees each spend. The full viewing key is necessary for a balance.
         </li>
+        <li>
+          <strong>Spendable balance.</strong> A balance can contain notes that a wallet cannot spend yet. The recommendation of <a href="https://zips.z.cash/zip-0315">ZIP 315</a> (draft) is 10 confirmations for an untrusted note.
+          For a trusted note, such as a note from a transaction that the wallet made, the recommendation is 3. With 25-second blocks, 10 confirmations are about 4 minutes.
+          Three confirmations are about 75 seconds. Show the spendable balance next to the balance. Thus, a person sees which funds are spendable now.
+        </li>
       </ul>
 
       <h2 id="demo">Demo: one seed, three keys</h2>
