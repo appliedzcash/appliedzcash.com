@@ -329,8 +329,10 @@
             <li>The enclave sends an attestation. The verifier examines the signature of the attestation.
               The verifier calculates the code hash from a reproducible build of the published source.
               The code hash must be the same as the hash in the attestation.</li>
-            <li>The enclave examines full blocks. It gets the chain tip from sources that are independent of the
-              operator. The operator can hold back block data. Then the enclave sends no records, and the authors see
+            <li>The enclave examines the header and all the transactions of each block.
+              It calculates the Merkle root of the transaction IDs. Then it compares this root with the root in the header.
+              It gets the chain tip from sources that are independent of the operator.
+              The operator can hold back blocks or the chain tip. Then the enclave sends no records, and the authors see
               the delay.</li>
             <li>The writer key stays in the enclave. The writer public key must be in the verified attestation.
               For this option, the verifier checks this key against record 0 and each recovery record 0.</li>
