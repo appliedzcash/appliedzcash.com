@@ -273,8 +273,13 @@
       <h2 id="cost">Cost</h2>
       <ul>
         <li>
-          <strong>Each memo</strong> One usual shielded payment with two actions. With the
-          <a href="https://zips.z.cash/zip-2009">ZIP 2009</a> fee rule, the fee for two actions is 2,000 zatoshis.
+          <strong>Each memo</strong> One usual shielded payment from Ironwood notes has two actions. From block
+          3,590,000, the fee rule for wallets is in <a href="https://zips.z.cash/zip-2009">ZIP 2009</a>. With that
+          rule, the fee for two actions is 2,000 zatoshis. A wallet with the older rule of
+          <a href="https://zips.z.cash/zip-0317">ZIP 317</a> pays 10,000 zatoshis.
+          A wallet that spends Orchard notes puts the spend in an Orchard bundle and the payment in an Ironwood bundle.
+          Each bundle has two actions. Thus, a usual payment from Orchard notes has four actions.
+          Its fee is 4,000 zatoshis with the ZIP 2009 rule. With the older rule, the fee is 20,000 zatoshis.
         </li>
         <li>
           <strong>Each record</strong> One transparent transaction for all the memos of a period. Its two outputs are
@@ -284,6 +289,10 @@
         <li>
           <strong>Wallets</strong> A record transaction has no shielded actions. Thus, other wallets do no trial
           decryption for a record. See <a href="../polite-actions/">Polite actions</a>.
+        </li>
+        <li>
+          <strong>Reader</strong> One incoming viewing key. The reader does trial decryption of each shielded action
+          of each block, as a wallet does. It also gets the full transaction of each payment.
         </li>
         <li>
           <strong>Receipt</strong> The memo and the path. A path in a record of n leaves has ⌈log₂ n⌉ hashes or
