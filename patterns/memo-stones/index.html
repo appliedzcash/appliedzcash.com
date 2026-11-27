@@ -332,7 +332,7 @@
             <li>The enclave examines the header and all the transactions of each block.
               It calculates the Merkle root of the transaction IDs. Then it compares this root with the root in the header.
               It gets the chain tip from sources that are independent of the operator.
-              The operator can hold back blocks or the chain tip. Then the enclave sends no records, and the authors see
+              The operator can hold back blocks or the chain tip. Thus, the enclave sends no records, and the authors see
               the delay.</li>
             <li>The writer key stays in the enclave. The writer public key must be in the verified attestation.
               For this option, the verifier checks this key against record 0 and each recovery record 0.</li>
